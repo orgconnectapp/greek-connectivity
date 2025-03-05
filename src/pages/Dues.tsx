@@ -1,12 +1,12 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   ArrowRight, 
   Calendar, 
   Check, 
   Clock, 
   CreditCard, 
-  Download 
+  Download,
+  Share
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,8 +27,9 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { toast } from '@/hooks/use-toast';
+import SharePaymentModal from '@/components/dues/SharePaymentModal';
 
-// Mock data
 const payments = [
   { 
     id: 1, 
@@ -72,10 +73,23 @@ const upcomingPayments = [
 ];
 
 const Dues = () => {
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<{
+    id: number;
+    description: string;
+    amount: number;
+    dueDate?: string;
+  } | null>(null);
+  
   const totalDues = 575;
   const paidDues = 325;
   const dueSoon = 250;
   const progress = Math.round((paidDues / totalDues) * 100);
+  
+  const handleSharePayment = (payment: typeof selectedPayment) => {
+    setSelectedPayment(payment);
+    setShareModalOpen(true);
+  };
   
   return (
     <div className="space-y-6 animate-fade-in">
@@ -189,12 +203,22 @@ const Dues = () => {
                         Due {payment.dueDate}
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2">
                       <p className="text-xl font-semibold">${payment.amount}</p>
-                      <Button>
-                        Pay Now 
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="icon"
+                          onClick={() => handleSharePayment(payment)}
+                          title="Share payment link"
+                        >
+                          <Share className="h-4 w-4" />
+                        </Button>
+                        <Button>
+                          Pay Now 
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -220,7 +244,7 @@ const Dues = () => {
                     <TableHead>Amount</TableHead>
                     <TableHead>Method</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Receipt</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -239,11 +263,27 @@ const Dues = () => {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        {payment.status === 'paid' && (
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        )}
+                        <div className="flex justify-end gap-2">
+                          {payment.status === 'pending' && (
+                            <Button 
+                              variant="outline" 
+                              size="icon"
+                              onClick={() => handleSharePayment({
+                                id: payment.id,
+                                description: payment.description,
+                                amount: payment.amount
+                              })}
+                              title="Share payment link"
+                            >
+                              <Share className="h-4 w-4" />
+                            </Button>
+                          )}
+                          {payment.status === 'paid' && (
+                            <Button variant="ghost" size="icon" className="h-8 w-8 p-0">
+                              <Download className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -253,6 +293,12 @@ const Dues = () => {
           </Card>
         </TabsContent>
       </Tabs>
+      
+      <SharePaymentModal 
+        open={shareModalOpen}
+        onOpenChange={setShareModalOpen}
+        paymentDetails={selectedPayment}
+      />
     </div>
   );
 };

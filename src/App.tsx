@@ -13,6 +13,7 @@ import Messages from "./pages/Messages";
 import MessageBoard from "./pages/MessageBoard";
 import AdminPanel from "./pages/AdminPanel";
 import NotFound from "./pages/NotFound";
+import ExternalPayment from "./pages/ExternalPayment";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,8 @@ const App = () => (
             <Route path="/message-board" element={<MessageBoard />} />
             <Route path="/admin" element={<AdminPanel />} />
           </Route>
+          {/* External routes (no Layout) */}
+          <Route path="/external-payment/:paymentId" element={<ExternalPayment />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
