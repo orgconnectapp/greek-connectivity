@@ -8,7 +8,8 @@ import {
   MessageSquare, 
   LayoutDashboard, 
   ChevronLeft, 
-  ChevronRight 
+  ChevronRight,
+  Shield
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -46,6 +47,11 @@ const SidebarNavItem = ({ icon: Icon, label, href, isCollapsed }: SidebarNavItem
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
+  
+  // This would typically come from an auth context
+  // For now, we'll just hardcode it for demonstration
+  const userRole = "president"; // Could be "president", "treasurer", "member", etc.
+  const isAdmin = ["president", "treasurer", "vice president"].includes(userRole);
   
   const toggleSidebar = () => {
     setIsCollapsed(prev => !prev);
@@ -95,6 +101,15 @@ const Sidebar = () => {
           href="/messages" 
           isCollapsed={isCollapsed} 
         />
+        
+        {isAdmin && (
+          <SidebarNavItem 
+            icon={Shield} 
+            label="Admin" 
+            href="/admin" 
+            isCollapsed={isCollapsed} 
+          />
+        )}
       </div>
       
       <Button

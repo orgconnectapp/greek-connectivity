@@ -10,6 +10,7 @@ import Members from "./pages/Members";
 import Dues from "./pages/Dues";
 import Fundraisers from "./pages/Fundraisers";
 import Messages from "./pages/Messages";
+import AdminPanel from "./pages/AdminPanel";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/dues" element={<Dues />} />
             <Route path="/fundraisers" element={<Fundraisers />} />
             <Route path="/messages" element={<Messages />} />
+            <Route path="/admin" element={<AdminPanel />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
