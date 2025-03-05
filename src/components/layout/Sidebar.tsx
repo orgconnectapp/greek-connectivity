@@ -59,7 +59,7 @@ const Sidebar = () => {
       <div className="flex h-16 items-center border-b px-4">
         {!isCollapsed && (
           <Link to="/" className="font-display text-xl font-bold text-primary">
-            GreekSync
+            OrgConnect
           </Link>
         )}
       </div>

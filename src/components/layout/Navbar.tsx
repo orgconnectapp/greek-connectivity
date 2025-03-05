@@ -21,7 +21,7 @@ const Navbar = () => {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
           <Link to="/" className="font-display text-xl font-bold text-primary transition-colors">
-            GreekSync
+            OrgConnect
           </Link>
           <div className="hidden md:flex md:items-center md:gap-4">
             <Link to="/" className="text-sm font-medium transition-colors hover:text-primary">
