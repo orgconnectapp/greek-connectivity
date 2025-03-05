@@ -84,7 +84,7 @@ const fundraisers = [
   },
   { 
     id: 6, 
-    title: 'Valentine's Bake Sale', 
+    title: 'Valentine\'s Bake Sale', 
     description: 'Selling homemade treats to raise funds for chapter activities.',
     date: 'February 14, 2024',
     goal: 300,
