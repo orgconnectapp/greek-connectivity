@@ -12,6 +12,7 @@ import Fundraisers from "./pages/Fundraisers";
 import Messages from "./pages/Messages";
 import MessageBoard from "./pages/MessageBoard";
 import AdminPanel from "./pages/AdminPanel";
+import Calendar from "./pages/Calendar";
 import NotFound from "./pages/NotFound";
 import ExternalPayment from "./pages/ExternalPayment";
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/fundraisers" element={<Fundraisers />} />
             <Route path="/messages" element={<Messages />} />
             <Route path="/message-board" element={<MessageBoard />} />
+            <Route path="/calendar" element={<Calendar />} />
             <Route path="/admin" element={<AdminPanel />} />
           </Route>
           {/* External routes (no Layout) */}

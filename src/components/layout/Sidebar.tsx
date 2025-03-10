@@ -11,6 +11,7 @@ import {
   ChevronRight,
   Shield,
   Megaphone,
+  Calendar,
   Share2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -83,6 +84,12 @@ const Sidebar = () => {
           icon={LayoutDashboard} 
           label="Dashboard" 
           href="/dashboard" 
+          isCollapsed={isCollapsed} 
+        />
+        <SidebarNavItem 
+          icon={Calendar} 
+          label="Calendar" 
+          href="/calendar" 
           isCollapsed={isCollapsed} 
         />
         <SidebarNavItem 
