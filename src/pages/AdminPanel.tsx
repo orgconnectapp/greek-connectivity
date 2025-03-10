@@ -10,7 +10,10 @@ import {
   Upload,
   Download,
   Bell,
-  CreditCard
+  CreditCard,
+  DollarSign,
+  Percent,
+  Check
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -40,6 +43,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Switch } from '@/components/ui/switch';
+import { Progress } from '@/components/ui/progress';
 import DashboardCard from '@/components/dashboard/DashboardCard';
 import CreateDueChargeModal from '@/components/admin/CreateDueChargeModal';
 
@@ -311,7 +315,7 @@ const AdminPanel = () => {
                     <TableHead>Type</TableHead>
                     <TableHead>Due Date</TableHead>
                     <TableHead>Created</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead>Payment Status</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -324,6 +328,10 @@ const AdminPanel = () => {
                       dueDate: 'Apr 15, 2024',
                       created: 'Mar 1, 2024',
                       status: 'Active',
+                      collected: 2250,
+                      total: 3600,
+                      members: 24,
+                      paidMembers: 15
                     },
                     { 
                       title: 'Leadership Conference Fee', 
@@ -332,6 +340,10 @@ const AdminPanel = () => {
                       dueDate: 'Mar 30, 2024',
                       created: 'Mar 5, 2024',
                       status: 'Active',
+                      collected: 560,
+                      total: 840,
+                      members: 24,
+                      paidMembers: 16
                     },
                     { 
                       title: 'Late Payment Fee', 
@@ -340,27 +352,61 @@ const AdminPanel = () => {
                       dueDate: 'May 1, 2024',
                       created: 'Mar 15, 2024',
                       status: 'Pending',
+                      collected: 0,
+                      total: 200,
+                      members: 8,
+                      paidMembers: 0
                     },
-                  ].map((dues, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="font-medium">{dues.title}</TableCell>
-                      <TableCell>{dues.amount}</TableCell>
-                      <TableCell>{dues.type}</TableCell>
-                      <TableCell>{dues.dueDate}</TableCell>
-                      <TableCell>{dues.created}</TableCell>
-                      <TableCell>
-                        <Badge variant={dues.status === 'Active' ? 'default' : 'secondary'}>
-                          {dues.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button variant="ghost" size="sm">Edit</Button>
-                          <Button variant="ghost" size="sm" className="text-destructive">Delete</Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  ].map((dues, index) => {
+                    const percentPaid = Math.round((dues.collected / dues.total) * 100);
+                    const percentMembers = Math.round((dues.paidMembers / dues.members) * 100);
+                    
+                    return (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">{dues.title}</TableCell>
+                        <TableCell>{dues.amount}</TableCell>
+                        <TableCell>{dues.type}</TableCell>
+                        <TableCell>{dues.dueDate}</TableCell>
+                        <TableCell>{dues.created}</TableCell>
+                        <TableCell className="w-[250px]">
+                          <div className="space-y-3">
+                            <div className="flex items-center justify-between text-sm">
+                              <div className="flex items-center gap-1">
+                                <DollarSign className="h-3.5 w-3.5 text-primary" />
+                                <span>Amount Collected:</span>
+                              </div>
+                              <div className="font-medium">${dues.collected} of ${dues.total}</div>
+                            </div>
+                            <Progress value={percentPaid} className="h-2" />
+                            
+                            <div className="flex items-center justify-between text-sm">
+                              <div className="flex items-center gap-1">
+                                <Users className="h-3.5 w-3.5 text-primary" />
+                                <span>Members Paid:</span>
+                              </div>
+                              <div className="font-medium">{dues.paidMembers} of {dues.members}</div>
+                            </div>
+                            <Progress value={percentMembers} className="h-2" />
+                            
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                              {percentPaid === 100 ? (
+                                <Check className="h-3.5 w-3.5 text-green-500" />
+                              ) : (
+                                <Percent className="h-3.5 w-3.5" />
+                              )}
+                              <span>{percentPaid}% collected</span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Button variant="ghost" size="sm">Edit</Button>
+                            <Button variant="ghost" size="sm" className="text-destructive">Delete</Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </CardContent>
