@@ -12,9 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -89,15 +87,12 @@ const MessageBoard = () => {
   const [newMessageOpen, setNewMessageOpen] = useState(false);
   const [newMessageContent, setNewMessageContent] = useState('');
   const [newMessageCategory, setNewMessageCategory] = useState('General');
-  const [currentTab, setCurrentTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Filter messages based on tab and search
+  // Filter messages based on search only
   const filteredMessages = messages.filter(message => {
-    const matchesTab = currentTab === 'all' || message.category.toLowerCase() === currentTab;
-    const matchesSearch = message.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          message.author.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesTab && matchesSearch;
+    return message.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+           message.author.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   // Sort messages - pinned first, then by newest
@@ -233,134 +228,39 @@ const MessageBoard = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setCurrentTab('all')}>
+            <DropdownMenuItem onClick={() => setSearchQuery('')}>
               All Messages
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setCurrentTab('announcements')}>
+            <DropdownMenuItem onClick={() => setSearchQuery('announcement')}>
               Announcements
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setCurrentTab('events')}>
+            <DropdownMenuItem onClick={() => setSearchQuery('event')}>
               Events
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setCurrentTab('questions')}>
+            <DropdownMenuItem onClick={() => setSearchQuery('question')}>
               Questions
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setCurrentTab('general')}>
+            <DropdownMenuItem onClick={() => setSearchQuery('general')}>
               General
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
 
-      <Tabs defaultValue="all" value={currentTab} onValueChange={setCurrentTab}>
-        <TabsList className="bg-transparent border-b w-full justify-start rounded-none p-0">
-          <TabsTrigger 
-            value="all" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-          >
-            All
-          </TabsTrigger>
-          <TabsTrigger 
-            value="announcements" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-          >
-            Announcements
-          </TabsTrigger>
-          <TabsTrigger 
-            value="events" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-          >
-            Events
-          </TabsTrigger>
-          <TabsTrigger 
-            value="general" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-          >
-            General
-          </TabsTrigger>
-          <TabsTrigger 
-            value="questions" 
-            className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent"
-          >
-            Questions
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="all" className="space-y-4 pt-4">
-          {sortedMessages.length > 0 ? (
-            sortedMessages.map((message) => (
-              <MessageCard 
-                key={message.id}
-                message={message}
-                onLike={() => handleLike(message.id)}
-                onPin={() => handlePin(message.id)}
-              />
-            ))
-          ) : (
-            <p className="text-center text-muted-foreground py-8">No messages found.</p>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="announcements" className="space-y-4 pt-4">
-          {sortedMessages.length > 0 ? (
-            sortedMessages.map((message) => (
-              <MessageCard 
-                key={message.id}
-                message={message}
-                onLike={() => handleLike(message.id)}
-                onPin={() => handlePin(message.id)}
-              />
-            ))
-          ) : (
-            <p className="text-center text-muted-foreground py-8">No announcements found.</p>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="events" className="space-y-4 pt-4">
-          {sortedMessages.length > 0 ? (
-            sortedMessages.map((message) => (
-              <MessageCard 
-                key={message.id}
-                message={message}
-                onLike={() => handleLike(message.id)}
-                onPin={() => handlePin(message.id)}
-              />
-            ))
-          ) : (
-            <p className="text-center text-muted-foreground py-8">No events found.</p>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="general" className="space-y-4 pt-4">
-          {sortedMessages.length > 0 ? (
-            sortedMessages.map((message) => (
-              <MessageCard 
-                key={message.id}
-                message={message}
-                onLike={() => handleLike(message.id)}
-                onPin={() => handlePin(message.id)}
-              />
-            ))
-          ) : (
-            <p className="text-center text-muted-foreground py-8">No general messages found.</p>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="questions" className="space-y-4 pt-4">
-          {sortedMessages.length > 0 ? (
-            sortedMessages.map((message) => (
-              <MessageCard 
-                key={message.id}
-                message={message}
-                onLike={() => handleLike(message.id)}
-                onPin={() => handlePin(message.id)}
-              />
-            ))
-          ) : (
-            <p className="text-center text-muted-foreground py-8">No questions found.</p>
-          )}
-        </TabsContent>
-      </Tabs>
+      <div className="space-y-4 pt-4">
+        {sortedMessages.length > 0 ? (
+          sortedMessages.map((message) => (
+            <MessageCard 
+              key={message.id}
+              message={message}
+              onLike={() => handleLike(message.id)}
+              onPin={() => handlePin(message.id)}
+            />
+          ))
+        ) : (
+          <p className="text-center text-muted-foreground py-8">No messages found.</p>
+        )}
+      </div>
     </div>
   );
 };

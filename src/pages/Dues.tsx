@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   ArrowRight, 
@@ -6,7 +7,10 @@ import {
   Clock, 
   CreditCard, 
   Download,
-  Share
+  Share,
+  ChevronDown,
+  ChevronUp,
+  DollarSign
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,6 +19,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -29,6 +34,11 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
 import SharePaymentModal from '@/components/dues/SharePaymentModal';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 const payments = [
   { 
@@ -72,6 +82,15 @@ const upcomingPayments = [
   },
 ];
 
+// New breakdown of charges
+const chargeBreakdown = [
+  { description: 'Chapter Dues', amount: 150 },
+  { description: 'National Membership Fee', amount: 200 },
+  { description: 'Social Events Fund', amount: 125 },
+  { description: 'Philanthropy Fund', amount: 50 },
+  { description: 'Facilities Maintenance', amount: 50 }
+];
+
 const Dues = () => {
   const [shareModalOpen, setShareModalOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<{
@@ -80,6 +99,7 @@ const Dues = () => {
     amount: number;
     dueDate?: string;
   } | null>(null);
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
   
   const totalDues = 575;
   const paidDues = 325;
@@ -101,26 +121,65 @@ const Dues = () => {
       </div>
       
       <div className="grid gap-6 md:grid-cols-3">
-        <Card className="animate-fade-up" style={{ animationDelay: '0.1s' }}>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total Due</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="text-2xl font-bold">${totalDues}</div>
-              <div className="rounded-full bg-primary/10 p-2">
-                <CreditCard className="h-5 w-5 text-primary" />
-              </div>
-            </div>
-            <div className="mt-4 space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-muted-foreground">Progress</span>
-                <span>{progress}% Complete</span>
-              </div>
-              <Progress value={progress} className="h-2" />
-            </div>
-          </CardContent>
-        </Card>
+        <Collapsible 
+          open={breakdownOpen} 
+          onOpenChange={setBreakdownOpen}
+          className="col-span-full md:col-span-1 animate-fade-up"
+        >
+          <CollapsibleTrigger asChild>
+            <Card className="cursor-pointer hover:bg-muted/5 transition-colors" style={{ animationDelay: '0.1s' }}>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">Total Due</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center justify-between">
+                  <div className="text-2xl font-bold">${totalDues}</div>
+                  <div className="rounded-full bg-primary/10 p-2">
+                    <CreditCard className="h-5 w-5 text-primary" />
+                  </div>
+                </div>
+                <div className="mt-4 space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Progress</span>
+                    <span>{progress}% Complete</span>
+                  </div>
+                  <Progress value={progress} className="h-2" />
+                </div>
+                <div className="mt-4 flex items-center justify-center text-sm text-muted-foreground">
+                  <span>View breakdown</span>
+                  {breakdownOpen ? 
+                    <ChevronUp className="ml-1 h-4 w-4" /> : 
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  }
+                </div>
+              </CardContent>
+            </Card>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <Card className="mt-2 border-primary/20">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-medium">Charges Breakdown</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {chargeBreakdown.map((charge, index) => (
+                    <div key={index} className="flex justify-between items-center">
+                      <div className="flex items-center">
+                        <DollarSign className="h-4 w-4 text-muted-foreground mr-2" />
+                        <span>{charge.description}</span>
+                      </div>
+                      <span className="font-medium">${charge.amount}</span>
+                    </div>
+                  ))}
+                  <div className="pt-2 border-t border-border flex justify-between items-center font-semibold">
+                    <span>Total</span>
+                    <span>${chargeBreakdown.reduce((acc, item) => acc + item.amount, 0)}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </CollapsibleContent>
+        </Collapsible>
         
         <Card className="animate-fade-up" style={{ animationDelay: '0.2s' }}>
           <CardHeader className="pb-2">
