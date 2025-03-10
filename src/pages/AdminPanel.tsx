@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Shield, 
@@ -10,7 +9,8 @@ import {
   ServerCog,
   Upload,
   Download,
-  Bell
+  Bell,
+  CreditCard
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -41,6 +41,7 @@ import {
 } from '@/components/ui/table';
 import { Switch } from '@/components/ui/switch';
 import DashboardCard from '@/components/dashboard/DashboardCard';
+import CreateDueChargeModal from '@/components/admin/CreateDueChargeModal';
 
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -61,9 +62,10 @@ const AdminPanel = () => {
       </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 lg:w-auto">
+        <TabsList className="grid w-full grid-cols-5 lg:w-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="users">User Management</TabsTrigger>
+          <TabsTrigger value="dues">Dues Management</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
           <TabsTrigger value="permissions">Permissions</TabsTrigger>
         </TabsList>
@@ -261,6 +263,101 @@ const AdminPanel = () => {
                       </TableCell>
                       <TableCell>
                         <Button variant="ghost" size="sm">Edit</Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        <TabsContent value="dues" className="space-y-4">
+          <Card>
+            <CardHeader className="space-y-0 pb-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Dues Management</CardTitle>
+                  <CardDescription>
+                    Create and manage due charges for your organization
+                  </CardDescription>
+                </div>
+                <CreateDueChargeModal />
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2 mb-4">
+                <Input placeholder="Search due charges..." className="max-w-sm" />
+                <Select defaultValue="all">
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Filter by type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Types</SelectItem>
+                    <SelectItem value="regular">Regular Dues</SelectItem>
+                    <SelectItem value="late">Late Fees</SelectItem>
+                    <SelectItem value="event">Event Fees</SelectItem>
+                    <SelectItem value="other">Other Charges</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <Table>
+                <TableCaption>A list of all due charges for your organization</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Due Date</TableHead>
+                    <TableHead>Created</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {[
+                    { 
+                      title: 'Spring 2024 Membership Dues', 
+                      amount: '$150.00', 
+                      type: 'Regular Dues',
+                      dueDate: 'Apr 15, 2024',
+                      created: 'Mar 1, 2024',
+                      status: 'Active',
+                    },
+                    { 
+                      title: 'Leadership Conference Fee', 
+                      amount: '$35.00', 
+                      type: 'Event Fee',
+                      dueDate: 'Mar 30, 2024',
+                      created: 'Mar 5, 2024',
+                      status: 'Active',
+                    },
+                    { 
+                      title: 'Late Payment Fee', 
+                      amount: '$25.00', 
+                      type: 'Late Fee',
+                      dueDate: 'May 1, 2024',
+                      created: 'Mar 15, 2024',
+                      status: 'Pending',
+                    },
+                  ].map((dues, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium">{dues.title}</TableCell>
+                      <TableCell>{dues.amount}</TableCell>
+                      <TableCell>{dues.type}</TableCell>
+                      <TableCell>{dues.dueDate}</TableCell>
+                      <TableCell>{dues.created}</TableCell>
+                      <TableCell>
+                        <Badge variant={dues.status === 'Active' ? 'default' : 'secondary'}>
+                          {dues.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2">
+                          <Button variant="ghost" size="sm">Edit</Button>
+                          <Button variant="ghost" size="sm" className="text-destructive">Delete</Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))}
