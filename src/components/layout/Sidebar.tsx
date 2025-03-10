@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -10,7 +9,8 @@ import {
   ChevronLeft, 
   ChevronRight,
   Shield,
-  Megaphone
+  Megaphone,
+  Share2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -73,9 +73,15 @@ const Sidebar = () => {
       
       <div className="flex flex-col gap-1 p-2">
         <SidebarNavItem 
+          icon={Megaphone} 
+          label="Message Board" 
+          href="/message-board" 
+          isCollapsed={isCollapsed} 
+        />
+        <SidebarNavItem 
           icon={LayoutDashboard} 
           label="Dashboard" 
-          href="/" 
+          href="/dashboard" 
           isCollapsed={isCollapsed} 
         />
         <SidebarNavItem 
@@ -100,12 +106,6 @@ const Sidebar = () => {
           icon={MessageSquare} 
           label="Messages" 
           href="/messages" 
-          isCollapsed={isCollapsed} 
-        />
-        <SidebarNavItem 
-          icon={Megaphone} 
-          label="Message Board" 
-          href="/message-board" 
           isCollapsed={isCollapsed} 
         />
         

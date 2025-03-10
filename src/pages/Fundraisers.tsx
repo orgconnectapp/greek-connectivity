@@ -9,7 +9,8 @@ import {
   Users, 
   LineChart,
   MoreHorizontal, 
-  Clock
+  Clock,
+  Share2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -29,6 +30,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { toast } from '@/components/ui/use-toast';
 
 // Mock data
 const fundraisers = [
@@ -119,6 +121,27 @@ const stats = [
 ];
 
 const Fundraisers = () => {
+  const handleShare = (fundraiser: any) => {
+    // In a real application, we'd generate a unique shareable link
+    const shareableLink = `${window.location.origin}/external-payment/${fundraiser.id}`;
+    
+    // Copy link to clipboard
+    navigator.clipboard.writeText(shareableLink)
+      .then(() => {
+        toast({
+          title: "Link copied to clipboard",
+          description: `Share this link to collect donations for "${fundraiser.title}"`,
+        });
+      })
+      .catch(() => {
+        toast({
+          title: "Failed to copy link",
+          description: "Please try again or share manually",
+          variant: "destructive",
+        });
+      });
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col gap-2">
@@ -201,21 +224,34 @@ const Fundraisers = () => {
                           <Badge className={statusColor[fundraiser.status as keyof typeof statusColor]}>
                             {fundraiser.status.charAt(0).toUpperCase() + fundraiser.status.slice(1)}
                           </Badge>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <MoreHorizontal className="h-4 w-4" />
+                          <div className="flex items-center gap-1">
+                            {fundraiser.status === 'active' && (
+                              <Button 
+                                variant="ghost" 
+                                size="icon" 
+                                className="h-8 w-8" 
+                                onClick={() => handleShare(fundraiser)}
+                                title="Share fundraiser"
+                              >
+                                <Share2 className="h-4 w-4" />
                               </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem>Edit</DropdownMenuItem>
-                              <DropdownMenuItem>View Details</DropdownMenuItem>
-                              <DropdownMenuItem>Share</DropdownMenuItem>
-                              {fundraiser.status === 'active' && (
-                                <DropdownMenuItem>Mark Completed</DropdownMenuItem>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
+                            )}
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem>Edit</DropdownMenuItem>
+                                <DropdownMenuItem>View Details</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleShare(fundraiser)}>Share</DropdownMenuItem>
+                                {fundraiser.status === 'active' && (
+                                  <DropdownMenuItem>Mark Completed</DropdownMenuItem>
+                                )}
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
                         </div>
                         <CardTitle className="text-lg font-medium">{fundraiser.title}</CardTitle>
                         <CardDescription className="line-clamp-2">
@@ -251,7 +287,16 @@ const Fundraisers = () => {
                         </div>
                         
                         {fundraiser.status === 'active' && (
-                          <Button className="w-full">Contribute</Button>
+                          <div className="flex gap-2">
+                            <Button className="flex-1">Contribute</Button>
+                            <Button 
+                              variant="outline" 
+                              size="icon" 
+                              onClick={() => handleShare(fundraiser)}
+                            >
+                              <Share2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         )}
                         
                         {fundraiser.status === 'upcoming' && (
