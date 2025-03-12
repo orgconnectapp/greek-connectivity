@@ -1,12 +1,122 @@
-
 import { useState } from 'react';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useNavigate } from 'react-router-dom';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrowRight, AtSign, Lock, User, Phone, School, ImagePlus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import LoginForm from '@/components/auth/LoginForm';
-import SignupForm from '@/components/auth/SignupForm';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from "@/hooks/use-toast";
+
+const loginSchema = z.object({
+  email: z.string().email("Invalid email address").endsWith('.edu', "Please use your school email (.edu)"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+
+const signupSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address").endsWith('.edu', "Please use your school email (.edu)"),
+  phoneNumber: z.string().min(10, "Please enter a valid phone number"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: z.string().min(6, "Please confirm your password"),
+  profilePicture: z.string().optional(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ["confirmPassword"],
+});
+
+type SignupFormValues = z.infer<typeof signupSchema>;
 
 const Auth = () => {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
+  const { login, signup, isLoading } = useAuth();
+  const navigate = useNavigate();
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+
+  const loginForm = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const signupForm = useForm<SignupFormValues>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      password: "",
+      confirmPassword: "",
+      profilePicture: "",
+    },
+  });
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setPreviewUrl(base64String);
+        signupForm.setValue('profilePicture', base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const onLoginSubmit = async (data: LoginFormValues) => {
+    try {
+      await login(data.email, data.password);
+      toast({
+        title: "Welcome back!",
+        description: "You have successfully logged in.",
+      });
+      navigate("/organizations");
+    } catch (error) {
+      toast({
+        title: "Login failed",
+        description: error instanceof Error ? error.message : "Please check your credentials and try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const onSignupSubmit = async (data: SignupFormValues) => {
+    try {
+      const { confirmPassword, ...userData } = data;
+      
+      await signup({
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        phoneNumber: userData.phoneNumber,
+        password: userData.password,
+        profilePicture: userData.profilePicture
+      });
+      
+      toast({
+        title: "Account created!",
+        description: "Please check your email to verify your account.",
+      });
+      navigate("/organizations");
+    } catch (error) {
+      toast({
+        title: "Signup failed",
+        description: error instanceof Error ? error.message : "Please check your information and try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-4">
@@ -24,11 +134,183 @@ const Auth = () => {
           </TabsList>
           
           <TabsContent value="login">
-            <LoginForm />
+            <form onSubmit={loginForm.handleSubmit(onLoginSubmit)}>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">School Email</Label>
+                  <div className="relative">
+                    <AtSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      id="email" 
+                      placeholder="you@university.edu" 
+                      className="pl-10" 
+                      {...loginForm.register("email")} 
+                    />
+                  </div>
+                  {loginForm.formState.errors.email && (
+                    <p className="text-sm text-destructive">{loginForm.formState.errors.email.message}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      id="password" 
+                      type="password" 
+                      placeholder="••••••••" 
+                      className="pl-10" 
+                      {...loginForm.register("password")} 
+                    />
+                  </div>
+                  {loginForm.formState.errors.password && (
+                    <p className="text-sm text-destructive">{loginForm.formState.errors.password.message}</p>
+                  )}
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Logging in..." : "Login"} <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            </form>
           </TabsContent>
           
           <TabsContent value="signup">
-            <SignupForm />
+            <form onSubmit={signupForm.handleSubmit(onSignupSubmit)}>
+              <CardContent className="space-y-4">
+                <div className="flex justify-center mb-4">
+                  <div className="relative">
+                    <div className="w-24 h-24 rounded-full border-2 border-primary overflow-hidden">
+                      {previewUrl ? (
+                        <img src={previewUrl} alt="Profile preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full bg-muted flex items-center justify-center">
+                          <ImagePlus className="h-8 w-8 text-muted-foreground" />
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="profile-picture"
+                    />
+                    <label
+                      htmlFor="profile-picture"
+                      className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-2 cursor-pointer hover:bg-primary/90 transition-colors"
+                    >
+                      <ImagePlus className="h-4 w-4" />
+                    </label>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="firstName">First Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        id="firstName" 
+                        placeholder="John" 
+                        className="pl-10" 
+                        {...signupForm.register("firstName")} 
+                      />
+                    </div>
+                    {signupForm.formState.errors.firstName && (
+                      <p className="text-sm text-destructive">{signupForm.formState.errors.firstName.message}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        id="lastName" 
+                        placeholder="Doe" 
+                        className="pl-10" 
+                        {...signupForm.register("lastName")} 
+                      />
+                    </div>
+                    {signupForm.formState.errors.lastName && (
+                      <p className="text-sm text-destructive">{signupForm.formState.errors.lastName.message}</p>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="email">School Email</Label>
+                  <div className="relative">
+                    <School className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      id="email" 
+                      placeholder="you@university.edu" 
+                      className="pl-10" 
+                      {...signupForm.register("email")} 
+                    />
+                  </div>
+                  {signupForm.formState.errors.email && (
+                    <p className="text-sm text-destructive">{signupForm.formState.errors.email.message}</p>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber">Phone Number</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      id="phoneNumber" 
+                      placeholder="(555) 555-5555" 
+                      className="pl-10" 
+                      {...signupForm.register("phoneNumber")} 
+                    />
+                  </div>
+                  {signupForm.formState.errors.phoneNumber && (
+                    <p className="text-sm text-destructive">{signupForm.formState.errors.phoneNumber.message}</p>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      id="password" 
+                      type="password" 
+                      placeholder="••••••••" 
+                      className="pl-10" 
+                      {...signupForm.register("password")} 
+                    />
+                  </div>
+                  {signupForm.formState.errors.password && (
+                    <p className="text-sm text-destructive">{signupForm.formState.errors.password.message}</p>
+                  )}
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      id="confirmPassword" 
+                      type="password" 
+                      placeholder="••••••••" 
+                      className="pl-10" 
+                      {...signupForm.register("confirmPassword")} 
+                    />
+                  </div>
+                  {signupForm.formState.errors.confirmPassword && (
+                    <p className="text-sm text-destructive">{signupForm.formState.errors.confirmPassword.message}</p>
+                  )}
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Creating account..." : "Create Account"} <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </CardFooter>
+            </form>
           </TabsContent>
         </Tabs>
       </Card>
