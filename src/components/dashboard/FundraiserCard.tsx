@@ -4,6 +4,7 @@ import { Progress } from '@/components/ui/progress';
 import { CalendarIcon, Users } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import DashboardCard from './DashboardCard';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface FundraiserCardProps {
   title: string;
@@ -12,6 +13,7 @@ interface FundraiserCardProps {
   goal: number;
   participants: number;
   status: 'active' | 'upcoming' | 'completed';
+  imageUrl?: string;
 }
 
 const FundraiserCard = ({ 
@@ -20,7 +22,8 @@ const FundraiserCard = ({
   raised, 
   goal, 
   participants, 
-  status 
+  status,
+  imageUrl = '/placeholder.svg'
 }: FundraiserCardProps) => {
   const progress = Math.min(Math.round((raised / goal) * 100), 100);
   
@@ -36,6 +39,14 @@ const FundraiserCard = ({
       className="h-full"
     >
       <div className="space-y-4">
+        <AspectRatio ratio={16 / 9} className="bg-muted rounded-md overflow-hidden">
+          <img
+            src={imageUrl}
+            alt={title}
+            className="h-full w-full object-cover transition-all hover:scale-105"
+          />
+        </AspectRatio>
+        
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <CalendarIcon className="h-4 w-4" />

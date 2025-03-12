@@ -5,7 +5,6 @@ import FundraiserCard from '@/components/dashboard/FundraiserCard';
 import MembershipStats from '@/components/dashboard/MembershipStats';
 import DashboardCard from '@/components/dashboard/DashboardCard';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { CalendarDays, MessageSquare, Bell } from 'lucide-react';
 
 const Index = () => {
@@ -65,6 +64,7 @@ const Index = () => {
               goal={2000}
               participants={18}
               status="active"
+              imageUrl="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&w=800"
             />
           </div>
           
@@ -76,6 +76,7 @@ const Index = () => {
               goal={500}
               participants={24}
               status="active"
+              imageUrl="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800"
             />
           </div>
           
@@ -87,6 +88,7 @@ const Index = () => {
               goal={1500}
               participants={5}
               status="upcoming"
+              imageUrl="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800"
             />
           </div>
         </div>
