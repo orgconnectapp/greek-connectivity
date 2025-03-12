@@ -18,7 +18,6 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import ExternalPayment from "./pages/ExternalPayment";
 import Auth from "./pages/Auth";
-import Organizations from "./pages/Organizations";
 import VerifyEmail from "./pages/VerifyEmail";
 import AuthLayout from "./components/layout/AuthLayout";
 
@@ -35,7 +34,6 @@ const App = () => (
             {/* Auth routes with AuthLayout */}
             <Route element={<AuthLayout />}>
               <Route path="/auth" element={<Auth />} />
-              <Route path="/organizations" element={<Organizations />} />
               <Route path="/verify-email" element={<VerifyEmail />} />
             </Route>
             

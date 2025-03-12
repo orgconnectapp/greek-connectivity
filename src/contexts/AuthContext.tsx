@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type User = {
@@ -19,7 +20,6 @@ type AuthContextType = {
   signup: (userData: Omit<User, 'id' | 'verifiedEmail'> & { password: string }) => Promise<void>;
   logout: () => void;
   verifyEmail: (token: string) => Promise<void>;
-  requestJoinOrganization: (orgId: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -56,7 +56,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           lastName: 'User',
           email,
           phoneNumber: '555-555-5555',
-          verifiedEmail: true
+          verifiedEmail: true,
+          organization: 'AXA Phi Alpha Zeta' // Default organization for demo
         };
         
         setUser(user);
@@ -87,6 +88,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         email: userData.email,
         phoneNumber: userData.phoneNumber,
         verifiedEmail: false,
+        organization: userData.organization,
         profilePicture: userData.profilePicture
       };
       
@@ -118,23 +120,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const requestJoinOrganization = async (orgId: string) => {
-    setIsLoading(true);
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (user) {
-        const updatedUser = { ...user, organization: orgId };
-        setUser(updatedUser);
-        localStorage.setItem('user', JSON.stringify(updatedUser));
-      }
-    } catch (error) {
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
@@ -150,8 +135,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login, 
         signup, 
         logout, 
-        verifyEmail,
-        requestJoinOrganization
+        verifyEmail
       }}
     >
       {children}

@@ -1,9 +1,10 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowRight, AtSign, Lock, User, Phone, School, ImagePlus } from 'lucide-react';
+import { ArrowRight, AtSign, Lock, User, Phone, School, ImagePlus, Building } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,6 +25,7 @@ const signupSchema = z.object({
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address").endsWith('.edu', "Please use your school email (.edu)"),
   phoneNumber: z.string().min(10, "Please enter a valid phone number"),
+  organization: z.string().min(1, "Please enter the organization name you wish to join"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Please confirm your password"),
   profilePicture: z.string().optional(),
@@ -55,6 +57,7 @@ const Auth = () => {
       lastName: "",
       email: "",
       phoneNumber: "",
+      organization: "",
       password: "",
       confirmPassword: "",
       profilePicture: "",
@@ -81,7 +84,7 @@ const Auth = () => {
         title: "Welcome back!",
         description: "You have successfully logged in.",
       });
-      navigate("/organizations");
+      navigate("/message-board");
     } catch (error) {
       toast({
         title: "Login failed",
@@ -100,6 +103,7 @@ const Auth = () => {
         lastName: userData.lastName,
         email: userData.email,
         phoneNumber: userData.phoneNumber,
+        organization: userData.organization,
         password: userData.password,
         profilePicture: userData.profilePicture
       });
@@ -108,7 +112,7 @@ const Auth = () => {
         title: "Account created!",
         description: "Please check your email to verify your account.",
       });
-      navigate("/organizations");
+      navigate("/message-board");
     } catch (error) {
       toast({
         title: "Signup failed",
@@ -268,6 +272,22 @@ const Auth = () => {
                   </div>
                   {signupForm.formState.errors.phoneNumber && (
                     <p className="text-sm text-destructive">{signupForm.formState.errors.phoneNumber.message}</p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="organization">Organization</Label>
+                  <div className="relative">
+                    <Building className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input 
+                      id="organization" 
+                      placeholder="Enter organization name" 
+                      className="pl-10" 
+                      {...signupForm.register("organization")} 
+                    />
+                  </div>
+                  {signupForm.formState.errors.organization && (
+                    <p className="text-sm text-destructive">{signupForm.formState.errors.organization.message}</p>
                   )}
                 </div>
                 

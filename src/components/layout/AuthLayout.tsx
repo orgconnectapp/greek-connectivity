@@ -20,19 +20,13 @@ const AuthLayout = () => {
     return <Outlet />;
   }
 
-  // For /auth route, redirect to dashboard if already authenticated
+  // For /auth route, redirect to message board if already authenticated
   if (location.pathname === "/auth" && isAuthenticated) {
-    // Send authenticated users to organizations page or message board
-    return <Navigate to="/organizations" replace />;
+    return <Navigate to="/message-board" replace />;
   }
 
-  // For /organizations route, redirect to auth if not authenticated
-  if (location.pathname === "/organizations" && !isAuthenticated) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  // Special case for the organizations page - check if email is verified
-  if (location.pathname === "/organizations" && user && !user.verifiedEmail) {
+  // Special case for email verification - check if email is verified
+  if (user && !user.verifiedEmail) {
     // In a real app, you might want to redirect to a "please verify your email" page
     // For this demo, we'll just let them through since we're not actually sending emails
   }
