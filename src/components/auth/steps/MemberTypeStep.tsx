@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { SignupFormData } from '../signupSchemas';
+import { useEffect } from 'react';
 
 interface MemberTypeStepProps {
   form: UseFormReturn<SignupFormData>;
@@ -11,6 +12,18 @@ interface MemberTypeStepProps {
 }
 
 export const MemberTypeStep = ({ form, onNextStep }: MemberTypeStepProps) => {
+  // Ensure memberType has a value when component mounts
+  useEffect(() => {
+    if (!form.getValues('memberType')) {
+      form.setValue('memberType', 'active');
+    }
+  }, [form]);
+
+  const handleTypeSelection = (type: 'active' | 'alumni') => {
+    form.setValue('memberType', type);
+    console.log('Member type selected:', type);
+  };
+
   return (
     <div className="space-y-4">
       <Label>Member Type</Label>
@@ -18,7 +31,7 @@ export const MemberTypeStep = ({ form, onNextStep }: MemberTypeStepProps) => {
         <Button
           type="button"
           variant={form.getValues('memberType') === 'active' ? 'default' : 'outline'}
-          onClick={() => form.setValue('memberType', 'active')}
+          onClick={() => handleTypeSelection('active')}
           className="w-full"
         >
           Active Member
@@ -26,7 +39,7 @@ export const MemberTypeStep = ({ form, onNextStep }: MemberTypeStepProps) => {
         <Button
           type="button"
           variant={form.getValues('memberType') === 'alumni' ? 'default' : 'outline'}
-          onClick={() => form.setValue('memberType', 'alumni')}
+          onClick={() => handleTypeSelection('alumni')}
           className="w-full"
         >
           Alumni
