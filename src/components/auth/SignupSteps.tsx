@@ -80,7 +80,21 @@ export const SignupSteps = () => {
 
   const onSubmit = async (data: SignupFormData) => {
     try {
-      await signup(data);
+      // Ensure all required fields are present (TypeScript validation only, actual values are validated by Zod)
+      const userData = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        organization: data.organization,
+        password: data.password,
+        memberType: data.memberType,
+        major: data.major || '',
+        currentYear: data.currentYear || 'freshman',
+        profilePicture: data.profilePicture || '',
+      };
+      
+      await signup(userData);
       toast({
         title: "Request Submitted",
         description: "Your request to join the organization has been submitted. You will receive access once approved.",
