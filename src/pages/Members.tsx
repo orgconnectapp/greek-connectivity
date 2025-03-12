@@ -12,6 +12,7 @@ import {
   Twitter,
   X
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -46,6 +47,7 @@ import {
 } from '@/components/ui/select';
 import { Member } from '@/components/calendar/types';
 import InviteMemberDialog from '@/components/members/InviteMemberDialog';
+import { useToast } from '@/hooks/use-toast';
 
 const members: Member[] = [
   { 
@@ -194,6 +196,8 @@ const Members = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
   
   const filteredMembers = members.filter(member => {
     const matchesSearch = 
@@ -210,6 +214,22 @@ const Members = () => {
   
   const handleOpenProfile = (member: Member) => {
     setSelectedMember(member);
+  };
+  
+  const handleMessageMember = (member: Member) => {
+    setSelectedMember(null);
+    toast({
+      title: `Messaging ${member.name}`,
+      description: "Opening conversation...",
+    });
+    navigate('/messages', { 
+      state: { 
+        openConversation: {
+          id: member.id,
+          name: member.name
+        } 
+      } 
+    });
   };
   
   return (
@@ -574,7 +594,7 @@ const Members = () => {
                 <DialogClose asChild>
                   <Button variant="outline">Close</Button>
                 </DialogClose>
-                <Button>
+                <Button onClick={() => handleMessageMember(selectedMember)}>
                   <Mail className="mr-2 h-4 w-4" />
                   Message
                 </Button>

@@ -1,5 +1,5 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { 
   Search, 
   Send, 
@@ -23,8 +23,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
-// Mock data
 const conversations = [
   {
     id: 1,
@@ -79,7 +79,6 @@ const conversations = [
   }
 ];
 
-// Mock messages for the current conversation
 const messages = [
   {
     id: 1,
@@ -126,13 +125,38 @@ const messages = [
 ];
 
 const Messages = () => {
+  const location = useLocation();
+  const { toast } = useToast();
   const [selectedConversation, setSelectedConversation] = useState(conversations[0]);
   const [newMessage, setNewMessage] = useState('');
+  
+  useEffect(() => {
+    if (location.state?.openConversation) {
+      const { id, name } = location.state.openConversation;
+      
+      const conversation = conversations.find(c => 
+        c.name.toLowerCase() === name.toLowerCase()
+      );
+      
+      if (conversation) {
+        setSelectedConversation(conversation);
+        toast({
+          title: `Conversation with ${name}`,
+          description: "Ready to chat!",
+        });
+      } else {
+        toast({
+          title: "Conversation not found",
+          description: `No existing conversation with ${name}`,
+          variant: "destructive"
+        });
+      }
+    }
+  }, [location.state]);
   
   return (
     <div className="h-[calc(100vh-10rem)] overflow-hidden rounded-lg border bg-background shadow-sm animate-fade-in">
       <div className="flex h-full">
-        {/* Conversations sidebar */}
         <div className="w-full max-w-xs border-r">
           <div className="flex h-14 items-center justify-between border-b px-4">
             <h2 className="font-medium">Messages</h2>
@@ -205,11 +229,9 @@ const Messages = () => {
           </ScrollArea>
         </div>
         
-        {/* Chat area */}
         <div className="flex flex-1 flex-col">
           {selectedConversation ? (
             <>
-              {/* Chat header */}
               <div className="flex h-14 items-center justify-between border-b px-4">
                 <div className="flex items-center gap-3">
                   <Avatar>
@@ -256,7 +278,6 @@ const Messages = () => {
                 </div>
               </div>
               
-              {/* Chat messages */}
               <ScrollArea className="flex-1 p-4">
                 <div className="space-y-4">
                   <div className="flex justify-center">
@@ -311,7 +332,6 @@ const Messages = () => {
                 </div>
               </ScrollArea>
               
-              {/* Message input */}
               <div className="border-t p-4">
                 <div className="flex items-center gap-2">
                   <Button variant="ghost" size="icon" className="h-8 w-8">
