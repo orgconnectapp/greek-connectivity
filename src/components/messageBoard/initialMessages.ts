@@ -47,7 +47,7 @@ export const initialMessages = [
         id: 2,
         author: 'Emma Johnson',
         avatar: '/placeholder.svg',
-        content: 'I'll be in the chapter room from 3-5pm tomorrow if anyone needs help.',
+        content: 'I\'ll be in the chapter room from 3-5pm tomorrow if anyone needs help.',
         timestamp: '3 hours ago'
       }
     ],
