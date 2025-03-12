@@ -1,14 +1,8 @@
 
 import React, { useState } from 'react';
-import { MessageSquare, Filter } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
 
 import MessageCard from '@/components/messageBoard/MessageCard';
@@ -53,7 +47,7 @@ const MessageBoard = () => {
       timestamp: 'Just now',
       likes: 0,
       comments: [],
-      category: newMessageCategory,
+      category: 'General', // Set a default category
       isPinned: false
     };
 
@@ -150,40 +144,14 @@ const MessageBoard = () => {
         />
       </div>
 
-      <div className="flex items-center space-x-4">
-        <div className="relative flex-1">
-          <Input
-            className="pl-8"
-            placeholder="Search messages..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <MessageSquare className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Filter className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setSearchQuery('')}>
-              All Messages
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setSearchQuery('announcement')}>
-              Announcements
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setSearchQuery('event')}>
-              Events
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setSearchQuery('question')}>
-              Questions
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setSearchQuery('general')}>
-              General
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <div className="relative flex-1">
+        <Input
+          className="pl-8 w-full"
+          placeholder="Search messages..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <MessageSquare className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
       </div>
 
       <div className="space-y-4 pt-4">

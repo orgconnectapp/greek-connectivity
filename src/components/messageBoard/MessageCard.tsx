@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { ThumbsUp, MessageCircle, Clock } from 'lucide-react';
+import { ThumbsUp, MessageCircle, Clock, Copy, Flag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -11,6 +10,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export interface MessageProps {
   message: {
@@ -38,6 +39,19 @@ export interface MessageProps {
 }
 
 const MessageCard = ({ message, onLike, onPin, onOpenComments, isLiked }: MessageProps) => {
+  const navigate = useNavigate();
+
+  const handleAuthorClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Navigate to the author's profile page
+    navigate(`/profile/${message.author.replace(/\s+/g, '-').toLowerCase()}`);
+  };
+
+  const handleCopyMessage = () => {
+    navigator.clipboard.writeText(message.content);
+    toast.success('Message copied to clipboard');
+  };
+
   return (
     <Card 
       className={`${message.isPinned ? "border-primary/50 bg-primary/5" : ""}`}
@@ -45,14 +59,19 @@ const MessageCard = ({ message, onLike, onPin, onOpenComments, isLiked }: Messag
     >
       <CardHeader className="pb-3">
         <div className="flex items-center gap-3">
-          <Avatar>
+          <Avatar onClick={handleAuthorClick} className="cursor-pointer">
             <AvatarImage src={message.avatar} alt={message.author} />
             <AvatarFallback>
               {message.author.split(' ').map(n => n[0]).join('')}
             </AvatarFallback>
           </Avatar>
           <div>
-            <CardTitle className="text-base">{message.author}</CardTitle>
+            <CardTitle 
+              className="text-base cursor-pointer hover:underline" 
+              onClick={handleAuthorClick}
+            >
+              {message.author}
+            </CardTitle>
             <div className="text-sm text-muted-foreground flex items-center gap-2">
               <span>{message.role}</span>
               <span className="text-xs">•</span>
@@ -63,15 +82,13 @@ const MessageCard = ({ message, onLike, onPin, onOpenComments, isLiked }: Messag
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Badge variant="outline">{message.category}</Badge>
-          {message.isPinned && (
-            <Badge variant="default" className="bg-primary">Pinned</Badge>
-          )}
-        </div>
+        {message.isPinned && (
+          <Badge variant="default" className="bg-primary">Pinned</Badge>
+        )}
       </CardHeader>
       <CardContent>
         <p className="whitespace-pre-line">{message.content}</p>
+        {/* Image or video content would be displayed here */}
       </CardContent>
       <CardFooter className="pt-3 border-t flex justify-between">
         <div className="flex gap-4">
@@ -96,11 +113,14 @@ const MessageCard = ({ message, onLike, onPin, onOpenComments, isLiked }: Messag
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={onPin}>
-              {message.isPinned ? "Unpin Message" : "Pin Message"}
+            <DropdownMenuItem onClick={handleCopyMessage}>
+              <Copy className="h-4 w-4 mr-2" />
+              Copy
             </DropdownMenuItem>
-            <DropdownMenuItem>Share</DropdownMenuItem>
-            <DropdownMenuItem>Report</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Flag className="h-4 w-4 mr-2" />
+              Report
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </CardFooter>
