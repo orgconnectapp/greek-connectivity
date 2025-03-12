@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   ArrowRight, 
@@ -34,6 +33,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
 import SharePaymentModal from '@/components/dues/SharePaymentModal';
+import PaymentModal from '@/components/dues/PaymentModal';
 import {
   Collapsible,
   CollapsibleContent,
@@ -82,7 +82,6 @@ const upcomingPayments = [
   },
 ];
 
-// New breakdown of charges
 const chargeBreakdown = [
   { description: 'Chapter Dues', amount: 150 },
   { description: 'National Membership Fee', amount: 200 },
@@ -93,6 +92,7 @@ const chargeBreakdown = [
 
 const Dues = () => {
   const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<{
     id: number;
     description: string;
@@ -109,6 +109,10 @@ const Dues = () => {
   const handleSharePayment = (payment: typeof selectedPayment) => {
     setSelectedPayment(payment);
     setShareModalOpen(true);
+  };
+
+  const handleMakePayment = () => {
+    setPaymentModalOpen(true);
   };
   
   return (
@@ -234,7 +238,7 @@ const Dues = () => {
             <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
             <TabsTrigger value="history">Payment History</TabsTrigger>
           </TabsList>
-          <Button>
+          <Button onClick={handleMakePayment}>
             <CreditCard className="mr-2 h-4 w-4" />
             Make Payment
           </Button>
@@ -357,6 +361,12 @@ const Dues = () => {
         open={shareModalOpen}
         onOpenChange={setShareModalOpen}
         paymentDetails={selectedPayment}
+      />
+
+      <PaymentModal
+        open={paymentModalOpen}
+        onOpenChange={setPaymentModalOpen}
+        outstandingAmount={dueSoon}
       />
     </div>
   );

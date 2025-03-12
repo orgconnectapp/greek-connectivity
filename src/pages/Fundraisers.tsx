@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { 
   Calendar, 
@@ -19,6 +18,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Input } from '@/components/ui/input';
@@ -31,6 +31,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from '@/components/ui/use-toast';
+import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 // Mock data
 const fundraisers = [
@@ -43,6 +44,7 @@ const fundraisers = [
     raised: 1250,
     participants: 18,
     status: 'active',
+    image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=500'
   },
   { 
     id: 2, 
@@ -53,6 +55,7 @@ const fundraisers = [
     raised: 450,
     participants: 24,
     status: 'active',
+    image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=500'
   },
   { 
     id: 3, 
@@ -63,6 +66,7 @@ const fundraisers = [
     raised: 0,
     participants: 5,
     status: 'upcoming',
+    image: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=500'
   },
   { 
     id: 4, 
@@ -73,6 +77,7 @@ const fundraisers = [
     raised: 0,
     participants: 0,
     status: 'upcoming',
+    image: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=500'
   },
   { 
     id: 5, 
@@ -83,6 +88,7 @@ const fundraisers = [
     raised: 0,
     participants: 0,
     status: 'upcoming',
+    image: 'https://images.unsplash.com/photo-1516763296043-f676c1105999?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=500'
   },
   { 
     id: 6, 
@@ -93,6 +99,7 @@ const fundraisers = [
     raised: 350,
     participants: 12,
     status: 'completed',
+    image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=500'
   },
 ];
 
@@ -219,6 +226,15 @@ const Fundraisers = () => {
                   
                   return (
                     <Card key={fundraiser.id} className="overflow-hidden transition-all hover:shadow-subtle animate-scale-in" style={{ animationDelay: `${0.1 * index}s` }}>
+                      <div className="overflow-hidden">
+                        <AspectRatio ratio={16 / 9}>
+                          <img 
+                            src={fundraiser.image} 
+                            alt={fundraiser.title}
+                            className="object-cover w-full h-full transition-transform hover:scale-105"
+                          />
+                        </AspectRatio>
+                      </div>
                       <CardHeader>
                         <div className="flex items-center justify-between">
                           <Badge className={statusColor[fundraiser.status as keyof typeof statusColor]}>
