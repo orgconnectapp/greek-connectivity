@@ -20,6 +20,7 @@ import ExternalPayment from "./pages/ExternalPayment";
 import Auth from "./pages/Auth";
 import VerifyEmail from "./pages/VerifyEmail";
 import AuthLayout from "./components/layout/AuthLayout";
+import UserProfile from "./pages/UserProfile";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/admin" element={<AdminPanel />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/:username" element={<UserProfile />} />
             </Route>
             
             {/* External routes (no Layout) */}

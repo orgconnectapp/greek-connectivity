@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { PlusCircle, Image, Video, X } from 'lucide-react';
+import { PlusCircle, Image, X } from 'lucide-react';
 
 interface NewMessageDialogProps {
   isOpen: boolean;
@@ -34,22 +34,29 @@ const NewMessageDialog = ({
   const [mediaFiles, setMediaFiles] = useState<Array<{type: 'image' | 'video', url: string}>>([]);
   const [isUploading, setIsUploading] = useState(false);
 
-  const handleFileUpload = (type: 'image' | 'video') => {
+  const handleMediaUpload = () => {
     const input = document.createElement('input');
     input.type = 'file';
-    input.accept = type === 'image' ? 'image/*' : 'video/*';
+    input.accept = 'image/*,video/*';
+    input.multiple = true;
     
     input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (file) {
+      const files = (e.target as HTMLInputElement).files;
+      if (files && files.length > 0) {
         setIsUploading(true);
         
-        // In a real app, you would upload the file to a server here
-        // For now, we'll just create a local URL
-        const url = URL.createObjectURL(file);
+        // Process each selected file
+        Array.from(files).forEach(file => {
+          // Determine if it's an image or video
+          const type = file.type.startsWith('image/') ? 'image' : 'video';
+          
+          // Create local URL
+          const url = URL.createObjectURL(file);
+          
+          // Add the file to the mediaFiles array
+          setMediaFiles(prev => [...prev, { type, url }]);
+        });
         
-        // Add the file to the mediaFiles array
-        setMediaFiles([...mediaFiles, { type, url }]);
         setIsUploading(false);
       }
     };
@@ -124,27 +131,18 @@ const NewMessageDialog = ({
             </div>
           )}
           
-          {/* Media upload buttons */}
-          <div className="flex gap-2">
+          {/* Single Media upload button */}
+          <div>
             <Button 
               type="button" 
               variant="outline" 
               size="sm" 
-              onClick={() => handleFileUpload('image')}
+              onClick={handleMediaUpload}
               disabled={isUploading}
+              className="w-full"
             >
               <Image className="h-4 w-4 mr-2" />
-              Add Image
-            </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
-              size="sm" 
-              onClick={() => handleFileUpload('video')}
-              disabled={isUploading}
-            >
-              <Video className="h-4 w-4 mr-2" />
-              Add Video
+              Add Media
             </Button>
           </div>
         </div>
