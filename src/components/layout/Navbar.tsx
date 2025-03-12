@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
+import { toast } from "@/hooks/use-toast";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -22,6 +23,10 @@ const Navbar = () => {
 
   const handleLogout = () => {
     logout();
+    toast({
+      title: "Signed out",
+      description: "You have been successfully signed out.",
+    });
     navigate('/auth');
   };
 

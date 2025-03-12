@@ -23,6 +23,12 @@ const Layout = () => {
     );
   }
 
+  // If not authenticated after loading, don't render anything
+  // The useEffect will handle the redirect
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen flex w-full">
       <Sidebar />

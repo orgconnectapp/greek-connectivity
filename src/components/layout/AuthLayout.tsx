@@ -22,7 +22,8 @@ const AuthLayout = () => {
 
   // For /auth route, redirect to dashboard if already authenticated
   if (location.pathname === "/auth" && isAuthenticated) {
-    return <Navigate to="/message-board" replace />;
+    // Send authenticated users to organizations page or message board
+    return <Navigate to="/organizations" replace />;
   }
 
   // For /organizations route, redirect to auth if not authenticated
