@@ -21,4 +21,14 @@ export interface Member {
   role: string;
   status: "active" | "alumni";
   profileImage?: string;
+  phone?: string;
+  joinedDate?: string;
+  major?: string;
+  graduationYear?: string;
+  bio?: string;
+  socialLinks?: {
+    instagram?: string;
+    linkedin?: string;
+    twitter?: string;
+  };
 }
