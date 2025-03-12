@@ -27,8 +27,11 @@ const PaymentModal = ({ open, onOpenChange, outstandingAmount }: PaymentModalPro
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setAmount(value);
-    setError(null);
+    // Only allow numbers and decimal point
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      setAmount(value);
+      setError(null);
+    }
   };
 
   const validateAmount = () => {
@@ -65,6 +68,17 @@ const PaymentModal = ({ open, onOpenChange, outstandingAmount }: PaymentModalPro
     }, 1500);
   };
 
+  // Restrict input to numbers only
+  const handleNumberOnlyInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Only allow numbers
+    if (value === '' || /^\d*$/.test(value)) {
+      e.target.value = value;
+    } else {
+      e.target.value = value.replace(/[^\d]/g, '');
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
@@ -96,9 +110,8 @@ const PaymentModal = ({ open, onOpenChange, outstandingAmount }: PaymentModalPro
                   onChange={handleAmountChange}
                   placeholder="0.00"
                   className="pl-7"
-                  type="number"
-                  step="0.01"
-                  min="0"
+                  type="text"
+                  inputMode="decimal"
                 />
               </div>
             </div>
@@ -111,10 +124,23 @@ const PaymentModal = ({ open, onOpenChange, outstandingAmount }: PaymentModalPro
                 id="card" 
                 placeholder="4242 4242 4242 4242"
                 className="mb-2"
+                inputMode="numeric"
+                onChange={handleNumberOnlyInput}
+                maxLength={16}
               />
               <div className="grid grid-cols-2 gap-4">
-                <Input placeholder="MM/YY" />
-                <Input placeholder="CVC" />
+                <Input 
+                  placeholder="MM/YY" 
+                  inputMode="numeric"
+                  onChange={handleNumberOnlyInput}
+                  maxLength={4}
+                />
+                <Input 
+                  placeholder="CVC" 
+                  inputMode="numeric"
+                  onChange={handleNumberOnlyInput}
+                  maxLength={3}
+                />
               </div>
             </div>
           </div>
