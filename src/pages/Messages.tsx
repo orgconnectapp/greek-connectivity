@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { 
@@ -129,12 +130,13 @@ const Messages = () => {
   const { toast } = useToast();
   const [selectedConversation, setSelectedConversation] = useState(conversations[0]);
   const [newMessage, setNewMessage] = useState('');
+  const [allConversations, setAllConversations] = useState(conversations);
   
   useEffect(() => {
     if (location.state?.openConversation) {
       const { id, name } = location.state.openConversation;
       
-      const conversation = conversations.find(c => 
+      let conversation = allConversations.find(c => 
         c.name.toLowerCase() === name.toLowerCase()
       );
       
@@ -145,14 +147,63 @@ const Messages = () => {
           description: "Ready to chat!",
         });
       } else {
+        // Create a new conversation
+        const newConversation = {
+          id: allConversations.length + 1,
+          name: name,
+          role: 'Member',
+          lastMessage: '',
+          timestamp: 'Just now',
+          unread: 0,
+          online: false,
+          avatar: '/placeholder.svg'
+        };
+        
+        setAllConversations(prev => [newConversation, ...prev]);
+        setSelectedConversation(newConversation);
+        
         toast({
-          title: "Conversation not found",
-          description: `No existing conversation with ${name}`,
-          variant: "destructive"
+          title: `New conversation with ${name}`,
+          description: "Start chatting now!",
         });
       }
     }
-  }, [location.state]);
+  }, [location.state, allConversations]);
+  
+  const handleSendMessage = () => {
+    if (newMessage.trim() === '') return;
+    
+    // Create a new message
+    const newMsg = {
+      id: messages.length + 1,
+      senderId: 1, // Current user
+      content: newMessage,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      read: true
+    };
+    
+    // Update the conversation's last message
+    const updatedConversations = allConversations.map(conv => {
+      if (conv.id === selectedConversation.id) {
+        return {
+          ...conv,
+          lastMessage: newMessage,
+          timestamp: 'Just now'
+        };
+      }
+      return conv;
+    });
+    
+    setAllConversations(updatedConversations);
+    setNewMessage('');
+    
+    // In a real app, we would append this to the messages array for this conversation
+    // For demo purposes, we'll just show a toast
+    toast({
+      title: `Message sent`,
+      description: "Your message has been sent successfully.",
+    });
+  };
   
   return (
     <div className="h-[calc(100vh-10rem)] overflow-hidden rounded-lg border bg-background shadow-sm animate-fade-in">
@@ -178,7 +229,7 @@ const Messages = () => {
           
           <ScrollArea className="h-[calc(100vh-13rem)]">
             <div className="space-y-1 p-2">
-              {conversations.map((conversation) => (
+              {allConversations.map((conversation) => (
                 <button
                   key={conversation.id}
                   className={cn(
@@ -342,11 +393,22 @@ const Messages = () => {
                     className="flex-1"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }
+                    }}
                   />
                   <Button variant="ghost" size="icon" className="h-8 w-8">
                     <Smile className="h-5 w-5" />
                   </Button>
-                  <Button size="icon" className="h-8 w-8" disabled={!newMessage}>
+                  <Button 
+                    size="icon" 
+                    className="h-8 w-8" 
+                    disabled={!newMessage}
+                    onClick={handleSendMessage}
+                  >
                     <Send className="h-4 w-4" />
                   </Button>
                 </div>
