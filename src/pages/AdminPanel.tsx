@@ -15,7 +15,8 @@ import {
   Percent,
   Check,
   X,
-  Flag
+  Flag,
+  Calendar
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -49,6 +50,7 @@ import { Progress } from '@/components/ui/progress';
 import { toast } from '@/hooks/use-toast';
 import DashboardCard from '@/components/dashboard/DashboardCard';
 import CreateDueChargeModal from '@/components/admin/CreateDueChargeModal';
+import EventApprovalSection from '@/components/admin/EventApprovalSection';
 
 const pendingFundraisers = [
   {
@@ -161,6 +163,8 @@ const AdminPanel = () => {
               </div>
             </DashboardCard>
           </div>
+          
+          <EventApprovalSection />
           
           <Card>
             <CardHeader>

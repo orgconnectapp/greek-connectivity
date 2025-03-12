@@ -3,17 +3,8 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EventCalendar from "@/components/calendar/EventCalendar";
 import CalendarIntegration from "@/components/calendar/CalendarIntegration";
-import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
-
-interface Event {
-  id: string;
-  title: string;
-  description: string;
-  date: Date;
-  location: string;
-  type: "meeting" | "social" | "service" | "fundraiser" | "other";
-}
+import CreateEventDialog from "@/components/calendar/CreateEventDialog";
+import { Event } from "@/components/calendar/types";
 
 const Calendar = () => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
@@ -33,10 +24,7 @@ const Calendar = () => {
             View and manage organization events and activities
           </p>
         </div>
-        <Button className="flex items-center gap-2">
-          <PlusCircle className="h-4 w-4" />
-          Add Event
-        </Button>
+        <CreateEventDialog />
       </div>
 
       <Tabs defaultValue="calendar" className="w-full">
