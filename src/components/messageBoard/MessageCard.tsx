@@ -34,9 +34,10 @@ export interface MessageProps {
   onLike: () => void;
   onPin: () => void;
   onOpenComments: () => void;
+  isLiked: boolean;
 }
 
-const MessageCard = ({ message, onLike, onPin, onOpenComments }: MessageProps) => {
+const MessageCard = ({ message, onLike, onPin, onOpenComments, isLiked }: MessageProps) => {
   return (
     <Card 
       className={`${message.isPinned ? "border-primary/50 bg-primary/5" : ""}`}
@@ -74,8 +75,13 @@ const MessageCard = ({ message, onLike, onPin, onOpenComments }: MessageProps) =
       </CardContent>
       <CardFooter className="pt-3 border-t flex justify-between">
         <div className="flex gap-4">
-          <Button variant="ghost" size="sm" className="gap-1" onClick={onLike}>
-            <ThumbsUp className="h-4 w-4" />
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className={`gap-1 ${isLiked ? "text-blue-500" : ""}`} 
+            onClick={onLike}
+          >
+            <ThumbsUp className={`h-4 w-4 ${isLiked ? "fill-blue-500 text-blue-500" : ""}`} />
             <span>{message.likes}</span>
           </Button>
           <Button variant="ghost" size="sm" className="gap-1" onClick={onOpenComments}>

@@ -25,6 +25,7 @@ const MessageBoard = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [newComment, setNewComment] = useState('');
+  const [likedMessages, setLikedMessages] = useState<number[]>([]);
 
   const filteredMessages = messages.filter(message => {
     return message.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -63,13 +64,27 @@ const MessageBoard = () => {
   };
 
   const handleLike = (messageId: number) => {
-    setMessages(
-      messages.map(message =>
-        message.id === messageId
-          ? { ...message, likes: message.likes + 1 }
-          : message
-      )
-    );
+    if (likedMessages.includes(messageId)) {
+      // Unlike the message
+      setLikedMessages(likedMessages.filter(id => id !== messageId));
+      setMessages(
+        messages.map(message =>
+          message.id === messageId
+            ? { ...message, likes: message.likes - 1 }
+            : message
+        )
+      );
+    } else {
+      // Like the message
+      setLikedMessages([...likedMessages, messageId]);
+      setMessages(
+        messages.map(message =>
+          message.id === messageId
+            ? { ...message, likes: message.likes + 1 }
+            : message
+        )
+      );
+    }
   };
 
   const handlePin = (messageId: number) => {
@@ -94,14 +109,22 @@ const MessageBoard = () => {
       timestamp: 'Just now'
     };
 
-    setMessages(messages.map(message => 
+    const updatedMessages = messages.map(message => 
       message.id === selectedMessage.id 
         ? { 
             ...message, 
             comments: [...message.comments, newCommentObj],
           }
         : message
-    ));
+    );
+
+    setMessages(updatedMessages);
+    
+    // Update the selectedMessage so the comment appears immediately
+    const updatedSelectedMessage = updatedMessages.find(m => m.id === selectedMessage.id);
+    if (updatedSelectedMessage) {
+      setSelectedMessage(updatedSelectedMessage);
+    }
 
     setNewComment('');
     toast.success('Comment added successfully');
@@ -172,6 +195,7 @@ const MessageBoard = () => {
               onLike={() => handleLike(message.id)}
               onPin={() => handlePin(message.id)}
               onOpenComments={() => setSelectedMessage(message)}
+              isLiked={likedMessages.includes(message.id)}
             />
           ))
         ) : (
