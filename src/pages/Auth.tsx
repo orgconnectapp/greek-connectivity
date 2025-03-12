@@ -1,10 +1,9 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ArrowRight, AtSign, Lock, User, Phone, School } from 'lucide-react';
+import { ArrowRight, AtSign, Lock, User, Phone, School, ImagePlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,7 +12,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from "@/hooks/use-toast";
 
-// Login form schema
 const loginSchema = z.object({
   email: z.string().email("Invalid email address").endsWith('.edu', "Please use your school email (.edu)"),
   password: z.string().min(6, "Password must be at least 6 characters"),
@@ -21,7 +19,6 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-// Signup form schema
 const signupSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
@@ -29,6 +26,7 @@ const signupSchema = z.object({
   phoneNumber: z.string().min(10, "Please enter a valid phone number"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Please confirm your password"),
+  profilePicture: z.string().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -40,8 +38,8 @@ const Auth = () => {
   const [activeTab, setActiveTab] = useState<"login" | "signup">("login");
   const { login, signup, isLoading } = useAuth();
   const navigate = useNavigate();
+  const [previewUrl, setPreviewUrl] = useState<string>("");
 
-  // Login form
   const loginForm = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -50,7 +48,6 @@ const Auth = () => {
     },
   });
 
-  // Signup form
   const signupForm = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -60,8 +57,22 @@ const Auth = () => {
       phoneNumber: "",
       password: "",
       confirmPassword: "",
+      profilePicture: "",
     },
   });
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setPreviewUrl(base64String);
+        signupForm.setValue('profilePicture', base64String);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const onLoginSubmit = async (data: LoginFormValues) => {
     try {
@@ -82,16 +93,15 @@ const Auth = () => {
 
   const onSignupSubmit = async (data: SignupFormValues) => {
     try {
-      // Fixed: Explicitly create a properly typed object to pass to signup
       const { confirmPassword, ...userData } = data;
       
-      // Now userData is guaranteed to have all required fields as non-optional
       await signup({
         firstName: userData.firstName,
         lastName: userData.lastName,
         email: userData.email,
         phoneNumber: userData.phoneNumber,
-        password: userData.password
+        password: userData.password,
+        profilePicture: userData.profilePicture
       });
       
       toast({
@@ -169,6 +179,33 @@ const Auth = () => {
           <TabsContent value="signup">
             <form onSubmit={signupForm.handleSubmit(onSignupSubmit)}>
               <CardContent className="space-y-4">
+                <div className="flex justify-center mb-4">
+                  <div className="relative">
+                    <div className="w-24 h-24 rounded-full border-2 border-primary overflow-hidden">
+                      {previewUrl ? (
+                        <img src={previewUrl} alt="Profile preview" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full bg-muted flex items-center justify-center">
+                          <ImagePlus className="h-8 w-8 text-muted-foreground" />
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="profile-picture"
+                    />
+                    <label
+                      htmlFor="profile-picture"
+                      className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-2 cursor-pointer hover:bg-primary/90 transition-colors"
+                    >
+                      <ImagePlus className="h-4 w-4" />
+                    </label>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name</Label>

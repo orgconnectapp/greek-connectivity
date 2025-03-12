@@ -8,6 +8,7 @@ type User = {
   phoneNumber: string;
   verifiedEmail: boolean;
   organization?: string;
+  profilePicture?: string;
 };
 
 type AuthContextType = {
@@ -85,7 +86,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         lastName: userData.lastName,
         email: userData.email,
         phoneNumber: userData.phoneNumber,
-        verifiedEmail: false
+        verifiedEmail: false,
+        profilePicture: userData.profilePicture
       };
       
       setUser(newUser);

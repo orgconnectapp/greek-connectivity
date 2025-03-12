@@ -80,8 +80,11 @@ const Navbar = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 p-1" aria-label="Account menu">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="/placeholder.svg" alt="User avatar" />
-                  <AvatarFallback>{getInitials()}</AvatarFallback>
+                  {user?.profilePicture ? (
+                    <AvatarImage src={user.profilePicture} alt={`${user.firstName} ${user.lastName}`} />
+                  ) : (
+                    <AvatarFallback>{getInitials()}</AvatarFallback>
+                  )}
                 </Avatar>
                 <span className="hidden text-sm font-medium md:inline-block">{getUserDisplayName()}</span>
                 <ChevronDown className="h-4 w-4 text-muted-foreground" />
