@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Search, 
@@ -46,8 +45,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Member } from '@/components/calendar/types';
+import InviteMemberDialog from '@/components/members/InviteMemberDialog';
 
-// Enhanced mock data with more profile details
 const members: Member[] = [
   { 
     id: "1", 
@@ -194,15 +193,14 @@ const Members = () => {
   const [viewType, setViewType] = useState<'grid' | 'list'>('grid');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   
   const filteredMembers = members.filter(member => {
-    // Apply search filter
     const matchesSearch = 
       member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
       member.email.toLowerCase().includes(searchTerm.toLowerCase());
     
-    // Apply status filter
     const matchesStatus = 
       statusFilter === 'all' || 
       member.status === statusFilter;
@@ -301,7 +299,7 @@ const Members = () => {
               </svg>
             </Button>
           </div>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={() => setInviteDialogOpen(true)}>
             <UserPlus className="h-4 w-4" />
             <span>Invite Member</span>
           </Button>
@@ -441,7 +439,6 @@ const Members = () => {
         </div>
       )}
       
-      {/* Member Profile Dialog */}
       <Dialog open={!!selectedMember} onOpenChange={(open) => !open && setSelectedMember(null)}>
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>
@@ -586,6 +583,8 @@ const Members = () => {
           )}
         </DialogContent>
       </Dialog>
+      
+      <InviteMemberDialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen} />
     </div>
   );
 };
