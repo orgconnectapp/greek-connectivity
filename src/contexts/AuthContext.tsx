@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type User = {
@@ -36,7 +35,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Check for saved user on mount
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
@@ -45,14 +43,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
   }, []);
 
-  // Mock login function
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // In a real app, this would be an API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Mock user data - would come from API in real app
       if (email.endsWith('.edu') && password.length >= 6) {
         const user: User = {
           id: Math.random().toString(36).substring(2, 15),
@@ -75,14 +70,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Mock signup function
   const signup = async (userData: Omit<User, 'id' | 'verifiedEmail'> & { password: string }) => {
     setIsLoading(true);
     try {
-      // In a real app, this would be an API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Check if email is .edu
       if (!userData.email.endsWith('.edu')) {
         throw new Error('Please use a valid school email (.edu)');
       }
@@ -93,13 +85,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         lastName: userData.lastName,
         email: userData.email,
         phoneNumber: userData.phoneNumber,
-        verifiedEmail: false // Would be false until verified
+        verifiedEmail: false
       };
       
       setUser(newUser);
       localStorage.setItem('user', JSON.stringify(newUser));
       
-      // In a real app, this would send a verification email
       console.log('Verification email sent to', userData.email);
     } catch (error) {
       throw error;
@@ -108,11 +99,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Mock verify email function
   const verifyEmail = async (token: string) => {
     setIsLoading(true);
     try {
-      // In a real app, this would validate the token with an API
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       if (user) {
@@ -127,11 +116,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Mock request to join organization
   const requestJoinOrganization = async (orgId: string) => {
     setIsLoading(true);
     try {
-      // In a real app, this would be an API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       if (user) {

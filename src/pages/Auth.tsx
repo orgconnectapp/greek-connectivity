@@ -82,8 +82,18 @@ const Auth = () => {
 
   const onSignupSubmit = async (data: SignupFormValues) => {
     try {
+      // Fixed: Explicitly create a properly typed object to pass to signup
       const { confirmPassword, ...userData } = data;
-      await signup(userData);
+      
+      // Now userData is guaranteed to have all required fields as non-optional
+      await signup({
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        email: userData.email,
+        phoneNumber: userData.phoneNumber,
+        password: userData.password
+      });
+      
       toast({
         title: "Account created!",
         description: "Please check your email to verify your account.",
