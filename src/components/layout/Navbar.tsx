@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bell, ChevronDown, Search } from 'lucide-react';
+import { Bell, ChevronDown, Search, LogOut } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -14,9 +14,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/auth');
+  };
+
+  const getInitials = () => {
+    if (!user) return 'GU';
+    return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`;
+  };
+
+  const getUserDisplayName = () => {
+    if (!user) return 'Guest User';
+    return `${user.firstName} ${user.lastName}`;
+  };
 
   return (
     <header className="sticky top-0 z-30 w-full border-b bg-background/80 backdrop-blur-md">
@@ -64,9 +81,9 @@ const Navbar = () => {
               <Button variant="ghost" className="flex items-center gap-2 p-1" aria-label="Account menu">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="/placeholder.svg" alt="User avatar" />
-                  <AvatarFallback>JS</AvatarFallback>
+                  <AvatarFallback>{getInitials()}</AvatarFallback>
                 </Avatar>
-                <span className="hidden text-sm font-medium md:inline-block">Jason Smith</span>
+                <span className="hidden text-sm font-medium md:inline-block">{getUserDisplayName()}</span>
                 <ChevronDown className="h-4 w-4 text-muted-foreground" />
               </Button>
             </DropdownMenuTrigger>
@@ -77,11 +94,17 @@ const Navbar = () => {
                 <DropdownMenuItem onClick={() => navigate('/profile')}>
                   Profile
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate('/organizations')}>
+                  My Organizations
+                </DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuItem>Billing</DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Sign out</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign out
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
