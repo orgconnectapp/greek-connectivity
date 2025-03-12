@@ -1,13 +1,15 @@
 
 import React, { useState } from 'react';
 import { Progress } from '@/components/ui/progress';
-import { CreditCard } from 'lucide-react';
+import { CreditCard, Share } from 'lucide-react';
 import DashboardCard from './DashboardCard';
 import { Button } from '@/components/ui/button';
 import PaymentModal from '../dues/PaymentModal';
+import SharePaymentModal from '../dues/SharePaymentModal';
 
 const DuesSummary = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   
   const paidAmount = 250;
   const totalAmount = 500;
@@ -48,18 +50,40 @@ const DuesSummary = () => {
           <p className="text-xs text-muted-foreground">Due on {dueDate}</p>
         </div>
         
-        <Button 
-          className="w-full" 
-          onClick={() => setIsPaymentModalOpen(true)}
-        >
-          <CreditCard className="h-4 w-4 mr-2" />
-          Pay Now
-        </Button>
+        <div className="grid grid-cols-2 gap-2">
+          <Button 
+            className="w-full" 
+            onClick={() => setIsPaymentModalOpen(true)}
+          >
+            <CreditCard className="h-4 w-4 mr-2" />
+            Pay Now
+          </Button>
+          
+          <Button 
+            className="w-full" 
+            variant="outline"
+            onClick={() => setIsShareModalOpen(true)}
+          >
+            <Share className="h-4 w-4 mr-2" />
+            Share
+          </Button>
+        </div>
         
         <PaymentModal
           open={isPaymentModalOpen}
           onOpenChange={setIsPaymentModalOpen}
           outstandingAmount={remainingAmount}
+        />
+        
+        <SharePaymentModal
+          open={isShareModalOpen}
+          onOpenChange={setIsShareModalOpen}
+          paymentDetails={{
+            id: 1,
+            description: "Chapter Dues",
+            amount: remainingAmount,
+            dueDate: dueDate
+          }}
         />
       </div>
     </DashboardCard>

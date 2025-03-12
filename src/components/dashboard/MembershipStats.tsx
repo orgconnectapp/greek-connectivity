@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Users, GraduationCap, BarChart, ArrowUpRight, X } from 'lucide-react';
+import { Users, GraduationCap, BarChart, X } from 'lucide-react';
 import DashboardCard from './DashboardCard';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -26,6 +26,7 @@ const alumniMembers = [
 const MembershipStats = () => {
   const [activeMembersDialogOpen, setActiveMembersDialogOpen] = useState(false);
   const [alumniMembersDialogOpen, setAlumniMembersDialogOpen] = useState(false);
+  const [totalMembersDialogOpen, setTotalMembersDialogOpen] = useState(false);
   const navigate = useNavigate();
   
   const totalMembers = activeMembers.length + alumniMembers.length;
@@ -40,73 +41,117 @@ const MembershipStats = () => {
         title="Membership"
         className="h-full"
       >
-        <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="rounded-lg border bg-card p-3">
-              <div className="flex items-center gap-2">
-                <div className="rounded-full bg-primary/10 p-2">
-                  <BarChart className="h-4 w-4 text-primary" />
-                </div>
-                <span className="text-sm font-medium">Total</span>
+        <div className="space-y-5 py-1">
+          <div 
+            className="rounded-lg border bg-card p-4 cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => setTotalMembersDialogOpen(true)}
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-full bg-primary/10 p-2">
+                <BarChart className="h-4 w-4 text-primary" />
               </div>
-              <p className="mt-2 text-2xl font-bold">{totalMembers}</p>
+              <span className="text-sm font-medium">Total Members</span>
             </div>
-            
-            <div 
-              className="rounded-lg border bg-card p-3 cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => setActiveMembersDialogOpen(true)}
-            >
-              <div className="flex items-center gap-2">
-                <div className="rounded-full bg-primary/10 p-2">
-                  <Users className="h-4 w-4 text-primary" />
-                </div>
-                <span className="text-sm font-medium">Active</span>
-              </div>
-              <p className="mt-2 text-2xl font-bold">{activeMembers.length}</p>
-            </div>
-            
-            <div 
-              className="rounded-lg border bg-card p-3 cursor-pointer hover:bg-muted/50 transition-colors"
-              onClick={() => setAlumniMembersDialogOpen(true)}
-            >
-              <div className="flex items-center gap-2">
-                <div className="rounded-full bg-primary/10 p-2">
-                  <GraduationCap className="h-4 w-4 text-primary" />
-                </div>
-                <span className="text-sm font-medium">Alumni</span>
-              </div>
-              <div className="mt-2 flex items-center gap-1">
-                <p className="text-2xl font-bold">{alumniMembers.length}</p>
-              </div>
-            </div>
+            <p className="mt-2 text-2xl font-bold">{totalMembers}</p>
           </div>
           
-          <div className="space-y-3">
-            <h4 className="text-sm font-medium">Recent Members</h4>
-            <div className="space-y-2">
-              {activeMembers.slice(0, 3).map((member) => (
-                <div 
-                  key={member.id} 
-                  className="flex items-center justify-between rounded-md border p-2 cursor-pointer hover:bg-muted/50 transition-colors"
-                  onClick={() => viewProfile(member.name)}
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <span className="text-xs font-medium text-primary">
-                        {member.name.split(' ').map(n => n[0]).join('')}
-                      </span>
-                    </div>
-                    <span className="text-sm font-medium">{member.name}</span>
-                  </div>
-                  <span className="text-xs text-muted-foreground">
-                    {member.joined}
-                  </span>
-                </div>
-              ))}
+          <div 
+            className="rounded-lg border bg-card p-4 cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => setActiveMembersDialogOpen(true)}
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-full bg-primary/10 p-2">
+                <Users className="h-4 w-4 text-primary" />
+              </div>
+              <span className="text-sm font-medium">Active</span>
+            </div>
+            <p className="mt-2 text-2xl font-bold">{activeMembers.length}</p>
+          </div>
+          
+          <div 
+            className="rounded-lg border bg-card p-4 cursor-pointer hover:bg-muted/50 transition-colors"
+            onClick={() => setAlumniMembersDialogOpen(true)}
+          >
+            <div className="flex items-center gap-2">
+              <div className="rounded-full bg-primary/10 p-2">
+                <GraduationCap className="h-4 w-4 text-primary" />
+              </div>
+              <span className="text-sm font-medium">Alumni</span>
+            </div>
+            <div className="mt-2 flex items-center gap-1">
+              <p className="text-2xl font-bold">{alumniMembers.length}</p>
             </div>
           </div>
         </div>
       </DashboardCard>
+      
+      {/* Total Members Dialog */}
+      <Dialog open={totalMembersDialogOpen} onOpenChange={setTotalMembersDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>All Members</DialogTitle>
+            <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+              <X className="h-4 w-4" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh]">
+            <div className="space-y-4 p-2">
+              <h3 className="font-medium text-sm">Active Members</h3>
+              <div className="space-y-2">
+                {activeMembers.map((member) => (
+                  <div 
+                    key={member.id} 
+                    className="flex items-center justify-between rounded-md border p-3 cursor-pointer hover:bg-muted/50 transition-colors"
+                    onClick={() => {
+                      viewProfile(member.name);
+                      setTotalMembersDialogOpen(false);
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-sm font-medium text-primary">
+                          {member.name.split(' ').map(n => n[0]).join('')}
+                        </span>
+                      </div>
+                      <span className="font-medium">{member.name}</span>
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      {member.joined}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              
+              <h3 className="font-medium text-sm pt-2">Alumni Members</h3>
+              <div className="space-y-2">
+                {alumniMembers.map((member) => (
+                  <div 
+                    key={member.id} 
+                    className="flex items-center justify-between rounded-md border p-3 cursor-pointer hover:bg-muted/50 transition-colors"
+                    onClick={() => {
+                      viewProfile(member.name);
+                      setTotalMembersDialogOpen(false);
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-sm font-medium text-primary">
+                          {member.name.split(' ').map(n => n[0]).join('')}
+                        </span>
+                      </div>
+                      <span className="font-medium">{member.name}</span>
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      Graduated {member.graduated}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
       
       {/* Active Members Dialog */}
       <Dialog open={activeMembersDialogOpen} onOpenChange={setActiveMembersDialogOpen}>
