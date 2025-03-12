@@ -12,6 +12,7 @@ export const baseSchema = z.object({
   organization: z.string().min(1, "Organization is required"),
   profilePicture: z.string().optional(),
   password: z.string().min(6, "Password must be at least 6 characters"),
+  university: z.string().optional(),
 });
 
 export type SignupFormData = z.infer<typeof baseSchema>;
@@ -27,3 +28,22 @@ export const MOCK_ORGANIZATIONS = [
   'Sigma Gamma Rho',
   'Iota Phi Theta'
 ];
+
+// Mock universities
+export const MOCK_UNIVERSITIES = [
+  'Howard University',
+  'Spelman College',
+  'Morehouse College',
+  'Hampton University',
+  'Florida A&M University',
+  'North Carolina A&T State University',
+  'Xavier University of Louisiana',
+  'Tuskegee University'
+];
+
+// Mock function to get organizations by university
+export const getOrganizationsByUniversity = (university: string): string[] => {
+  // In a real app, this would fetch from an API based on the university
+  // For now, we'll just return the mock organizations
+  return MOCK_ORGANIZATIONS;
+};

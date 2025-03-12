@@ -21,7 +21,7 @@ export const MemberTypeStep = ({ form, onNextStep }: MemberTypeStepProps) => {
           onClick={() => form.setValue('memberType', 'active')}
           className="w-full"
         >
-          Active
+          Active Member
         </Button>
         <Button
           type="button"

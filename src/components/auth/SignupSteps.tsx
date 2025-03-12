@@ -10,6 +10,9 @@ import { MemberTypeStep } from './steps/MemberTypeStep';
 import { ContactAndAcademicStep } from './steps/ContactAndAcademicStep';
 import { ProfilePictureStep } from './steps/ProfilePictureStep';
 import { OrganizationStep } from './steps/OrganizationStep';
+import { AlumniContactStep } from './steps/AlumniContactStep';
+import { AlumniPasswordStep } from './steps/AlumniPasswordStep';
+import { AlumniUniversityStep } from './steps/AlumniUniversityStep';
 
 export const SignupSteps = () => {
   const [step, setStep] = useState(1);
@@ -28,6 +31,7 @@ export const SignupSteps = () => {
       organization: '',
       profilePicture: '',
       password: '',
+      university: '',
     },
   });
 
@@ -49,6 +53,7 @@ export const SignupSteps = () => {
         major: data.major || '',
         currentYear: data.currentYear || 'freshman',
         profilePicture: data.profilePicture || '',
+        university: data.university || '',
       };
       
       await signup(userData);
@@ -65,6 +70,8 @@ export const SignupSteps = () => {
     }
   };
 
+  const isAlumni = form.getValues('memberType') === 'alumni';
+
   const renderStep = () => {
     switch (step) {
       case 1:
@@ -72,13 +79,41 @@ export const SignupSteps = () => {
       case 2:
         return <MemberTypeStep form={form} onNextStep={nextStep} />;
       case 3:
-        return <ContactAndAcademicStep form={form} onNextStep={nextStep} />;
+        return isAlumni 
+          ? <AlumniContactStep form={form} onNextStep={nextStep} />
+          : <ContactAndAcademicStep form={form} onNextStep={nextStep} />;
       case 4:
-        return <ProfilePictureStep form={form} onNextStep={nextStep} />;
+        return isAlumni 
+          ? <AlumniPasswordStep form={form} onNextStep={nextStep} />
+          : <ProfilePictureStep form={form} onNextStep={nextStep} />;
       case 5:
-        return <OrganizationStep form={form} onSubmit={onSubmit} />;
+        return isAlumni 
+          ? <AlumniUniversityStep form={form} onSubmit={onSubmit} />
+          : <OrganizationStep form={form} onSubmit={onSubmit} />;
       default:
         return null;
+    }
+  };
+
+  const getStepLabel = () => {
+    if (isAlumni) {
+      switch (step) {
+        case 1: return "Personal Information";
+        case 2: return "Member Type";
+        case 3: return "Contact Information";
+        case 4: return "Create Password";
+        case 5: return "University & Organization";
+        default: return "";
+      }
+    } else {
+      switch (step) {
+        case 1: return "Personal Information";
+        case 2: return "Member Type";
+        case 3: return "Contact & Academic Information";
+        case 4: return "Profile Picture";
+        case 5: return "Organization Selection";
+        default: return "";
+      }
     }
   };
 
@@ -87,13 +122,7 @@ export const SignupSteps = () => {
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-tight">Create an account</h2>
         <p className="text-sm text-muted-foreground">
-          Step {step} of 5: {
-            step === 1 ? "Personal Information" :
-            step === 2 ? "Member Type" :
-            step === 3 ? "Contact & Academic Information" :
-            step === 4 ? "Profile Picture" :
-            "Organization Selection"
-          }
+          Step {step} of 5: {getStepLabel()}
         </p>
       </div>
       {renderStep()}
