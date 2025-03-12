@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type User = {
@@ -20,6 +19,7 @@ type AuthContextType = {
   signup: (userData: Omit<User, 'id' | 'verifiedEmail'> & { password: string }) => Promise<void>;
   logout: () => void;
   verifyEmail: (token: string) => Promise<void>;
+  requestJoinOrganization: (organizationId: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -126,6 +126,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     console.log('User logged out successfully');
   };
 
+  const requestJoinOrganization = async (organizationId: string) => {
+    setIsLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log(`Request to join organization ${organizationId} submitted`);
+      // In a real app, this would make an API call to request joining the organization
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider 
       value={{ 
@@ -135,7 +148,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         login, 
         signup, 
         logout, 
-        verifyEmail
+        verifyEmail,
+        requestJoinOrganization
       }}
     >
       {children}
