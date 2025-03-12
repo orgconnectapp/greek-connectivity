@@ -33,7 +33,6 @@ import {
 import { toast } from '@/components/ui/use-toast';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 
-// Mock data
 const fundraisers = [
   { 
     id: 1, 
@@ -129,10 +128,8 @@ const stats = [
 
 const Fundraisers = () => {
   const handleShare = (fundraiser: any) => {
-    // In a real application, we'd generate a unique shareable link
     const shareableLink = `${window.location.origin}/external-payment/${fundraiser.id}`;
     
-    // Copy link to clipboard
     navigator.clipboard.writeText(shareableLink)
       .then(() => {
         toast({
@@ -205,16 +202,14 @@ const Fundraisers = () => {
       <Tabs defaultValue="active" className="animate-fade-up" style={{ animationDelay: '0.4s' }}>
         <TabsList>
           <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-          <TabsTrigger value="completed">Completed</TabsTrigger>
           <TabsTrigger value="all">All</TabsTrigger>
         </TabsList>
         
-        {['active', 'upcoming', 'completed', 'all'].map((tab) => (
+        {['active', 'all'].map((tab) => (
           <TabsContent key={tab} value={tab} className="mt-6">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {fundraisers
-                .filter(f => tab === 'all' || f.status === tab)
+                .filter(f => tab === 'all' || f.status === 'active')
                 .map((fundraiser, index) => {
                   const progress = Math.min(Math.round((fundraiser.raised / fundraiser.goal) * 100), 100);
                   
