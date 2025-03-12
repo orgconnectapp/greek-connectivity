@@ -13,6 +13,7 @@ import Messages from "./pages/Messages";
 import MessageBoard from "./pages/MessageBoard";
 import AdminPanel from "./pages/AdminPanel";
 import Calendar from "./pages/Calendar";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import ExternalPayment from "./pages/ExternalPayment";
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/message-board" element={<MessageBoard />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/admin" element={<AdminPanel />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
           {/* External routes (no Layout) */}
           <Route path="/external-payment/:paymentId" element={<ExternalPayment />} />
