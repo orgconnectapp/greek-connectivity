@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { PlusCircle } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import CreateFundraiserDialog from '@/components/fundraisers/CreateFundraiserDialog';
 import FundraisersSearch from '@/components/fundraisers/FundraisersSearch';
@@ -18,6 +17,9 @@ const Fundraisers = () => {
   const [donatingFundraiser, setDonatingFundraiser] = useState<FundraiserType | null>(null);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [sharingFundraiser, setSharingFundraiser] = useState<FundraiserType | null>(null);
+  
+  // Filter out the Member Participation stat
+  const filteredStats = stats.filter(stat => stat.title !== "Member Participation");
   
   const handleShare = (fundraiser: FundraiserType) => {
     setSharingFundraiser(fundraiser);
@@ -49,7 +51,7 @@ const Fundraisers = () => {
         </p>
       </div>
       
-      <StatsList stats={stats} />
+      <StatsList stats={filteredStats} />
       
       <FundraisersSearch onCreateClick={() => setCreateDialogOpen(true)} />
       
