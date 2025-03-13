@@ -1,15 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { 
   Search, 
   Send, 
-  Plus, 
   MoreVertical, 
   Paperclip,
   Smile,
-  Phone,
-  Video
+  MessageSquarePlus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,6 +22,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import NewDirectMessageDialog from '@/components/messages/NewDirectMessageDialog';
 
 const conversations = [
   {
@@ -125,12 +123,52 @@ const messages = [
   }
 ];
 
+const members = [
+  {
+    id: 1,
+    name: 'Emma Johnson',
+    role: 'Vice President',
+    avatar: '/placeholder.svg'
+  },
+  {
+    id: 2,
+    name: 'Michael Brown',
+    role: 'Treasurer',
+    avatar: '/placeholder.svg'
+  },
+  {
+    id: 3,
+    name: 'Sophia Garcia',
+    role: 'Secretary',
+    avatar: '/placeholder.svg'
+  },
+  {
+    id: 4,
+    name: 'Alex Williams',
+    role: 'Event Coordinator',
+    avatar: '/placeholder.svg'
+  },
+  {
+    id: 5,
+    name: 'Maya Rodriguez',
+    role: 'Member',
+    avatar: '/placeholder.svg'
+  },
+  {
+    id: 6,
+    name: 'David Kim',
+    role: 'Member',
+    avatar: '/placeholder.svg'
+  }
+];
+
 const Messages = () => {
   const location = useLocation();
   const { toast } = useToast();
   const [selectedConversation, setSelectedConversation] = useState(conversations[0]);
   const [newMessage, setNewMessage] = useState('');
   const [allConversations, setAllConversations] = useState(conversations);
+  const [newDirectMessageOpen, setNewDirectMessageOpen] = useState(false);
   
   useEffect(() => {
     if (location.state?.openConversation) {
@@ -147,7 +185,6 @@ const Messages = () => {
           description: "Ready to chat!",
         });
       } else {
-        // Create a new conversation
         const newConversation = {
           id: allConversations.length + 1,
           name: name,
@@ -173,16 +210,14 @@ const Messages = () => {
   const handleSendMessage = () => {
     if (newMessage.trim() === '') return;
     
-    // Create a new message
     const newMsg = {
       id: messages.length + 1,
-      senderId: 1, // Current user
+      senderId: 1,
       content: newMessage,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       read: true
     };
     
-    // Update the conversation's last message
     const updatedConversations = allConversations.map(conv => {
       if (conv.id === selectedConversation.id) {
         return {
@@ -197,12 +232,48 @@ const Messages = () => {
     setAllConversations(updatedConversations);
     setNewMessage('');
     
-    // In a real app, we would append this to the messages array for this conversation
-    // For demo purposes, we'll just show a toast
     toast({
       title: `Message sent`,
       description: "Your message has been sent successfully.",
     });
+  };
+  
+  const handleCreateNewDirectMessage = (selectedMembers) => {
+    const isGroup = selectedMembers.length > 1;
+    
+    let name = '';
+    if (isGroup) {
+      if (selectedMembers.length <= 2) {
+        name = selectedMembers.map(m => m.name).join(' & ');
+      } else {
+        name = `${selectedMembers[0].name}, ${selectedMembers[1].name} & ${selectedMembers.length - 2} others`;
+      }
+    } else {
+      name = selectedMembers[0].name;
+    }
+    
+    const newConversation = {
+      id: Date.now(),
+      name: name,
+      role: isGroup ? `Group • ${selectedMembers.length} members` : selectedMembers[0].role,
+      lastMessage: '',
+      timestamp: 'Just now',
+      unread: 0,
+      online: false,
+      avatar: isGroup ? '/placeholder.svg' : selectedMembers[0].avatar,
+      isGroup: isGroup,
+      members: selectedMembers
+    };
+    
+    setAllConversations(prev => [newConversation, ...prev]);
+    setSelectedConversation(newConversation);
+    
+    toast({
+      title: isGroup ? "Group chat created" : "Conversation started",
+      description: `You can now send messages to ${isGroup ? 'the group' : name}.`,
+    });
+    
+    setNewDirectMessageOpen(false);
   };
   
   return (
@@ -211,8 +282,9 @@ const Messages = () => {
         <div className="w-full max-w-xs border-r">
           <div className="flex h-14 items-center justify-between border-b px-4">
             <h2 className="font-medium">Messages</h2>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Plus className="h-5 w-5" />
+            <Button variant="outline" className="flex items-center gap-2" onClick={() => setNewDirectMessageOpen(true)}>
+              <MessageSquarePlus className="h-4 w-4" />
+              New Direct Message
             </Button>
           </div>
           
@@ -307,12 +379,6 @@ const Messages = () => {
                 </div>
                 
                 <div className="flex items-center gap-1">
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Phone className="h-5 w-5" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Video className="h-5 w-5" />
-                  </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -426,6 +492,13 @@ const Messages = () => {
           )}
         </div>
       </div>
+      
+      <NewDirectMessageDialog 
+        open={newDirectMessageOpen}
+        onOpenChange={setNewDirectMessageOpen}
+        members={members}
+        onCreateConversation={handleCreateNewDirectMessage}
+      />
     </div>
   );
 };
