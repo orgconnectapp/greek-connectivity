@@ -5,8 +5,6 @@ import {
   Settings, 
   Key, 
   Users,
-  Database,
-  ServerCog,
   Upload,
   Download,
   Bell,
@@ -122,9 +120,9 @@ const AdminPanel = () => {
         </TabsList>
         
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-2">
             <DashboardCard
-              title="Total Members"
+              title="Total Organization Members"
               description="Active members in your organization"
             >
               <div className="flex items-center justify-between">
@@ -134,32 +132,12 @@ const AdminPanel = () => {
             </DashboardCard>
             
             <DashboardCard
-              title="Pending Approvals"
+              title="Pending Member Approvals"
               description="Members awaiting verification"
             >
               <div className="flex items-center justify-between">
                 <div className="text-2xl font-bold">3</div>
                 <UserCog className="h-4 w-4 text-muted-foreground" />
-              </div>
-            </DashboardCard>
-            
-            <DashboardCard
-              title="System Health"
-              description="All systems operational"
-            >
-              <div className="flex items-center justify-between">
-                <div className="text-2xl font-bold text-green-500">100%</div>
-                <ServerCog className="h-4 w-4 text-muted-foreground" />
-              </div>
-            </DashboardCard>
-            
-            <DashboardCard
-              title="Data Storage"
-              description="Documents and media"
-            >
-              <div className="flex items-center justify-between">
-                <div className="text-2xl font-bold">1.2GB</div>
-                <Database className="h-4 w-4 text-muted-foreground" />
               </div>
             </DashboardCard>
           </div>
@@ -228,32 +206,7 @@ const AdminPanel = () => {
             </CardContent>
           </Card>
           
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Activity</CardTitle>
-                <CardDescription>Latest actions by admins</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {[
-                    { user: 'Jason Smith', action: 'Updated member role', time: '2 hours ago' },
-                    { user: 'Emma Johnson', action: 'Approved new member', time: '5 hours ago' },
-                    { user: 'Michael Brown', action: 'Created new fundraiser', time: '1 day ago' },
-                    { user: 'Sophia Garcia', action: 'Modified dues schedule', time: '2 days ago' },
-                  ].map((item, index) => (
-                    <div key={index} className="flex items-center gap-4 text-sm">
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate font-medium">{item.user}</p>
-                        <p className="text-muted-foreground">{item.action}</p>
-                      </div>
-                      <div className="text-muted-foreground">{item.time}</div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-            
+          <div className="grid gap-4 md:grid-cols-1">
             <Card>
               <CardHeader>
                 <CardTitle>Quick Actions</CardTitle>
@@ -272,10 +225,6 @@ const AdminPanel = () => {
                   <Button className="justify-start">
                     <Bell className="mr-2 h-4 w-4" />
                     Send Organization Announcement
-                  </Button>
-                  <Button className="justify-start">
-                    <ServerCog className="mr-2 h-4 w-4" />
-                    System Configuration
                   </Button>
                 </div>
               </CardContent>
