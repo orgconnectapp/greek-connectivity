@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Shield, 
@@ -95,6 +94,40 @@ const pendingFundraisers = [
   }
 ];
 
+// Mock data for charges details
+const chargesDetails = {
+  "Spring 2024 Membership Dues": {
+    paidMembers: [
+      { name: "Jason Smith", role: "President", email: "jason@greeksync.com", paid: true, amount: 150, date: "Mar 16, 2024" },
+      { name: "Emma Johnson", role: "Vice President", email: "emma@greeksync.com", paid: true, amount: 150, date: "Mar 10, 2024" },
+      { name: "Michael Brown", role: "Treasurer", email: "michael@greeksync.com", paid: true, amount: 150, date: "Mar 5, 2024" },
+      { name: "Sophia Garcia", role: "Secretary", email: "sophia@greeksync.com", paid: true, amount: 150, date: "Mar 12, 2024" },
+      { name: "Alex Williams", role: "Event Coordinator", email: "alex@greeksync.com", paid: false },
+      // More members...
+    ]
+  },
+  "Leadership Conference Fee": {
+    paidMembers: [
+      { name: "Jason Smith", role: "President", email: "jason@greeksync.com", paid: true, amount: 35, date: "Mar 20, 2024" },
+      { name: "Emma Johnson", role: "Vice President", email: "emma@greeksync.com", paid: true, amount: 35, date: "Mar 15, 2024" },
+      { name: "Michael Brown", role: "Treasurer", email: "michael@greeksync.com", paid: true, amount: 35, date: "Mar 18, 2024" },
+      { name: "Sophia Garcia", role: "Secretary", email: "sophia@greeksync.com", paid: false },
+      { name: "Alex Williams", role: "Event Coordinator", email: "alex@greeksync.com", paid: false },
+      // More members...
+    ]
+  },
+  "Late Payment Fee": {
+    paidMembers: [
+      { name: "Jason Smith", role: "President", email: "jason@greeksync.com", paid: false },
+      { name: "Emma Johnson", role: "Vice President", email: "emma@greeksync.com", paid: false },
+      { name: "Michael Brown", role: "Treasurer", email: "michael@greeksync.com", paid: false },
+      { name: "Sophia Garcia", role: "Secretary", email: "sophia@greeksync.com", paid: false },
+      { name: "Alex Williams", role: "Event Coordinator", email: "alex@greeksync.com", paid: false },
+      // More members...
+    ]
+  }
+};
+
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [fundraisers, setFundraisers] = useState(pendingFundraisers);
@@ -102,6 +135,8 @@ const AdminPanel = () => {
   const [selectedMember, setSelectedMember] = useState<any>(null);
   const [removeMemberDialog, setRemoveMemberDialog] = useState(false);
   const [inviteDialog, setInviteDialog] = useState(false);
+  const [chargeDetailsDialog, setChargeDetailsDialog] = useState(false);
+  const [selectedCharge, setSelectedCharge] = useState<string | null>(null);
   
   const handleFundraiserApproval = (id: number, approved: boolean) => {
     setFundraisers(prevFundraisers => 
@@ -143,6 +178,11 @@ const AdminPanel = () => {
     });
   };
   
+  const handleChargeClick = (chargeTitle: string) => {
+    setSelectedCharge(chargeTitle);
+    setChargeDetailsDialog(true);
+  };
+  
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex items-center justify-between">
@@ -161,7 +201,7 @@ const AdminPanel = () => {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList className="grid w-full grid-cols-5 lg:w-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="users">User Management</TabsTrigger>
+          <TabsTrigger value="users">Member Management</TabsTrigger>
           <TabsTrigger value="dues">Dues Management</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
           <TabsTrigger value="permissions">Permissions</TabsTrigger>
@@ -477,7 +517,11 @@ const AdminPanel = () => {
                     const percentMembers = Math.round((dues.paidMembers / dues.members) * 100);
                     
                     return (
-                      <TableRow key={index}>
+                      <TableRow 
+                        key={index} 
+                        className="cursor-pointer hover:bg-muted"
+                        onDoubleClick={() => handleChargeClick(dues.title)}
+                      >
                         <TableCell className="font-medium">{dues.title}</TableCell>
                         <TableCell>{dues.amount}</TableCell>
                         <TableCell>{dues.type}</TableCell>
@@ -809,10 +853,4 @@ const AdminPanel = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Invite Member Dialog */}
-      <InviteMemberDialog open={inviteDialog} onOpenChange={setInviteDialog} />
-    </div>
-  );
-};
-
-export default AdminPanel;
+      {
