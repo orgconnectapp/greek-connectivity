@@ -267,8 +267,6 @@ const Dues = () => {
   );
 };
 
-export default Dues;
-
 // Payment Plan Modal component
 interface PaymentPlanModalProps {
   open: boolean;
@@ -363,4 +361,5 @@ const PaymentPlanModal = ({ open, onOpenChange, outstandingAmount, dueDate }: Pa
   );
 };
 
+// Export the Dues component as the default export
 export default Dues;
