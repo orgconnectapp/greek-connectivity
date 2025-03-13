@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Shield, 
@@ -14,7 +15,11 @@ import {
   Check,
   X,
   Flag,
-  Calendar
+  Calendar,
+  UserPlus,
+  Pencil,
+  Trash2,
+  UserX
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -43,12 +48,22 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
 import { toast } from '@/hooks/use-toast';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import DashboardCard from '@/components/dashboard/DashboardCard';
 import CreateDueChargeModal from '@/components/admin/CreateDueChargeModal';
 import EventApprovalSection from '@/components/admin/EventApprovalSection';
+import InviteMemberDialog from '@/components/members/InviteMemberDialog';
 
 const pendingFundraisers = [
   {
@@ -83,6 +98,10 @@ const pendingFundraisers = [
 const AdminPanel = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [fundraisers, setFundraisers] = useState(pendingFundraisers);
+  const [editMemberDialog, setEditMemberDialog] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<any>(null);
+  const [removeMemberDialog, setRemoveMemberDialog] = useState(false);
+  const [inviteDialog, setInviteDialog] = useState(false);
   
   const handleFundraiserApproval = (id: number, approved: boolean) => {
     setFundraisers(prevFundraisers => 
@@ -92,6 +111,35 @@ const AdminPanel = () => {
     toast({
       title: approved ? "Fundraiser approved" : "Fundraiser denied",
       description: `The fundraiser has been ${approved ? 'approved and is now live' : 'denied and removed from the system'}.`,
+    });
+  };
+
+  const handleEditMember = (member: any) => {
+    setSelectedMember(member);
+    setEditMemberDialog(true);
+  };
+
+  const handleRemoveMember = () => {
+    toast({
+      title: "Member removed",
+      description: `${selectedMember.name} has been removed from the organization.`,
+    });
+    
+    setRemoveMemberDialog(false);
+    setEditMemberDialog(false);
+  };
+
+  const handleStatusChange = (status: string) => {
+    toast({
+      title: "Status updated",
+      description: `${selectedMember.name}'s status has been updated to ${status}.`,
+    });
+  };
+
+  const handleRoleChange = (role: string) => {
+    toast({
+      title: "Role updated",
+      description: `${selectedMember.name}'s role has been updated to ${role}.`,
     });
   };
   
@@ -237,9 +285,9 @@ const AdminPanel = () => {
             <CardHeader className="space-y-0 pb-2">
               <div className="flex items-center justify-between">
                 <CardTitle>Member Management</CardTitle>
-                <Button size="sm">
-                  <UserCog className="mr-2 h-4 w-4" />
-                  Add Member
+                <Button size="sm" onClick={() => setInviteDialog(true)}>
+                  <UserPlus className="mr-2 h-4 w-4" />
+                  Invite Member
                 </Button>
               </div>
               <CardDescription>
@@ -326,7 +374,14 @@ const AdminPanel = () => {
                         <Switch checked={member.admin} />
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="sm">Edit</Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => handleEditMember(member)}
+                        >
+                          <Pencil className="h-4 w-4 mr-1" />
+                          Edit
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -619,6 +674,143 @@ const AdminPanel = () => {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Edit Member Dialog */}
+      <Dialog open={editMemberDialog} onOpenChange={setEditMemberDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Member</DialogTitle>
+            <DialogDescription>
+              Update member details, role, and status
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedMember && (
+            <div className="space-y-4 py-2">
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Member Information</h3>
+                <div className="text-sm">
+                  <p><span className="font-medium">Name:</span> {selectedMember.name}</p>
+                  <p><span className="font-medium">Email:</span> {selectedMember.email}</p>
+                  <p><span className="font-medium">Current Role:</span> {selectedMember.role}</p>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Change Status</h3>
+                <Select 
+                  defaultValue={selectedMember.status.toLowerCase()}
+                  onValueChange={handleStatusChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Active</SelectItem>
+                    <SelectItem value="inactive">Inactive</SelectItem>
+                    <SelectItem value="alumni">Alumni</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Assign Role</h3>
+                <Select 
+                  defaultValue={selectedMember.role.toLowerCase().replace(' ', '-')}
+                  onValueChange={handleRoleChange}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="president">President</SelectItem>
+                    <SelectItem value="vice-president">Vice President</SelectItem>
+                    <SelectItem value="treasurer">Treasurer</SelectItem>
+                    <SelectItem value="secretary">Secretary</SelectItem>
+                    <SelectItem value="event-coordinator">Event Coordinator</SelectItem>
+                    <SelectItem value="member">Member</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium">Admin Access</h3>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Grant admin panel access</span>
+                  <Switch defaultChecked={selectedMember.admin} />
+                </div>
+              </div>
+              
+              <div className="pt-2">
+                <Button 
+                  variant="destructive" 
+                  className="w-full" 
+                  onClick={() => setRemoveMemberDialog(true)}
+                >
+                  <UserX className="mr-2 h-4 w-4" />
+                  Remove from Organization
+                </Button>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditMemberDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => {
+              toast({
+                title: "Changes saved",
+                description: "Member information has been updated",
+              });
+              setEditMemberDialog(false);
+            }}>
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Remove Member Confirmation Dialog */}
+      <Dialog open={removeMemberDialog} onOpenChange={setRemoveMemberDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Remove Member</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to remove this member from your organization? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedMember && (
+            <div className="py-4">
+              <div className="p-4 border rounded-md bg-muted/50 mb-4">
+                <p className="font-medium">{selectedMember.name}</p>
+                <p className="text-sm text-muted-foreground">{selectedMember.email}</p>
+                <p className="text-sm text-muted-foreground">{selectedMember.role}</p>
+              </div>
+              
+              <div className="flex justify-between">
+                <p className="text-sm text-destructive font-medium">
+                  <Trash2 className="h-4 w-4 inline mr-1" />
+                  This will permanently remove the member
+                </p>
+              </div>
+            </div>
+          )}
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRemoveMemberDialog(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleRemoveMember}>
+              Remove Member
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Invite Member Dialog */}
+      <InviteMemberDialog open={inviteDialog} onOpenChange={setInviteDialog} />
     </div>
   );
 };
