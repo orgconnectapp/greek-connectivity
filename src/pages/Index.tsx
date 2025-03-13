@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DuesSummary from '@/components/dashboard/DuesSummary';
 import FundraiserCard from '@/components/dashboard/FundraiserCard';
@@ -8,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { CalendarDays, MessageSquare, Bell } from 'lucide-react';
 import FundraiserDetailsDialog from '@/components/fundraisers/FundraiserDetailsDialog';
 import ShareFundraiserDialog from '@/components/fundraisers/ShareFundraiserDialog';
+import DonationDialog from '@/components/fundraisers/DonationDialog';
 import { FundraiserType, DonorType } from '@/components/fundraisers/data';
 
 const Index = () => {
@@ -16,6 +16,8 @@ const Index = () => {
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [sharingFundraiser, setSharingFundraiser] = useState<FundraiserType | null>(null);
+  const [donationDialogOpen, setDonationDialogOpen] = useState(false);
+  const [donatingFundraiser, setDonatingFundraiser] = useState<FundraiserType | null>(null);
   
   // Sample fundraisers data - this would typically come from an API
   const fundraisers = [
@@ -89,6 +91,12 @@ const Index = () => {
   const handleShareFundraiser = (fundraiser: FundraiserType) => {
     setSharingFundraiser(fundraiser);
     setShareDialogOpen(true);
+  };
+
+  // Function to handle contribute button click
+  const handleContributeFundraiser = (fundraiser: FundraiserType) => {
+    setDonatingFundraiser(fundraiser);
+    setDonationDialogOpen(true);
   };
 
   // Function to get donors for a specific fundraiser
@@ -172,7 +180,7 @@ const Index = () => {
         open={detailsDialogOpen}
         onOpenChange={setDetailsDialogOpen}
         donors={getFundraiserDonors()}
-        onContribute={undefined} // You can implement contribution functionality if needed
+        onContribute={handleContributeFundraiser}
         onShare={handleShareFundraiser}
       />
 
@@ -181,6 +189,13 @@ const Index = () => {
         open={shareDialogOpen}
         onOpenChange={setShareDialogOpen}
         fundraiser={sharingFundraiser}
+      />
+
+      {/* Donation Dialog */}
+      <DonationDialog
+        open={donationDialogOpen}
+        onOpenChange={setDonationDialogOpen}
+        fundraiser={donatingFundraiser}
       />
     </div>
   );
