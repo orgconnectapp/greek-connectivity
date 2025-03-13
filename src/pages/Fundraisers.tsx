@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Calendar, 
   DollarSign, 
@@ -30,8 +30,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from '@/hooks/use-toast';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import CreateFundraiserDialog from '@/components/fundraisers/CreateFundraiserDialog';
 
 const fundraisers = [
   { 
@@ -127,6 +128,8 @@ const stats = [
 ];
 
 const Fundraisers = () => {
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  
   const handleShare = (fundraiser: any) => {
     const shareableLink = `${window.location.origin}/external-payment/${fundraiser.id}`;
     
@@ -193,7 +196,10 @@ const Fundraisers = () => {
           </Button>
         </div>
         
-        <Button className="gap-2">
+        <Button 
+          className="gap-2" 
+          onClick={() => setCreateDialogOpen(true)}
+        >
           <PlusCircle className="h-4 w-4" />
           <span>Create Fundraiser</span>
         </Button>
@@ -325,6 +331,11 @@ const Fundraisers = () => {
           </TabsContent>
         ))}
       </Tabs>
+      
+      <CreateFundraiserDialog 
+        open={createDialogOpen} 
+        onOpenChange={setCreateDialogOpen} 
+      />
     </div>
   );
 };
