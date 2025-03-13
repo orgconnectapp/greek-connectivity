@@ -1,13 +1,38 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Phone, MapPin, Calendar, Clock, Edit } from "lucide-react";
+import { Mail, Phone, MapPin, Calendar, Clock, Edit, Eye, EyeOff } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Profile = () => {
+  const { toast } = useToast();
+  const { user } = useAuth();
+
+  // State for privacy settings
+  const [showEmail, setShowEmail] = useState(true);
+  const [showPhone, setShowPhone] = useState(true);
+
+  const handlePrivacyChange = (setting: 'email' | 'phone', value: boolean) => {
+    if (setting === 'email') {
+      setShowEmail(value);
+    } else {
+      setShowPhone(value);
+    }
+
+    // In a real app, you would save these settings to the backend
+    toast({
+      title: "Privacy setting updated",
+      description: `Your ${setting} is now ${value ? 'visible' : 'hidden'} to other members.`,
+    });
+  };
+
   return (
     <div className="container max-w-5xl mx-auto space-y-8">
       <div className="flex flex-col space-y-4">
@@ -57,10 +82,28 @@ const Profile = () => {
                       <li className="flex items-center gap-2">
                         <Mail className="h-4 w-4 text-muted-foreground" />
                         <span>jason.smith@example.com</span>
+                        {showEmail ? (
+                          <Badge variant="outline" className="ml-auto text-xs bg-green-100 text-green-800">
+                            <Eye className="h-3 w-3 mr-1" /> Visible
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="ml-auto text-xs bg-yellow-100 text-yellow-800">
+                            <EyeOff className="h-3 w-3 mr-1" /> Hidden
+                          </Badge>
+                        )}
                       </li>
                       <li className="flex items-center gap-2">
                         <Phone className="h-4 w-4 text-muted-foreground" />
                         <span>(555) 123-4567</span>
+                        {showPhone ? (
+                          <Badge variant="outline" className="ml-auto text-xs bg-green-100 text-green-800">
+                            <Eye className="h-3 w-3 mr-1" /> Visible
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="ml-auto text-xs bg-yellow-100 text-yellow-800">
+                            <EyeOff className="h-3 w-3 mr-1" /> Hidden
+                          </Badge>
+                        )}
                       </li>
                       <li className="flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-muted-foreground" />
@@ -141,7 +184,36 @@ const Profile = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-4">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="font-medium mb-2">Privacy Settings</h3>
+                  <p className="text-sm text-muted-foreground mb-4">Control what information is visible to other members</p>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="show-email">Show Email Address</Label>
+                        <p className="text-sm text-muted-foreground">Allow other members to see your email address</p>
+                      </div>
+                      <Switch 
+                        id="show-email" 
+                        checked={showEmail}
+                        onCheckedChange={(checked) => handlePrivacyChange('email', checked)}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <Label htmlFor="show-phone">Show Phone Number</Label>
+                        <p className="text-sm text-muted-foreground">Allow other members to see your phone number</p>
+                      </div>
+                      <Switch 
+                        id="show-phone" 
+                        checked={showPhone}
+                        onCheckedChange={(checked) => handlePrivacyChange('phone', checked)}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
                 <div>
                   <h3 className="font-medium mb-2">Email Notifications</h3>
                   <p className="text-sm text-muted-foreground mb-4">Manage what types of emails you receive</p>
