@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { EditProfileDialog } from "@/components/profile/EditProfileDialog";
 
 const Profile = () => {
   const { toast } = useToast();
@@ -18,6 +19,19 @@ const Profile = () => {
   // State for privacy settings
   const [showEmail, setShowEmail] = useState(true);
   const [showPhone, setShowPhone] = useState(true);
+  
+  // State for user profile information
+  const [profileData, setProfileData] = useState({
+    email: "jason.smith@example.com",
+    phoneNumber: "(555) 123-4567",
+    address: "123 University Ave, Campus Housing",
+    major: "Computer Science",
+    gradYear: "Class of 2024",
+    gpa: "3.8",
+  });
+  
+  // State for edit profile dialog
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   const handlePrivacyChange = (setting: 'email' | 'phone', value: boolean) => {
     if (setting === 'email') {
@@ -30,6 +44,25 @@ const Profile = () => {
     toast({
       title: "Privacy setting updated",
       description: `Your ${setting} is now ${value ? 'visible' : 'hidden'} to other members.`,
+    });
+  };
+  
+  const handleProfileSave = (formData: any) => {
+    setProfileData({
+      email: formData.email,
+      phoneNumber: formData.phoneNumber,
+      address: formData.address,
+      major: formData.major,
+      gradYear: formData.gradYear,
+      gpa: formData.gpa,
+    });
+    
+    setShowEmail(formData.showEmail);
+    setShowPhone(formData.showPhone);
+    
+    toast({
+      title: "Profile updated",
+      description: "Your profile information has been updated successfully.",
     });
   };
 
@@ -67,7 +100,12 @@ const Profile = () => {
                     </div>
                   </div>
                 </div>
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="gap-2"
+                  onClick={() => setEditDialogOpen(true)}
+                >
                   <Edit className="h-4 w-4" />
                   Edit Profile
                 </Button>
@@ -81,7 +119,7 @@ const Profile = () => {
                     <ul className="space-y-3">
                       <li className="flex items-center gap-2">
                         <Mail className="h-4 w-4 text-muted-foreground" />
-                        <span>jason.smith@example.com</span>
+                        <span>{profileData.email}</span>
                         {showEmail ? (
                           <Badge variant="outline" className="ml-auto text-xs bg-green-100 text-green-800">
                             <Eye className="h-3 w-3 mr-1" /> Visible
@@ -94,7 +132,7 @@ const Profile = () => {
                       </li>
                       <li className="flex items-center gap-2">
                         <Phone className="h-4 w-4 text-muted-foreground" />
-                        <span>(555) 123-4567</span>
+                        <span>{profileData.phoneNumber}</span>
                         {showPhone ? (
                           <Badge variant="outline" className="ml-auto text-xs bg-green-100 text-green-800">
                             <Eye className="h-3 w-3 mr-1" /> Visible
@@ -107,15 +145,15 @@ const Profile = () => {
                       </li>
                       <li className="flex items-center gap-2">
                         <MapPin className="h-4 w-4 text-muted-foreground" />
-                        <span>123 University Ave, Campus Housing</span>
+                        <span>{profileData.address}</span>
                       </li>
                     </ul>
                   </div>
 
                   <div>
                     <h3 className="text-sm font-medium text-muted-foreground mb-2">Academic Information</h3>
-                    <p>Computer Science, Class of 2024</p>
-                    <p>GPA: 3.8</p>
+                    <p>{profileData.major}, {profileData.gradYear}</p>
+                    <p>GPA: {profileData.gpa}</p>
                   </div>
                 </div>
 
@@ -244,6 +282,23 @@ const Profile = () => {
           </Card>
         </TabsContent>
       </Tabs>
+      
+      {/* Edit Profile Dialog */}
+      <EditProfileDialog 
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        initialData={{
+          email: profileData.email,
+          phoneNumber: profileData.phoneNumber,
+          address: profileData.address,
+          major: profileData.major,
+          gradYear: profileData.gradYear,
+          gpa: profileData.gpa,
+          showEmail: showEmail,
+          showPhone: showPhone,
+        }}
+        onSave={handleProfileSave}
+      />
     </div>
   );
 };
