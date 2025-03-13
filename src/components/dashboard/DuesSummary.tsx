@@ -16,26 +16,21 @@ export interface DuesData {
   progressPercentage: number;
 }
 
+// Move duesData outside of the component
+export const duesData: DuesData = {
+  paidAmount: 250,
+  totalAmount: 500,
+  remainingAmount: 250, // totalAmount - paidAmount
+  dueDate: "April 15, 2024",
+  nextPaymentAmount: 125,
+  progressPercentage: 50 // Math.round((paidAmount / totalAmount) * 100)
+};
+
 const DuesSummary = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   
-  const paidAmount = 250;
-  const totalAmount = 500;
-  const remainingAmount = totalAmount - paidAmount;
-  const dueDate = "April 15, 2024";
-  const nextPaymentAmount = 125;
-  const progressPercentage = Math.round((paidAmount / totalAmount) * 100);
-
-  // Export dues data for reuse
-  export const duesData: DuesData = {
-    paidAmount,
-    totalAmount,
-    remainingAmount,
-    dueDate,
-    nextPaymentAmount,
-    progressPercentage
-  };
+  const { paidAmount, totalAmount, remainingAmount, dueDate, nextPaymentAmount, progressPercentage } = duesData;
 
   return (
     <DashboardCard 
