@@ -11,16 +11,41 @@ import {
 import { duesData } from '@/components/dashboard/DuesSummary';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { CreditCard, Share, Calendar, AlertCircle } from 'lucide-react';
+import { CreditCard, Share, Calendar, AlertCircle, Receipt, FileText } from 'lucide-react';
 import PaymentModal from '@/components/dues/PaymentModal';
 import SharePaymentModal from '@/components/dues/SharePaymentModal';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
 const Dues = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isPaymentPlanModalOpen, setIsPaymentPlanModalOpen] = useState(false);
 
-  const { paidAmount, totalAmount, remainingAmount, dueDate, progressPercentage } = duesData;
+  const { paidAmount, totalAmount, remainingAmount, dueDate, progressPercentage, chargeBreakdown } = duesData;
 
   return (
     <div className="container mx-auto py-6 space-y-8">
@@ -65,35 +90,112 @@ const Dues = () => {
         
         {/* Dues Status Card */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Dues Status</h2>
-          
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-3xl font-bold">${paidAmount}</p>
-                <p className="text-sm text-muted-foreground">of ${totalAmount} paid</p>
-              </div>
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
-                <CreditCard className="h-6 w-6 text-primary" />
-              </div>
-            </div>
+          <Tabs defaultValue="summary" className="w-full">
+            <TabsList className="w-full grid grid-cols-2 mb-4">
+              <TabsTrigger value="summary">Summary</TabsTrigger>
+              <TabsTrigger value="breakdown">Breakdown</TabsTrigger>
+            </TabsList>
             
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <span>Progress</span>
-                <span className="font-medium">{progressPercentage}%</span>
+            <TabsContent value="summary" className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-3xl font-bold">${paidAmount}</p>
+                  <p className="text-sm text-muted-foreground">of ${totalAmount} paid</p>
+                </div>
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <CreditCard className="h-6 w-6 text-primary" />
+                </div>
               </div>
-              <Progress value={progressPercentage} className="h-2" />
-            </div>
+              
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span>Progress</span>
+                  <span className="font-medium">{progressPercentage}%</span>
+                </div>
+                <Progress value={progressPercentage} className="h-2" />
+              </div>
+              
+              <div className="rounded-md bg-muted p-3">
+                <div className="flex items-center justify-between text-sm mb-1">
+                  <span className="font-medium">Remaining</span>
+                  <span className="text-destructive font-medium">${remainingAmount}</span>
+                </div>
+                <p className="text-xs text-muted-foreground">Due on {dueDate}</p>
+              </div>
+              
+              <Button 
+                onClick={() => setIsPaymentModalOpen(true)}
+                className="w-full mt-2"
+              >
+                <CreditCard className="h-4 w-4 mr-2" />
+                Pay Now
+              </Button>
+            </TabsContent>
             
-            <div className="rounded-md bg-muted p-3">
-              <div className="flex items-center justify-between text-sm mb-1">
-                <span className="font-medium">Remaining</span>
-                <span className="text-destructive font-medium">${remainingAmount}</span>
+            <TabsContent value="breakdown">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-sm">Charge Breakdown</h3>
+                  <div className="text-sm text-muted-foreground flex items-center space-x-1">
+                    <Receipt className="h-4 w-4" />
+                    <span>Total: ${totalAmount}</span>
+                  </div>
+                </div>
+                
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Item</TableHead>
+                      <TableHead className="text-right">Amount</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {chargeBreakdown.map((item, index) => (
+                      <TableRow key={index}>
+                        <TableCell>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger className="flex items-center space-x-1 text-sm font-medium">
+                                <span>{item.name}</span>
+                                {item.description && (
+                                  <FileText className="h-3 w-3 text-muted-foreground" />
+                                )}
+                              </TooltipTrigger>
+                              {item.description && (
+                                <TooltipContent>
+                                  <p>{item.description}</p>
+                                </TooltipContent>
+                              )}
+                            </Tooltip>
+                          </TooltipProvider>
+                        </TableCell>
+                        <TableCell className="text-right">${item.amount}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                
+                <div className="rounded-md bg-muted p-3 mt-4">
+                  <div className="flex items-center justify-between text-sm mb-1">
+                    <span className="font-medium">Amount Paid</span>
+                    <span className="text-green-600 font-medium">${paidAmount}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium">Amount Remaining</span>
+                    <span className="text-destructive font-medium">${remainingAmount}</span>
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={() => setIsPaymentModalOpen(true)}
+                  className="w-full mt-2"
+                >
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  Pay Now
+                </Button>
               </div>
-              <p className="text-xs text-muted-foreground">Due on {dueDate}</p>
-            </div>
-          </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
       
@@ -164,6 +266,8 @@ const Dues = () => {
     </div>
   );
 };
+
+export default Dues;
 
 // Payment Plan Modal component
 interface PaymentPlanModalProps {

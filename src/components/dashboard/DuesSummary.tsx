@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Progress } from '@/components/ui/progress';
-import { CreditCard, Share, CalendarDays } from 'lucide-react';
+import { CreditCard, Share, CalendarDays, Receipt } from 'lucide-react';
 import DashboardCard from './DashboardCard';
 import { Button } from '@/components/ui/button';
 import PaymentModal from '../dues/PaymentModal';
@@ -14,6 +14,13 @@ export interface DuesData {
   dueDate: string;
   nextPaymentAmount: number;
   progressPercentage: number;
+  chargeBreakdown: DuesChargeItem[];
+}
+
+export interface DuesChargeItem {
+  name: string;
+  amount: number;
+  description?: string;
 }
 
 // Move duesData outside of the component
@@ -23,7 +30,29 @@ export const duesData: DuesData = {
   remainingAmount: 250, // totalAmount - paidAmount
   dueDate: "April 15, 2024",
   nextPaymentAmount: 125,
-  progressPercentage: 50 // Math.round((paidAmount / totalAmount) * 100)
+  progressPercentage: 50, // Math.round((paidAmount / totalAmount) * 100)
+  chargeBreakdown: [
+    {
+      name: "National Dues",
+      amount: 200,
+      description: "Annual membership fees to national organization"
+    },
+    {
+      name: "Chapter Fees",
+      amount: 150,
+      description: "Local chapter operational costs"
+    },
+    {
+      name: "Event Fund",
+      amount: 100,
+      description: "Contribution to chapter events"
+    },
+    {
+      name: "Insurance",
+      amount: 50,
+      description: "Liability coverage for members"
+    }
+  ]
 };
 
 const DuesSummary = () => {
