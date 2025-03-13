@@ -6,7 +6,8 @@ import {
   MoreVertical, 
   Paperclip,
   Smile,
-  MessageSquarePlus
+  MessageSquarePlus,
+  Pencil
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +21,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import NewDirectMessageDialog from '@/components/messages/NewDirectMessageDialog';
@@ -169,6 +177,8 @@ const Messages = () => {
   const [newMessage, setNewMessage] = useState('');
   const [allConversations, setAllConversations] = useState(conversations);
   const [newDirectMessageOpen, setNewDirectMessageOpen] = useState(false);
+  const [renameDialogOpen, setRenameDialogOpen] = useState(false);
+  const [newGroupName, setNewGroupName] = useState('');
   
   useEffect(() => {
     if (location.state?.openConversation) {
@@ -238,12 +248,14 @@ const Messages = () => {
     });
   };
   
-  const handleCreateNewDirectMessage = (selectedMembers) => {
+  const handleCreateNewDirectMessage = (selectedMembers, initialMessage, groupName) => {
     const isGroup = selectedMembers.length > 1;
     
     let name = '';
     if (isGroup) {
-      if (selectedMembers.length <= 2) {
+      if (groupName && selectedMembers.length >= 3) {
+        name = groupName;
+      } else if (selectedMembers.length <= 2) {
         name = selectedMembers.map(m => m.name).join(' & ');
       } else {
         name = `${selectedMembers[0].name}, ${selectedMembers[1].name} & ${selectedMembers.length - 2} others`;
@@ -256,25 +268,74 @@ const Messages = () => {
       id: Date.now(),
       name: name,
       role: isGroup ? `Group • ${selectedMembers.length} members` : selectedMembers[0].role,
-      lastMessage: '',
+      lastMessage: initialMessage,
       timestamp: 'Just now',
       unread: 0,
       online: false,
       avatar: isGroup ? '/placeholder.svg' : selectedMembers[0].avatar,
       isGroup: isGroup,
-      members: selectedMembers
+      members: selectedMembers,
+      customName: groupName && selectedMembers.length >= 3 ? true : false
     };
     
     setAllConversations(prev => [newConversation, ...prev]);
     setSelectedConversation(newConversation);
     
+    const newMsg = {
+      id: Date.now(),
+      senderId: 1,
+      content: initialMessage,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      read: true
+    };
+    
     toast({
       title: isGroup ? "Group chat created" : "Conversation started",
-      description: `You can now send messages to ${isGroup ? 'the group' : name}.`,
+      description: `You started a conversation with ${isGroup ? 'the group' : name}.`,
     });
     
     setNewDirectMessageOpen(false);
   };
+  
+  const handleRenameGroup = () => {
+    if (newGroupName.trim() === '') return;
+    
+    setAllConversations(prev => 
+      prev.map(conv => {
+        if (conv.id === selectedConversation.id) {
+          return {
+            ...conv,
+            name: newGroupName,
+            customName: true
+          };
+        }
+        return conv;
+      })
+    );
+    
+    setSelectedConversation(prev => ({
+      ...prev,
+      name: newGroupName,
+      customName: true
+    }));
+    
+    setRenameDialogOpen(false);
+    setNewGroupName('');
+    
+    toast({
+      title: "Group renamed",
+      description: `The group has been renamed to "${newGroupName}".`,
+    });
+  };
+  
+  const openRenameDialog = () => {
+    setNewGroupName(selectedConversation.name);
+    setRenameDialogOpen(true);
+  };
+  
+  const canRenameGroup = selectedConversation?.isGroup && 
+    selectedConversation?.members && 
+    selectedConversation.members.length >= 3;
   
   return (
     <div className="h-[calc(100vh-10rem)] overflow-hidden rounded-lg border bg-background shadow-sm animate-fade-in">
@@ -336,7 +397,7 @@ const Messages = () => {
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="truncate text-sm text-muted-foreground">
-                          {conversation.role}
+                          {conversation.lastMessage || conversation.role}
                         </span>
                         {conversation.unread > 0 && (
                           <Badge variant="default" className="ml-auto h-5 w-5 justify-center rounded-full p-0">
@@ -365,8 +426,18 @@ const Messages = () => {
                         : selectedConversation.name.split(' ').map(n => n[0]).join('')}
                     </AvatarFallback>
                   </Avatar>
-                  <div>
+                  <div className="flex items-center gap-2">
                     <div className="font-medium">{selectedConversation.name}</div>
+                    {canRenameGroup && (
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6" 
+                        onClick={openRenameDialog}
+                      >
+                        <Pencil className="h-3 w-3" />
+                      </Button>
+                    )}
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       {selectedConversation.online 
                         ? <span className="flex items-center gap-1">
@@ -499,6 +570,32 @@ const Messages = () => {
         members={members}
         onCreateConversation={handleCreateNewDirectMessage}
       />
+      
+      <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Rename Group Chat</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Input
+                id="name"
+                placeholder="Enter new group name"
+                value={newGroupName}
+                onChange={(e) => setNewGroupName(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRenameDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleRenameGroup} disabled={!newGroupName.trim()}>
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

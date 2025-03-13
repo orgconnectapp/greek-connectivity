@@ -12,9 +12,11 @@ import {
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Search } from 'lucide-react';
+import { Search, Users } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 interface Member {
   id: number;
@@ -27,7 +29,7 @@ interface NewDirectMessageDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   members: Member[];
-  onCreateConversation: (selectedMembers: Member[]) => void;
+  onCreateConversation: (selectedMembers: Member[], initialMessage: string, groupName?: string) => void;
 }
 
 const NewDirectMessageDialog = ({
@@ -39,6 +41,7 @@ const NewDirectMessageDialog = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMembers, setSelectedMembers] = useState<Member[]>([]);
   const [initialMessage, setInitialMessage] = useState('');
+  const [groupName, setGroupName] = useState('');
   
   // Filter members based on search query
   const filteredMembers = members.filter(member => 
@@ -66,15 +69,22 @@ const NewDirectMessageDialog = ({
   };
   
   const handleCreateConversation = () => {
-    if (selectedMembers.length > 0) {
-      onCreateConversation(selectedMembers);
+    if (selectedMembers.length > 0 && initialMessage.trim() !== '') {
+      onCreateConversation(
+        selectedMembers, 
+        initialMessage,
+        selectedMembers.length >= 3 ? groupName : undefined
+      );
       
       // Reset state
       setSelectedMembers([]);
       setSearchQuery('');
       setInitialMessage('');
+      setGroupName('');
     }
   };
+
+  const isGroupChat = selectedMembers.length >= 3;
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -154,17 +164,39 @@ const NewDirectMessageDialog = ({
           )}
         </ScrollArea>
         
-        {/* Initial message input */}
+        {/* Group name input (only for 3+ members) */}
+        {isGroupChat && (
+          <div className="space-y-2 mt-4">
+            <div className="flex items-center gap-2">
+              <Users className="h-4 w-4 text-muted-foreground" />
+              <Label htmlFor="group-name" className="text-sm font-medium">
+                Group Chat Name (optional)
+              </Label>
+            </div>
+            <Input
+              id="group-name"
+              placeholder="Enter a name for this group chat"
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
+            />
+          </div>
+        )}
+        
+        {/* Initial message input - now required */}
         <div className="space-y-2 mt-4">
-          <label htmlFor="initial-message" className="text-sm font-medium">
-            Initial message (optional)
-          </label>
-          <Input
+          <Label htmlFor="initial-message" className="text-sm font-medium">
+            Initial message <span className="text-destructive">*</span>
+          </Label>
+          <Textarea
             id="initial-message"
             placeholder="Type your first message..."
             value={initialMessage}
             onChange={(e) => setInitialMessage(e.target.value)}
+            className="min-h-[80px]"
           />
+          {selectedMembers.length > 0 && initialMessage.trim() === '' && (
+            <p className="text-xs text-destructive">An initial message is required</p>
+          )}
         </div>
         
         <DialogFooter className="mt-4">
@@ -173,7 +205,7 @@ const NewDirectMessageDialog = ({
           </Button>
           <Button 
             onClick={handleCreateConversation} 
-            disabled={selectedMembers.length === 0}
+            disabled={selectedMembers.length === 0 || initialMessage.trim() === ''}
           >
             Start Conversation
           </Button>
