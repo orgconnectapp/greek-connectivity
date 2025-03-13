@@ -19,32 +19,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-interface DonorType {
-  id: number;
-  name: string;
-  avatar: string;
-  amount: number;
-  date: string;
-}
+import { DonorType, FundraiserType } from './data';
 
 interface FundraiserCardProps {
-  fundraiser: {
-    id: number;
-    title: string;
-    description: string;
-    date: string;
-    goal: number;
-    raised: number;
-    participants: number;
-    status: 'active' | 'upcoming' | 'completed';
-    image: string;
-    donors: number[];
-  };
+  fundraiser: FundraiserType;
   visibleDonors: DonorType[];
   remainingDonorNames: string[];
   otherDonorsCount: number;
-  onShare: (fundraiser: any) => void;
+  onShare: (fundraiser: FundraiserType) => void;
   onDoubleClick: () => void;
 }
 

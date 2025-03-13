@@ -1,7 +1,28 @@
 
 import { DollarSign, LineChart, Users } from 'lucide-react';
 
-export const donors = [
+export type DonorType = {
+  id: number;
+  name: string;
+  avatar: string;
+  amount: number;
+  date: string;
+};
+
+export type FundraiserType = {
+  id: number;
+  title: string;
+  description: string;
+  date: string;
+  goal: number;
+  raised: number;
+  participants: number;
+  status: 'active' | 'upcoming' | 'completed';
+  image: string;
+  donors: number[];
+};
+
+export const donors: DonorType[] = [
   { id: 1, name: 'Emma', avatar: 'https://i.pravatar.cc/150?img=1', amount: 50, date: '2024-04-01' },
   { id: 2, name: 'Mike', avatar: 'https://i.pravatar.cc/150?img=2', amount: 25, date: '2024-04-02' },
   { id: 3, name: 'John', avatar: 'https://i.pravatar.cc/150?img=3', amount: 100, date: '2024-04-03' },
@@ -22,7 +43,7 @@ export const donors = [
   { id: 18, name: 'Brandon', avatar: 'https://i.pravatar.cc/150?img=18', amount: 40, date: '2024-04-18' },
 ];
 
-export const fundraisers = [
+export const fundraisers: FundraiserType[] = [
   { 
     id: 1, 
     title: 'Spring Charity Gala', 
@@ -56,7 +77,8 @@ export const fundraisers = [
     raised: 0,
     participants: 5,
     status: 'upcoming',
-    image: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=500'
+    image: 'https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=500',
+    donors: []
   },
   { 
     id: 4, 
@@ -67,7 +89,8 @@ export const fundraisers = [
     raised: 0,
     participants: 0,
     status: 'upcoming',
-    image: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=500'
+    image: 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=500',
+    donors: []
   },
   { 
     id: 5, 
@@ -78,7 +101,8 @@ export const fundraisers = [
     raised: 0,
     participants: 0,
     status: 'upcoming',
-    image: 'https://images.unsplash.com/photo-1516763296043-f676c1105999?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=500'
+    image: 'https://images.unsplash.com/photo-1516763296043-f676c1105999?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=500',
+    donors: []
   },
   { 
     id: 6, 
@@ -89,7 +113,8 @@ export const fundraisers = [
     raised: 350,
     participants: 12,
     status: 'completed',
-    image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=500'
+    image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=500',
+    donors: []
   },
 ];
 

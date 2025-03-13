@@ -15,27 +15,10 @@ import { Progress } from '@/components/ui/progress';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-
-interface DonorType {
-  id: number;
-  name: string;
-  avatar: string;
-  amount: number;
-  date: string;
-}
+import { DonorType, FundraiserType } from './data';
 
 interface FundraiserDetailsDialogProps {
-  fundraiser: {
-    id: number;
-    title: string;
-    description: string;
-    date: string;
-    goal: number;
-    raised: number;
-    participants: number;
-    status: 'active' | 'upcoming' | 'completed';
-    image: string;
-  } | null;
+  fundraiser: FundraiserType | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   donors: DonorType[];

@@ -7,13 +7,13 @@ import FundraisersSearch from '@/components/fundraisers/FundraisersSearch';
 import FundraisersList from '@/components/fundraisers/FundraisersList';
 import FundraiserDetailsDialog from '@/components/fundraisers/FundraiserDetailsDialog';
 import StatsList from '@/components/fundraisers/StatsList';
-import { donors, fundraisers, stats } from '@/components/fundraisers/data';
+import { donors, fundraisers, stats, FundraiserType, DonorType } from '@/components/fundraisers/data';
 
 const Fundraisers = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [selectedFundraiser, setSelectedFundraiser] = useState<typeof fundraisers[0] | null>(null);
+  const [selectedFundraiser, setSelectedFundraiser] = useState<FundraiserType | null>(null);
   
-  const handleShare = (fundraiser: any) => {
+  const handleShare = (fundraiser: FundraiserType) => {
     const shareableLink = `${window.location.origin}/external-payment/${fundraiser.id}`;
     
     navigator.clipboard.writeText(shareableLink)
@@ -32,11 +32,11 @@ const Fundraisers = () => {
       });
   };
 
-  const handleFundraiserDoubleClick = (fundraiser: typeof fundraisers[0]) => {
+  const handleFundraiserDoubleClick = (fundraiser: FundraiserType) => {
     setSelectedFundraiser(fundraiser);
   };
 
-  const getFundraiserDonors = (fundraiserId: number) => {
+  const getFundraiserDonors = (fundraiserId: number): DonorType[] => {
     const fundraiser = fundraisers.find(f => f.id === fundraiserId);
     if (!fundraiser) return [];
     

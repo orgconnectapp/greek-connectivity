@@ -2,27 +2,7 @@
 import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import FundraiserCard from './FundraiserCard';
-
-interface DonorType {
-  id: number;
-  name: string;
-  avatar: string;
-  amount: number;
-  date: string;
-}
-
-interface FundraiserType {
-  id: number;
-  title: string;
-  description: string;
-  date: string;
-  goal: number;
-  raised: number;
-  participants: number;
-  status: 'active' | 'upcoming' | 'completed';
-  image: string;
-  donors: number[];
-}
+import { DonorType, FundraiserType } from './data';
 
 interface FundraisersListProps {
   fundraisers: FundraiserType[];
@@ -49,7 +29,7 @@ const FundraisersList = ({
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {fundraisers
               .filter(f => tab === 'all' || f.status === 'active')
-              .map((fundraiser, index) => {
+              .map((fundraiser) => {
                 const fundraiserDonors = getFundraiserDonors(fundraiser.id);
                 const visibleDonors = fundraiserDonors.slice(0, 3);
                 const remainingDonors = fundraiserDonors.length > 3 ? 
