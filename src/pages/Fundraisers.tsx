@@ -7,6 +7,7 @@ import FundraisersSearch from '@/components/fundraisers/FundraisersSearch';
 import FundraisersList from '@/components/fundraisers/FundraisersList';
 import FundraiserDetailsDialog from '@/components/fundraisers/FundraiserDetailsDialog';
 import DonationDialog from '@/components/fundraisers/DonationDialog';
+import ShareFundraiserDialog from '@/components/fundraisers/ShareFundraiserDialog';
 import StatsList from '@/components/fundraisers/StatsList';
 import { donors, fundraisers, stats, FundraiserType, DonorType } from '@/components/fundraisers/data';
 
@@ -15,24 +16,12 @@ const Fundraisers = () => {
   const [selectedFundraiser, setSelectedFundraiser] = useState<FundraiserType | null>(null);
   const [donationDialogOpen, setDonationDialogOpen] = useState(false);
   const [donatingFundraiser, setDonatingFundraiser] = useState<FundraiserType | null>(null);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [sharingFundraiser, setSharingFundraiser] = useState<FundraiserType | null>(null);
   
   const handleShare = (fundraiser: FundraiserType) => {
-    const shareableLink = `${window.location.origin}/external-payment/${fundraiser.id}`;
-    
-    navigator.clipboard.writeText(shareableLink)
-      .then(() => {
-        toast({
-          title: "Link copied to clipboard",
-          description: `Share this link to collect donations for "${fundraiser.title}"`,
-        });
-      })
-      .catch(() => {
-        toast({
-          title: "Failed to copy link",
-          description: "Please try again or share manually",
-          variant: "destructive",
-        });
-      });
+    setSharingFundraiser(fundraiser);
+    setShareDialogOpen(true);
   };
 
   const handleFundraiserDoubleClick = (fundraiser: FundraiserType) => {
@@ -89,6 +78,12 @@ const Fundraisers = () => {
         open={donationDialogOpen}
         onOpenChange={setDonationDialogOpen}
         fundraiser={donatingFundraiser}
+      />
+
+      <ShareFundraiserDialog
+        open={shareDialogOpen}
+        onOpenChange={setShareDialogOpen}
+        fundraiser={sharingFundraiser}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Search, Filter } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -20,9 +20,6 @@ const FundraisersSearch = ({ onCreateClick }: FundraisersSearchProps) => {
             className="pl-8"
           />
         </div>
-        <Button variant="outline" size="icon">
-          <Filter className="h-4 w-4" />
-        </Button>
       </div>
       
       <Button 

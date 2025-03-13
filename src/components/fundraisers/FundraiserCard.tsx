@@ -126,32 +126,6 @@ const FundraiserCard = ({
           <Progress value={progress} className="h-2" />
         </div>
 
-        {visibleDonors.length > 0 ? (
-          <div className="flex items-center text-sm">
-            <div className="flex -space-x-2 mr-2">
-              {visibleDonors.map((donor) => (
-                <Avatar key={donor.id} className="border-2 border-background h-8 w-8">
-                  <AvatarImage src={donor.avatar} alt={donor.name} />
-                  <AvatarFallback>{donor.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-              ))}
-            </div>
-            <span className="text-muted-foreground">
-              {remainingDonorNames.length > 0 && (
-                <>+ {remainingDonorNames.join(', ')}</>
-              )}
-              {otherDonorsCount > 0 && (
-                <> + {otherDonorsCount} other donor{otherDonorsCount !== 1 ? 's' : ''}</>
-              )}
-            </span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-1 text-sm text-muted-foreground">
-            <Users className="h-4 w-4" />
-            <span>No donors yet</span>
-          </div>
-        )}
-
         {fundraiser.status === 'active' && (
           <div className="flex gap-2">
             <Button 
