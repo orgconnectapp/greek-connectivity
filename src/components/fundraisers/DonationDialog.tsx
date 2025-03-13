@@ -130,13 +130,9 @@ const DonationDialog = ({ open, onOpenChange, fundraiser }: DonationDialogProps)
               
               <div className="pt-4">
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem 
-                    value="custom" 
-                    id="amount-custom" 
-                    checked={selectedAmount === 'custom'}
-                    onClick={() => setSelectedAmount('custom')}
-                    className="sr-only" 
-                  />
+                  <RadioGroup value={selectedAmount === 'custom' ? 'custom' : ''} onValueChange={() => setSelectedAmount('custom')}>
+                    <RadioGroupItem value="custom" id="amount-custom" className="sr-only" />
+                  </RadioGroup>
                   <Label
                     htmlFor="amount-custom"
                     className={`flex items-center space-x-2 w-full h-14 border rounded-md px-3 transition-colors cursor-pointer ${
@@ -144,6 +140,7 @@ const DonationDialog = ({ open, onOpenChange, fundraiser }: DonationDialogProps)
                         ? 'bg-primary/10 border-primary'
                         : 'bg-card hover:bg-accent'
                     }`}
+                    onClick={() => setSelectedAmount('custom')}
                   >
                     <div className="flex items-center w-full">
                       <span className="text-muted-foreground">$</span>

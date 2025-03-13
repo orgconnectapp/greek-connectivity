@@ -82,6 +82,7 @@ const Fundraisers = () => {
         open={!!selectedFundraiser}
         onOpenChange={(open) => !open && setSelectedFundraiser(null)}
         donors={selectedFundraiser ? getFundraiserDonors(selectedFundraiser.id) : []}
+        onContribute={handleContribute}
       />
 
       <DonationDialog

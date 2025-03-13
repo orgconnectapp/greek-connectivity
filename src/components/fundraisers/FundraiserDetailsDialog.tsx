@@ -22,15 +22,24 @@ interface FundraiserDetailsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   donors: DonorType[];
+  onContribute?: (fundraiser: FundraiserType) => void;
 }
 
 const FundraiserDetailsDialog = ({
   fundraiser,
   open,
   onOpenChange,
-  donors
+  donors,
+  onContribute
 }: FundraiserDetailsDialogProps) => {
   if (!fundraiser) return null;
+
+  const handleContribute = () => {
+    if (onContribute && fundraiser) {
+      onOpenChange(false); // Close the details dialog
+      onContribute(fundraiser);
+    }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -104,7 +113,7 @@ const FundraiserDetailsDialog = ({
             </div>
 
             {fundraiser.status === 'active' && (
-              <Button className="w-full">Contribute Now</Button>
+              <Button className="w-full" onClick={handleContribute}>Contribute Now</Button>
             )}
           </div>
         </div>
