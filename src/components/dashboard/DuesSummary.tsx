@@ -1,11 +1,20 @@
 
 import React, { useState } from 'react';
 import { Progress } from '@/components/ui/progress';
-import { CreditCard, Share } from 'lucide-react';
+import { CreditCard, Share, CalendarDays } from 'lucide-react';
 import DashboardCard from './DashboardCard';
 import { Button } from '@/components/ui/button';
 import PaymentModal from '../dues/PaymentModal';
 import SharePaymentModal from '../dues/SharePaymentModal';
+
+export interface DuesData {
+  paidAmount: number;
+  totalAmount: number;
+  remainingAmount: number;
+  dueDate: string;
+  nextPaymentAmount: number;
+  progressPercentage: number;
+}
 
 const DuesSummary = () => {
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
@@ -17,6 +26,16 @@ const DuesSummary = () => {
   const dueDate = "April 15, 2024";
   const nextPaymentAmount = 125;
   const progressPercentage = Math.round((paidAmount / totalAmount) * 100);
+
+  // Export dues data for reuse
+  export const duesData: DuesData = {
+    paidAmount,
+    totalAmount,
+    remainingAmount,
+    dueDate,
+    nextPaymentAmount,
+    progressPercentage
+  };
 
   return (
     <DashboardCard 
