@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { X } from 'lucide-react';
+import { X, Share2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -23,6 +23,7 @@ interface FundraiserDetailsDialogProps {
   onOpenChange: (open: boolean) => void;
   donors: DonorType[];
   onContribute?: (fundraiser: FundraiserType) => void;
+  onShare?: (fundraiser: FundraiserType) => void;
 }
 
 const FundraiserDetailsDialog = ({
@@ -30,7 +31,8 @@ const FundraiserDetailsDialog = ({
   open,
   onOpenChange,
   donors,
-  onContribute
+  onContribute,
+  onShare
 }: FundraiserDetailsDialogProps) => {
   if (!fundraiser) return null;
 
@@ -41,17 +43,38 @@ const FundraiserDetailsDialog = ({
     }
   };
 
+  const handleShare = () => {
+    if (onShare && fundraiser) {
+      onShare(fundraiser);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="text-2xl">{fundraiser.title}</DialogTitle>
-            <DialogClose asChild>
-              <Button variant="ghost" size="icon">
-                <X className="h-4 w-4" />
-              </Button>
-            </DialogClose>
+            <div className="flex gap-2">
+              {fundraiser.status === 'active' && (
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleShare();
+                  }}
+                  title="Share fundraiser"
+                >
+                  <Share2 className="h-4 w-4" />
+                </Button>
+              )}
+              <DialogClose asChild>
+                <Button variant="ghost" size="icon">
+                  <X className="h-4 w-4" />
+                </Button>
+              </DialogClose>
+            </div>
           </div>
           <DialogDescription>
             {fundraiser.description}
@@ -112,9 +135,16 @@ const FundraiserDetailsDialog = ({
               </div>
             </div>
 
-            {fundraiser.status === 'active' && (
-              <Button className="w-full" onClick={handleContribute}>Contribute Now</Button>
-            )}
+            <div className="flex gap-2">
+              {fundraiser.status === 'active' && (
+                <>
+                  <Button className="flex-1" onClick={handleContribute}>Contribute</Button>
+                  <Button variant="outline" size="icon" onClick={handleShare}>
+                    <Share2 className="h-4 w-4" />
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
         </div>
 

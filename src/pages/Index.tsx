@@ -7,12 +7,15 @@ import DashboardCard from '@/components/dashboard/DashboardCard';
 import { Button } from '@/components/ui/button';
 import { CalendarDays, MessageSquare, Bell } from 'lucide-react';
 import FundraiserDetailsDialog from '@/components/fundraisers/FundraiserDetailsDialog';
+import ShareFundraiserDialog from '@/components/fundraisers/ShareFundraiserDialog';
 import { FundraiserType, DonorType } from '@/components/fundraisers/data';
 
 const Index = () => {
   // Add state for fundraiser details dialog
   const [selectedFundraiser, setSelectedFundraiser] = useState<FundraiserType | null>(null);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [sharingFundraiser, setSharingFundraiser] = useState<FundraiserType | null>(null);
   
   // Sample fundraisers data - this would typically come from an API
   const fundraisers = [
@@ -80,6 +83,12 @@ const Index = () => {
   const handleFundraiserDoubleClick = (fundraiser: any) => {
     setSelectedFundraiser(fundraiser);
     setDetailsDialogOpen(true);
+  };
+
+  // Function to handle share button click
+  const handleShareFundraiser = (fundraiser: FundraiserType) => {
+    setSharingFundraiser(fundraiser);
+    setShareDialogOpen(true);
   };
 
   // Function to get donors for a specific fundraiser
@@ -164,6 +173,14 @@ const Index = () => {
         onOpenChange={setDetailsDialogOpen}
         donors={getFundraiserDonors()}
         onContribute={undefined} // You can implement contribution functionality if needed
+        onShare={handleShareFundraiser}
+      />
+
+      {/* Share Fundraiser Dialog */}
+      <ShareFundraiserDialog
+        open={shareDialogOpen}
+        onOpenChange={setShareDialogOpen}
+        fundraiser={sharingFundraiser}
       />
     </div>
   );
