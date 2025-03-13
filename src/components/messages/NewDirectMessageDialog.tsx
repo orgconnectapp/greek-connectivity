@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -73,7 +72,7 @@ const NewDirectMessageDialog = ({
       onCreateConversation(
         selectedMembers, 
         initialMessage,
-        selectedMembers.length >= 3 ? groupName : undefined
+        selectedMembers.length > 1 ? groupName : undefined
       );
       
       // Reset state
@@ -84,7 +83,7 @@ const NewDirectMessageDialog = ({
     }
   };
 
-  const isGroupChat = selectedMembers.length >= 3;
+  const isGroupChat = selectedMembers.length > 1;
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -164,7 +163,7 @@ const NewDirectMessageDialog = ({
           )}
         </ScrollArea>
         
-        {/* Group name input (only for 3+ members) */}
+        {/* Group name input (now for 2+ members) */}
         {isGroupChat && (
           <div className="space-y-2 mt-4">
             <div className="flex items-center gap-2">
@@ -182,7 +181,7 @@ const NewDirectMessageDialog = ({
           </div>
         )}
         
-        {/* Initial message input - now required */}
+        {/* Initial message input - required */}
         <div className="space-y-2 mt-4">
           <Label htmlFor="initial-message" className="text-sm font-medium">
             Initial message <span className="text-destructive">*</span>

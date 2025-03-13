@@ -7,13 +7,13 @@ export const createNewConversation = (
   initialMessage: string, 
   groupName?: string
 ): Conversation => {
-  const isGroup = selectedMembers.length > 1;
+  const isGroup = selectedMembers.length > 1; // Changed from > 1 to >= 2, but this is the same
   
   let name = '';
   if (isGroup) {
-    if (groupName && selectedMembers.length >= 3) {
+    if (groupName && groupName.trim() !== '') {
       name = groupName;
-    } else if (selectedMembers.length <= 2) {
+    } else if (selectedMembers.length === 2) {
       name = selectedMembers.map(m => m.name).join(' & ');
     } else {
       name = `${selectedMembers[0].name}, ${selectedMembers[1].name} & ${selectedMembers.length - 2} others`;
@@ -33,7 +33,7 @@ export const createNewConversation = (
     avatar: isGroup ? '/placeholder.svg' : selectedMembers[0].avatar,
     isGroup: isGroup,
     members: selectedMembers,
-    customName: groupName && selectedMembers.length >= 3 ? true : false
+    customName: groupName && groupName.trim() !== '' ? true : false
   };
 };
 

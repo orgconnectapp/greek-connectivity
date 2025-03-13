@@ -9,6 +9,9 @@ const EmptyConversation = () => {
         <p className="text-muted-foreground">
           Choose a conversation from the list to start messaging
         </p>
+        <p className="text-muted-foreground mt-2 text-sm">
+          Conversations with 2 or more people are treated as group chats
+        </p>
       </div>
     </div>
   );
