@@ -31,8 +31,10 @@ import {
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import NewDirectMessageDialog from '@/components/messages/NewDirectMessageDialog';
+import { Conversation } from '@/components/messages/types';
+import { Member } from '@/components/messages/NewDirectMessageDialog';
 
-const conversations = [
+const conversations: Conversation[] = [
   {
     id: 1,
     name: 'Emma Johnson',
@@ -131,7 +133,7 @@ const messages = [
   }
 ];
 
-const members = [
+const members: Member[] = [
   {
     id: 1,
     name: 'Emma Johnson',
@@ -173,9 +175,9 @@ const members = [
 const Messages = () => {
   const location = useLocation();
   const { toast } = useToast();
-  const [selectedConversation, setSelectedConversation] = useState(conversations[0]);
+  const [selectedConversation, setSelectedConversation] = useState<Conversation>(conversations[0]);
   const [newMessage, setNewMessage] = useState('');
-  const [allConversations, setAllConversations] = useState(conversations);
+  const [allConversations, setAllConversations] = useState<Conversation[]>(conversations);
   const [newDirectMessageOpen, setNewDirectMessageOpen] = useState(false);
   const [renameDialogOpen, setRenameDialogOpen] = useState(false);
   const [newGroupName, setNewGroupName] = useState('');
@@ -195,7 +197,7 @@ const Messages = () => {
           description: "Ready to chat!",
         });
       } else {
-        const newConversation = {
+        const newConversation: Conversation = {
           id: allConversations.length + 1,
           name: name,
           role: 'Member',
@@ -248,7 +250,7 @@ const Messages = () => {
     });
   };
   
-  const handleCreateNewDirectMessage = (selectedMembers, initialMessage, groupName) => {
+  const handleCreateNewDirectMessage = (selectedMembers: Member[], initialMessage: string, groupName?: string) => {
     const isGroup = selectedMembers.length > 1;
     
     let name = '';
@@ -264,7 +266,7 @@ const Messages = () => {
       name = selectedMembers[0].name;
     }
     
-    const newConversation = {
+    const newConversation: Conversation = {
       id: Date.now(),
       name: name,
       role: isGroup ? `Group • ${selectedMembers.length} members` : selectedMembers[0].role,

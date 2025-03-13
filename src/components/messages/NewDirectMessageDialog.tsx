@@ -18,7 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 
-interface Member {
+export interface Member {
   id: number;
   name: string;
   role: string;
