@@ -28,6 +28,7 @@ interface FundraiserCardProps {
   otherDonorsCount: number;
   onShare: (fundraiser: FundraiserType) => void;
   onDoubleClick: () => void;
+  onContribute: () => void;
 }
 
 const FundraiserCard = ({
@@ -37,6 +38,7 @@ const FundraiserCard = ({
   otherDonorsCount,
   onShare,
   onDoubleClick,
+  onContribute,
 }: FundraiserCardProps) => {
   const progress = Math.min(Math.round((fundraiser.raised / fundraiser.goal) * 100), 100);
 
@@ -152,7 +154,15 @@ const FundraiserCard = ({
 
         {fundraiser.status === 'active' && (
           <div className="flex gap-2">
-            <Button className="flex-1">Contribute</Button>
+            <Button 
+              className="flex-1"
+              onClick={(e) => {
+                e.stopPropagation();
+                onContribute();
+              }}
+            >
+              Contribute
+            </Button>
             <Button
               variant="outline"
               size="icon"

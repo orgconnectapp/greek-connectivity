@@ -8,6 +8,7 @@ interface FundraisersListProps {
   fundraisers: FundraiserType[];
   handleShare: (fundraiser: FundraiserType) => void;
   handleFundraiserDoubleClick: (fundraiser: FundraiserType) => void;
+  handleContribute: (fundraiser: FundraiserType) => void;
   getFundraiserDonors: (fundraiserId: number) => DonorType[];
 }
 
@@ -15,6 +16,7 @@ const FundraisersList = ({
   fundraisers, 
   handleShare, 
   handleFundraiserDoubleClick,
+  handleContribute,
   getFundraiserDonors
 }: FundraisersListProps) => {
   return (
@@ -46,6 +48,7 @@ const FundraisersList = ({
                     otherDonorsCount={otherDonorsCount}
                     onShare={handleShare}
                     onDoubleClick={() => handleFundraiserDoubleClick(fundraiser)}
+                    onContribute={() => handleContribute(fundraiser)}
                   />
                 );
               })}

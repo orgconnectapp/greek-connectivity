@@ -6,12 +6,15 @@ import CreateFundraiserDialog from '@/components/fundraisers/CreateFundraiserDia
 import FundraisersSearch from '@/components/fundraisers/FundraisersSearch';
 import FundraisersList from '@/components/fundraisers/FundraisersList';
 import FundraiserDetailsDialog from '@/components/fundraisers/FundraiserDetailsDialog';
+import DonationDialog from '@/components/fundraisers/DonationDialog';
 import StatsList from '@/components/fundraisers/StatsList';
 import { donors, fundraisers, stats, FundraiserType, DonorType } from '@/components/fundraisers/data';
 
 const Fundraisers = () => {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [selectedFundraiser, setSelectedFundraiser] = useState<FundraiserType | null>(null);
+  const [donationDialogOpen, setDonationDialogOpen] = useState(false);
+  const [donatingFundraiser, setDonatingFundraiser] = useState<FundraiserType | null>(null);
   
   const handleShare = (fundraiser: FundraiserType) => {
     const shareableLink = `${window.location.origin}/external-payment/${fundraiser.id}`;
@@ -34,6 +37,11 @@ const Fundraisers = () => {
 
   const handleFundraiserDoubleClick = (fundraiser: FundraiserType) => {
     setSelectedFundraiser(fundraiser);
+  };
+
+  const handleContribute = (fundraiser: FundraiserType) => {
+    setDonatingFundraiser(fundraiser);
+    setDonationDialogOpen(true);
   };
 
   const getFundraiserDonors = (fundraiserId: number): DonorType[] => {
@@ -60,6 +68,7 @@ const Fundraisers = () => {
         fundraisers={fundraisers}
         handleShare={handleShare}
         handleFundraiserDoubleClick={handleFundraiserDoubleClick}
+        handleContribute={handleContribute}
         getFundraiserDonors={getFundraiserDonors}
       />
       
@@ -73,6 +82,12 @@ const Fundraisers = () => {
         open={!!selectedFundraiser}
         onOpenChange={(open) => !open && setSelectedFundraiser(null)}
         donors={selectedFundraiser ? getFundraiserDonors(selectedFundraiser.id) : []}
+      />
+
+      <DonationDialog
+        open={donationDialogOpen}
+        onOpenChange={setDonationDialogOpen}
+        fundraiser={donatingFundraiser}
       />
     </div>
   );
