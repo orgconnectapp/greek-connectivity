@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Users, UserCog, Flag, Upload, Download, Bell, Check, X, Calendar, ChevronDown, Info } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import MemberApprovalDialog, { PendingMember } from './MemberApprovalDialog';
 
 interface FundraiserData {
   id: number;
@@ -26,6 +26,43 @@ interface FundraiserData {
   createdAt: string;
   image: string;
 }
+
+// Mock pending members data
+const MOCK_PENDING_MEMBERS: PendingMember[] = [
+  {
+    id: "1",
+    name: "Jordan Smith",
+    email: "jordan.smith@university.edu",
+    phone: "(555) 123-4567",
+    major: "Computer Science",
+    year: "Junior",
+    bio: "I'm excited to join this organization to develop my leadership skills and network with like-minded peers.",
+    appliedDate: "2 days ago",
+    profileImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+  },
+  {
+    id: "2",
+    name: "Taylor Johnson",
+    email: "taylor.johnson@university.edu",
+    phone: "(555) 987-6543",
+    major: "Business Administration",
+    year: "Sophomore",
+    bio: "Looking to gain valuable experience in event planning and community service through this organization.",
+    appliedDate: "3 days ago",
+    profileImage: "https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+  },
+  {
+    id: "3",
+    name: "Alex Rivera",
+    email: "alex.rivera@university.edu",
+    phone: "(555) 456-7890",
+    major: "Marketing",
+    year: "Freshman",
+    bio: "Passionate about making a difference on campus and developing professional skills.",
+    appliedDate: "4 days ago",
+    profileImage: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+  }
+];
 
 const OverviewSection = () => {
   const [fundraisers, setFundraisers] = useState<FundraiserData[]>([
@@ -64,6 +101,11 @@ const OverviewSection = () => {
   
   const [selectedFundraiser, setSelectedFundraiser] = useState<FundraiserData | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  
+  const [isMemberSectionOpen, setIsMemberSectionOpen] = useState(false);
+  const [pendingMembers, setPendingMembers] = useState<PendingMember[]>(MOCK_PENDING_MEMBERS);
+  const [selectedMember, setSelectedMember] = useState<PendingMember | null>(null);
+  const [isMemberDetailsOpen, setIsMemberDetailsOpen] = useState(false);
 
   const handleFundraiserApproval = (id: number, approved: boolean) => {
     setFundraisers(prevFundraisers => 
@@ -85,6 +127,25 @@ const OverviewSection = () => {
     setIsDetailsOpen(true);
   };
 
+  const handleMemberDoubleClick = (member: PendingMember) => {
+    setSelectedMember(member);
+    setIsMemberDetailsOpen(true);
+  };
+
+  const handleMemberApproval = (id: string, approved: boolean) => {
+    // In a real app, this would make an API call to update the member status
+    const updatedMembers = pendingMembers.filter(member => member.id !== id);
+    setPendingMembers(updatedMembers);
+    
+    toast({
+      title: approved ? "Member approved" : "Member rejected",
+      description: `The membership application has been ${approved ? 'approved' : 'rejected'}.`,
+    });
+    
+    // Close the dialog if it's open
+    setIsMemberDetailsOpen(false);
+  };
+
   return (
     <div className="space-y-4">
       <div className="grid gap-4 md:grid-cols-2">
@@ -102,12 +163,100 @@ const OverviewSection = () => {
           title="Pending Member Approvals"
           description="Members awaiting verification"
         >
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">3</div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-2xl font-bold">{pendingMembers.length}</div>
             <UserCog className="h-4 w-4 text-muted-foreground" />
           </div>
+          
+          <Collapsible
+            open={isMemberSectionOpen}
+            onOpenChange={setIsMemberSectionOpen}
+            className="w-full"
+          >
+            <CollapsibleTrigger asChild>
+              <Button 
+                variant="outline" 
+                className="w-full flex justify-between items-center"
+                size="sm"
+              >
+                {isMemberSectionOpen ? "Hide Details" : "View Details"}
+                <ChevronDown 
+                  className={`h-4 w-4 transition-transform duration-200 ${
+                    isMemberSectionOpen ? "transform rotate-180" : ""
+                  }`} 
+                />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-4">
+              {pendingMembers.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  No pending member applications
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {pendingMembers.map((member) => (
+                    <div 
+                      key={member.id} 
+                      className="border rounded-lg p-4 space-y-3 cursor-pointer hover:bg-gray-50 transition-colors"
+                      onDoubleClick={() => handleMemberDoubleClick(member)}
+                    >
+                      <div className="flex items-center gap-3">
+                        {member.profileImage && (
+                          <img 
+                            src={member.profileImage} 
+                            alt={member.name}
+                            className="h-10 w-10 rounded-full object-cover"
+                          />
+                        )}
+                        <div>
+                          <h3 className="font-semibold">{member.name}</h3>
+                          <p className="text-sm text-muted-foreground">{member.major}, {member.year}</p>
+                        </div>
+                      </div>
+                      
+                      <p className="text-sm">Applied: {member.appliedDate}</p>
+                      
+                      <div className="flex gap-2 pt-2">
+                        <Button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMemberApproval(member.id, true);
+                          }}
+                          className="bg-green-600 hover:bg-green-700"
+                          size="sm"
+                        >
+                          <Check className="mr-2 h-4 w-4" />
+                          Approve
+                        </Button>
+                        <Button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMemberApproval(member.id, false);
+                          }}
+                          variant="destructive"
+                          size="sm"
+                        >
+                          <X className="mr-2 h-4 w-4" />
+                          Reject
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CollapsibleContent>
+          </Collapsible>
         </DashboardCard>
       </div>
+      
+      {/* Member Approval Dialog */}
+      <MemberApprovalDialog
+        member={selectedMember}
+        isOpen={isMemberDetailsOpen}
+        onOpenChange={setIsMemberDetailsOpen}
+        onApprove={(id) => handleMemberApproval(id, true)}
+        onReject={(id) => handleMemberApproval(id, false)}
+      />
       
       <DashboardCard
         title="Event Approvals"
