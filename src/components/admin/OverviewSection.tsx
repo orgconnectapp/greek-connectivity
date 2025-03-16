@@ -1,12 +1,14 @@
 
 import React, { useState } from 'react';
-import { Users, UserCog, Flag, Upload, Download, Bell, Check, X } from 'lucide-react';
+import { Users, UserCog, Flag, Upload, Download, Bell, Check, X, Calendar, ChevronDown } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
 import DashboardCard from '@/components/dashboard/DashboardCard';
 import EventApprovalSection from '@/components/admin/EventApprovalSection';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Event } from '@/components/calendar/types';
 
 interface FundraiserData {
   id: number;
@@ -48,6 +50,9 @@ const OverviewSection = () => {
       image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=1267&ixlib=rb-4.0.3"
     }
   ]);
+  
+  const [isEventSectionOpen, setIsEventSectionOpen] = useState(false);
+  const [pendingEventsCount, setPendingEventsCount] = useState(3); // Initial count based on mock data
 
   const handleFundraiserApproval = (id: number, approved: boolean) => {
     setFundraisers(prevFundraisers => 
@@ -58,6 +63,10 @@ const OverviewSection = () => {
       title: approved ? "Fundraiser approved" : "Fundraiser denied",
       description: `The fundraiser has been ${approved ? 'approved and is now live' : 'denied and removed from the system'}.`,
     });
+  };
+
+  const handleEventApproval = (events: Event[]) => {
+    setPendingEventsCount(events.length);
   };
 
   return (
@@ -84,7 +93,39 @@ const OverviewSection = () => {
         </DashboardCard>
       </div>
       
-      <EventApprovalSection />
+      <DashboardCard
+        title="Event Approvals"
+        description="Events awaiting your approval"
+      >
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-2xl font-bold">{pendingEventsCount}</div>
+          <Calendar className="h-4 w-4 text-muted-foreground" />
+        </div>
+        
+        <Collapsible
+          open={isEventSectionOpen}
+          onOpenChange={setIsEventSectionOpen}
+          className="w-full"
+        >
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="outline" 
+              className="w-full flex justify-between items-center"
+              size="sm"
+            >
+              {isEventSectionOpen ? "Hide Details" : "View Details"}
+              <ChevronDown 
+                className={`h-4 w-4 transition-transform duration-200 ${
+                  isEventSectionOpen ? "transform rotate-180" : ""
+                }`} 
+              />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-4">
+            <EventApprovalSection onEventApproval={handleEventApproval} />
+          </CollapsibleContent>
+        </Collapsible>
+      </DashboardCard>
       
       <Card>
         <CardHeader>

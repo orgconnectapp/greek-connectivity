@@ -2,7 +2,6 @@
 import React from "react";
 import { Check, Calendar, X, MapPin, Clock } from "lucide-react";
 import { format } from "date-fns";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
@@ -80,78 +79,67 @@ const EventApprovalSection: React.FC<EventApprovalSectionProps> = ({ onEventAppr
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Calendar className="h-5 w-5 text-primary" />
-          Event Approvals
-        </CardTitle>
-        <CardDescription>
-          Review and approve events created by members
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {pendingEvents.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            No pending events to approve
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {pendingEvents.map(event => (
-              <div key={event.id} className="border rounded-lg p-4 space-y-3">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-semibold text-lg">{event.title}</h3>
-                  <Badge className={EVENT_TYPES[event.type].color}>
-                    {EVENT_TYPES[event.type].label}
-                  </Badge>
+    <div>
+      {pendingEvents.length === 0 ? (
+        <div className="text-center py-8 text-muted-foreground">
+          No pending events to approve
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {pendingEvents.map(event => (
+            <div key={event.id} className="border rounded-lg p-4 space-y-3">
+              <div className="flex justify-between items-start">
+                <h3 className="font-semibold text-lg">{event.title}</h3>
+                <Badge className={EVENT_TYPES[event.type].color}>
+                  {EVENT_TYPES[event.type].label}
+                </Badge>
+              </div>
+              
+              <p className="text-sm text-muted-foreground">
+                Created by: {event.createdBy}
+              </p>
+              
+              <p className="text-sm">{event.description}</p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <span>{format(event.date, "EEEE, MMMM d, yyyy")}</span>
                 </div>
-                
-                <p className="text-sm text-muted-foreground">
-                  Created by: {event.createdBy}
-                </p>
-                
-                <p className="text-sm">{event.description}</p>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span>{format(event.date, "EEEE, MMMM d, yyyy")}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span>{event.startTime} - {event.endTime}</span>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-2 text-sm">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span>{event.location}</span>
-                </div>
-                
-                <div className="flex gap-2 pt-2">
-                  <Button 
-                    onClick={() => handleEventApproval(event.id, true)}
-                    className="bg-green-600 hover:bg-green-700"
-                    size="sm"
-                  >
-                    <Check className="mr-2 h-4 w-4" />
-                    Approve
-                  </Button>
-                  <Button 
-                    onClick={() => handleEventApproval(event.id, false)}
-                    variant="destructive"
-                    size="sm"
-                  >
-                    <X className="mr-2 h-4 w-4" />
-                    Reject
-                  </Button>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-muted-foreground" />
+                  <span>{event.startTime} - {event.endTime}</span>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+              
+              <div className="flex items-center gap-2 text-sm">
+                <MapPin className="h-4 w-4 text-muted-foreground" />
+                <span>{event.location}</span>
+              </div>
+              
+              <div className="flex gap-2 pt-2">
+                <Button 
+                  onClick={() => handleEventApproval(event.id, true)}
+                  className="bg-green-600 hover:bg-green-700"
+                  size="sm"
+                >
+                  <Check className="mr-2 h-4 w-4" />
+                  Approve
+                </Button>
+                <Button 
+                  onClick={() => handleEventApproval(event.id, false)}
+                  variant="destructive"
+                  size="sm"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Reject
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 
