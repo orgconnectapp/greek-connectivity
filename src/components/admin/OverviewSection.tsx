@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Users, UserCog, Flag, Upload, Download, Bell, Check, X, Calendar, ChevronDown } from 'lucide-react';
+import { Users, UserCog, Flag, Upload, Download, Bell, Check, X, Calendar, ChevronDown, Info } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +9,13 @@ import DashboardCard from '@/components/dashboard/DashboardCard';
 import EventApprovalSection from '@/components/admin/EventApprovalSection';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Event } from '@/components/calendar/types';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface FundraiserData {
   id: number;
@@ -52,7 +59,11 @@ const OverviewSection = () => {
   ]);
   
   const [isEventSectionOpen, setIsEventSectionOpen] = useState(false);
-  const [pendingEventsCount, setPendingEventsCount] = useState(3); // Initial count based on mock data
+  const [isFundraiserSectionOpen, setIsFundraiserSectionOpen] = useState(false);
+  const [pendingEventsCount, setPendingEventsCount] = useState(3);
+  
+  const [selectedFundraiser, setSelectedFundraiser] = useState<FundraiserData | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   const handleFundraiserApproval = (id: number, approved: boolean) => {
     setFundraisers(prevFundraisers => 
@@ -67,6 +78,11 @@ const OverviewSection = () => {
 
   const handleEventApproval = (events: Event[]) => {
     setPendingEventsCount(events.length);
+  };
+  
+  const handleFundraiserDoubleClick = (fundraiser: FundraiserData) => {
+    setSelectedFundraiser(fundraiser);
+    setIsDetailsOpen(true);
   };
 
   return (
@@ -127,67 +143,172 @@ const OverviewSection = () => {
         </Collapsible>
       </DashboardCard>
       
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Flag className="h-5 w-5 text-primary" />
-            Fundraiser Approvals
-          </CardTitle>
-          <CardDescription>
-            Review and approve fundraisers created by members
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {fundraisers.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              No pending fundraisers to approve
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {fundraisers.map((fundraiser) => (
-                <div key={fundraiser.id} className="flex flex-col md:flex-row gap-4 border rounded-lg p-4">
-                  <div className="w-full md:w-1/4">
+      <DashboardCard
+        title="Fundraiser Approvals"
+        description="Review and approve fundraisers created by members"
+      >
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-2xl font-bold">{fundraisers.length}</div>
+          <Flag className="h-4 w-4 text-muted-foreground" />
+        </div>
+        
+        <Collapsible
+          open={isFundraiserSectionOpen}
+          onOpenChange={setIsFundraiserSectionOpen}
+          className="w-full"
+        >
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="outline" 
+              className="w-full flex justify-between items-center"
+              size="sm"
+            >
+              {isFundraiserSectionOpen ? "Hide Details" : "View Details"}
+              <ChevronDown 
+                className={`h-4 w-4 transition-transform duration-200 ${
+                  isFundraiserSectionOpen ? "transform rotate-180" : ""
+                }`} 
+              />
+            </Button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="mt-4">
+            {fundraisers.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                No pending fundraisers to approve
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {fundraisers.map((fundraiser) => (
+                  <div 
+                    key={fundraiser.id} 
+                    className="flex flex-col md:flex-row gap-4 border rounded-lg p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                    onDoubleClick={() => handleFundraiserDoubleClick(fundraiser)}
+                  >
+                    <div className="w-full md:w-1/4">
+                      <img 
+                        src={fundraiser.image} 
+                        alt={fundraiser.title}
+                        className="rounded-md object-cover w-full h-[140px]"
+                      />
+                    </div>
+                    <div className="flex-1 space-y-2">
+                      <div className="flex justify-between items-start">
+                        <h3 className="font-semibold text-lg">{fundraiser.title}</h3>
+                        <Badge variant="outline" className="text-xs">
+                          Submitted {fundraiser.createdAt}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">Created by: {fundraiser.creator}</p>
+                      <p className="text-sm">Goal: ${fundraiser.goal}</p>
+                      <p className="text-sm">{fundraiser.description}</p>
+                      <div className="flex gap-2 pt-2">
+                        <Button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleFundraiserApproval(fundraiser.id, true);
+                          }}
+                          className="bg-green-600 hover:bg-green-700"
+                          size="sm"
+                        >
+                          <Check className="mr-2 h-4 w-4" />
+                          Approve
+                        </Button>
+                        <Button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleFundraiserApproval(fundraiser.id, false);
+                          }}
+                          variant="destructive"
+                          size="sm"
+                        >
+                          <X className="mr-2 h-4 w-4" />
+                          Deny
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CollapsibleContent>
+        </Collapsible>
+      </DashboardCard>
+      
+      {/* Fundraiser Details Dialog */}
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <DialogContent className="max-w-2xl">
+          {selectedFundraiser && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Flag className="h-5 w-5 text-primary" />
+                  {selectedFundraiser.title}
+                </DialogTitle>
+                <DialogDescription>
+                  Fundraiser details and approval options
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-4 py-4">
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="w-full md:w-1/3">
                     <img 
-                      src={fundraiser.image} 
-                      alt={fundraiser.title}
-                      className="rounded-md object-cover w-full h-[140px]"
+                      src={selectedFundraiser.image} 
+                      alt={selectedFundraiser.title}
+                      className="rounded-md object-cover w-full h-auto"
                     />
                   </div>
-                  <div className="flex-1 space-y-2">
-                    <div className="flex justify-between items-start">
-                      <h3 className="font-semibold text-lg">{fundraiser.title}</h3>
-                      <Badge variant="outline" className="text-xs">
-                        Submitted {fundraiser.createdAt}
-                      </Badge>
+                  
+                  <div className="flex-1 space-y-3">
+                    <div>
+                      <span className="font-medium">Description:</span>
+                      <p className="mt-1">{selectedFundraiser.description}</p>
                     </div>
-                    <p className="text-sm text-muted-foreground">Created by: {fundraiser.creator}</p>
-                    <p className="text-sm">Goal: ${fundraiser.goal}</p>
-                    <p className="text-sm">{fundraiser.description}</p>
-                    <div className="flex gap-2 pt-2">
-                      <Button 
-                        onClick={() => handleFundraiserApproval(fundraiser.id, true)}
-                        className="bg-green-600 hover:bg-green-700"
-                        size="sm"
-                      >
-                        <Check className="mr-2 h-4 w-4" />
-                        Approve
-                      </Button>
-                      <Button 
-                        onClick={() => handleFundraiserApproval(fundraiser.id, false)}
-                        variant="destructive"
-                        size="sm"
-                      >
-                        <X className="mr-2 h-4 w-4" />
-                        Deny
-                      </Button>
+                    
+                    <div>
+                      <span className="font-medium">Created by:</span>
+                      <p className="mt-1">{selectedFundraiser.creator}</p>
+                    </div>
+                    
+                    <div>
+                      <span className="font-medium">Fundraising Goal:</span>
+                      <p className="mt-1 font-semibold">${selectedFundraiser.goal}</p>
+                    </div>
+                    
+                    <div>
+                      <span className="font-medium">Submitted:</span>
+                      <p className="mt-1">{selectedFundraiser.createdAt}</p>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+              
+              <div className="flex justify-end gap-2 mt-4">
+                <Button 
+                  onClick={() => {
+                    handleFundraiserApproval(selectedFundraiser.id, true);
+                    setIsDetailsOpen(false);
+                  }}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <Check className="mr-2 h-4 w-4" />
+                  Approve Fundraiser
+                </Button>
+                <Button 
+                  onClick={() => {
+                    handleFundraiserApproval(selectedFundraiser.id, false);
+                    setIsDetailsOpen(false);
+                  }}
+                  variant="destructive"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Deny Fundraiser
+                </Button>
+              </div>
+            </>
           )}
-        </CardContent>
-      </Card>
+        </DialogContent>
+      </Dialog>
       
       <Card>
         <CardHeader>

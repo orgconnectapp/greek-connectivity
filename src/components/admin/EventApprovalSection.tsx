@@ -1,11 +1,17 @@
-
 import React from "react";
-import { Check, Calendar, X, MapPin, Clock } from "lucide-react";
+import { Check, Calendar, X, MapPin, Clock, Info } from "lucide-react";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 import { Event } from "@/components/calendar/types";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // Mock pending events data
 const MOCK_PENDING_EVENTS: Event[] = [
@@ -53,6 +59,8 @@ interface EventApprovalSectionProps {
 
 const EventApprovalSection: React.FC<EventApprovalSectionProps> = ({ onEventApproval }) => {
   const [pendingEvents, setPendingEvents] = React.useState<Event[]>(MOCK_PENDING_EVENTS);
+  const [selectedEvent, setSelectedEvent] = React.useState<Event | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
   const handleEventApproval = (id: string, approved: boolean) => {
     // In a real app, this would make an API call to update the event status
@@ -68,6 +76,11 @@ const EventApprovalSection: React.FC<EventApprovalSectionProps> = ({ onEventAppr
       title: approved ? "Event approved" : "Event rejected",
       description: `The event has been ${approved ? 'approved and added to the calendar' : 'rejected'}.`,
     });
+  };
+  
+  const handleEventDoubleClick = (event: Event) => {
+    setSelectedEvent(event);
+    setIsDetailsOpen(true);
   };
   
   const EVENT_TYPES = {
@@ -87,7 +100,11 @@ const EventApprovalSection: React.FC<EventApprovalSectionProps> = ({ onEventAppr
       ) : (
         <div className="space-y-4">
           {pendingEvents.map(event => (
-            <div key={event.id} className="border rounded-lg p-4 space-y-3">
+            <div 
+              key={event.id} 
+              className="border rounded-lg p-4 space-y-3 cursor-pointer hover:bg-gray-50 transition-colors"
+              onDoubleClick={() => handleEventDoubleClick(event)}
+            >
               <div className="flex justify-between items-start">
                 <h3 className="font-semibold text-lg">{event.title}</h3>
                 <Badge className={EVENT_TYPES[event.type].color}>
@@ -119,7 +136,10 @@ const EventApprovalSection: React.FC<EventApprovalSectionProps> = ({ onEventAppr
               
               <div className="flex gap-2 pt-2">
                 <Button 
-                  onClick={() => handleEventApproval(event.id, true)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEventApproval(event.id, true);
+                  }}
                   className="bg-green-600 hover:bg-green-700"
                   size="sm"
                 >
@@ -127,7 +147,10 @@ const EventApprovalSection: React.FC<EventApprovalSectionProps> = ({ onEventAppr
                   Approve
                 </Button>
                 <Button 
-                  onClick={() => handleEventApproval(event.id, false)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEventApproval(event.id, false);
+                  }}
                   variant="destructive"
                   size="sm"
                 >
@@ -139,6 +162,93 @@ const EventApprovalSection: React.FC<EventApprovalSectionProps> = ({ onEventAppr
           ))}
         </div>
       )}
+
+      {/* Event Details Dialog */}
+      <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
+        <DialogContent className="max-w-2xl">
+          {selectedEvent && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-primary" />
+                  {selectedEvent.title}
+                </DialogTitle>
+                <DialogDescription>
+                  Event details and approval options
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-4 py-4">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Event Type:</span>
+                  <Badge className={EVENT_TYPES[selectedEvent.type].color}>
+                    {EVENT_TYPES[selectedEvent.type].label}
+                  </Badge>
+                </div>
+                
+                <div>
+                  <span className="font-medium">Description:</span>
+                  <p className="mt-1">{selectedEvent.description}</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <span className="font-medium">Date:</span>
+                    <p className="mt-1 flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      {format(selectedEvent.date, "EEEE, MMMM d, yyyy")}
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <span className="font-medium">Time:</span>
+                    <p className="mt-1 flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      {selectedEvent.startTime} - {selectedEvent.endTime}
+                    </p>
+                  </div>
+                </div>
+                
+                <div>
+                  <span className="font-medium">Location:</span>
+                  <p className="mt-1 flex items-center gap-2">
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                    {selectedEvent.location}
+                  </p>
+                </div>
+                
+                <div>
+                  <span className="font-medium">Submitted by:</span>
+                  <p className="mt-1">{selectedEvent.createdBy}</p>
+                </div>
+              </div>
+              
+              <div className="flex justify-end gap-2 mt-4">
+                <Button 
+                  onClick={() => {
+                    handleEventApproval(selectedEvent.id, true);
+                    setIsDetailsOpen(false);
+                  }}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <Check className="mr-2 h-4 w-4" />
+                  Approve Event
+                </Button>
+                <Button 
+                  onClick={() => {
+                    handleEventApproval(selectedEvent.id, false);
+                    setIsDetailsOpen(false);
+                  }}
+                  variant="destructive"
+                >
+                  <X className="mr-2 h-4 w-4" />
+                  Reject Event
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
