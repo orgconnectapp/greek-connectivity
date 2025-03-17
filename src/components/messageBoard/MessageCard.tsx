@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ThumbsUp, MessageCircle, Clock, Copy, Flag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -54,7 +55,7 @@ const MessageCard = ({ message, onLike, onPin, onOpenComments, isLiked }: Messag
 
   return (
     <Card 
-      className={`${message.isPinned ? "border-primary/50 bg-primary/5" : ""}`}
+      className="hover:border-primary/30 transition-colors"
       onDoubleClick={onOpenComments}
     >
       <CardHeader className="pb-3">
