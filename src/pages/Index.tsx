@@ -3,6 +3,7 @@ import DuesSummary from '@/components/dashboard/DuesSummary';
 import FundraiserCard from '@/components/dashboard/FundraiserCard';
 import MembershipStats from '@/components/dashboard/MembershipStats';
 import DashboardCard from '@/components/dashboard/DashboardCard';
+import OrganizationInfo from '@/components/dashboard/OrganizationInfo';
 import { Button } from '@/components/ui/button';
 import { CalendarDays, MessageSquare, Bell } from 'lucide-react';
 import FundraiserDetailsDialog from '@/components/fundraisers/FundraiserDetailsDialog';
@@ -11,15 +12,13 @@ import DonationDialog from '@/components/fundraisers/DonationDialog';
 import { FundraiserType, DonorType } from '@/components/fundraisers/data';
 
 const Index = () => {
-  // Add state for fundraiser details dialog
   const [selectedFundraiser, setSelectedFundraiser] = useState<FundraiserType | null>(null);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [sharingFundraiser, setSharingFundraiser] = useState<FundraiserType | null>(null);
   const [donationDialogOpen, setDonationDialogOpen] = useState(false);
   const [donatingFundraiser, setDonatingFundraiser] = useState<FundraiserType | null>(null);
-  
-  // Sample fundraisers data - this would typically come from an API
+
   const fundraisers = [
     {
       id: 1,
@@ -56,7 +55,6 @@ const Index = () => {
     }
   ];
 
-  // Sample donors data - this would typically come from an API
   const donors: DonorType[] = [
     {
       id: 1,
@@ -81,27 +79,22 @@ const Index = () => {
     }
   ];
 
-  // Function to handle double click on a fundraiser card
   const handleFundraiserDoubleClick = (fundraiser: any) => {
     setSelectedFundraiser(fundraiser);
     setDetailsDialogOpen(true);
   };
 
-  // Function to handle share button click
   const handleShareFundraiser = (fundraiser: FundraiserType) => {
     setSharingFundraiser(fundraiser);
     setShareDialogOpen(true);
   };
 
-  // Function to handle contribute button click
   const handleContributeFundraiser = (fundraiser: FundraiserType) => {
     setDonatingFundraiser(fundraiser);
     setDonationDialogOpen(true);
   };
 
-  // Function to get donors for a specific fundraiser
   const getFundraiserDonors = () => {
-    // In a real application, this would filter donors based on the fundraiser ID
     return donors;
   };
 
@@ -113,6 +106,8 @@ const Index = () => {
           Welcome back! Here's what's happening with your organization.
         </p>
       </div>
+      
+      <OrganizationInfo />
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <div className="animate-fade-up" style={{ animationDelay: '0.1s' }}>
@@ -174,7 +169,6 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Fundraiser Details Dialog */}
       <FundraiserDetailsDialog
         fundraiser={selectedFundraiser}
         open={detailsDialogOpen}
@@ -184,14 +178,12 @@ const Index = () => {
         onShare={handleShareFundraiser}
       />
 
-      {/* Share Fundraiser Dialog */}
       <ShareFundraiserDialog
         open={shareDialogOpen}
         onOpenChange={setShareDialogOpen}
         fundraiser={sharingFundraiser}
       />
 
-      {/* Donation Dialog */}
       <DonationDialog
         open={donationDialogOpen}
         onOpenChange={setDonationDialogOpen}
