@@ -66,6 +66,14 @@ const Navbar = () => {
   const handleNavigateToSettings = () => {
     navigate('/profile?tab=settings');
   };
+  
+  const handleNavigateToDashboard = () => {
+    navigate('/dashboard');
+  };
+  
+  const handleNavigateToBilling = () => {
+    navigate('/billing');
+  };
 
   return (
     <header className="sticky top-0 z-30 w-full border-b bg-background/80 backdrop-blur-md">
@@ -125,11 +133,11 @@ const Navbar = () => {
                 <DropdownMenuItem onClick={() => navigate('/profile')}>
                   Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate('/organizations')}>
-                  My Organizations
+                <DropdownMenuItem onClick={handleNavigateToDashboard}>
+                  Dashboard
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleNavigateToSettings}>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleNavigateToBilling}>Billing</DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">

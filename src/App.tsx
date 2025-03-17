@@ -15,6 +15,7 @@ import MessageBoard from "./pages/MessageBoard";
 import AdminPanel from "./pages/AdminPanel";
 import Calendar from "./pages/Calendar";
 import Profile from "./pages/Profile";
+import Billing from "./pages/Billing";
 import NotFound from "./pages/NotFound";
 import ExternalPayment from "./pages/ExternalPayment";
 import Auth from "./pages/Auth";
@@ -51,6 +52,7 @@ const App = () => (
               <Route path="/admin" element={<AdminPanel />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/profile/:username" element={<UserProfile />} />
+              <Route path="/billing" element={<Billing />} />
             </Route>
             
             {/* External routes (no Layout) */}
