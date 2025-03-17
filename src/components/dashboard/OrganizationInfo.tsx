@@ -6,10 +6,10 @@ import { Card, CardContent } from '@/components/ui/card';
 const OrganizationInfo = () => {
   // This would typically come from an API or context
   const organizationInfo = {
-    name: "Alpha Phi Omega",
-    chapterName: "Gamma Alpha",
-    description: "Alpha Phi Omega is a national co-educational service fraternity founded on the principles of leadership, friendship, and service. Our chapter focuses on campus and community service projects.",
-    founded: 1925,
+    name: "Lambda Chi Alpha",
+    chapterName: "Phi Alpha Zeta",
+    description: "Lambda Chi Alpha is a national co-educational service fraternity founded on the principles of leadership, friendship, and service. Our chapter focuses on campus and community service projects.",
+    founded: 1977,
     memberCount: 87,
     achievements: "Distinguished Service Chapter Award, 2023"
   };
