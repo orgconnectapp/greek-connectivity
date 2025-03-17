@@ -63,6 +63,10 @@ const Navbar = () => {
     return location.pathname === path;
   };
 
+  const handleNavigateToSettings = () => {
+    navigate('/profile?tab=settings');
+  };
+
   return (
     <header className="sticky top-0 z-30 w-full border-b bg-background/80 backdrop-blur-md">
       <div className="container flex h-16 items-center justify-between">
@@ -124,7 +128,7 @@ const Navbar = () => {
                 <DropdownMenuItem onClick={() => navigate('/organizations')}>
                   My Organizations
                 </DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleNavigateToSettings}>Settings</DropdownMenuItem>
                 <DropdownMenuItem>Billing</DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
