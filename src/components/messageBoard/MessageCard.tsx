@@ -84,7 +84,7 @@ const MessageCard = ({ message, onLike, onPin, onOpenComments, isLiked }: Messag
           </div>
         </div>
         {message.isPinned && (
-          <Badge variant="default" className="bg-primary">Pinned</Badge>
+          <Badge variant="default" className="bg-primary px-2 py-0.5 text-xs font-medium">Pinned</Badge>
         )}
       </CardHeader>
       <CardContent>
