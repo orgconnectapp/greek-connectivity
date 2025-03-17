@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Phone, MapPin, Calendar, Clock, Edit, Eye, EyeOff } from "lucide-react";
+import { Mail, Phone, MapPin, Calendar, Edit, Eye, EyeOff } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
@@ -165,17 +165,7 @@ const Profile = () => {
                         <Calendar className="h-4 w-4 text-muted-foreground" />
                         <span>Initiated: Spring 2022</span>
                       </li>
-                      <li className="flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                        <span>Service Hours: 45 (This Semester)</span>
-                      </li>
                     </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="text-sm font-medium text-muted-foreground mb-2">Payment Status</h3>
-                    <Badge className="bg-green-500">Dues Paid</Badge>
-                    <p className="mt-2 text-sm">Last payment: September 15, 2023</p>
                   </div>
                 </div>
               </div>
