@@ -1,16 +1,25 @@
-
 import { z } from 'zod';
 
 export const baseSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
   memberType: z.enum(['active', 'alumni']),
+  schoolEmail: z.string().email("Invalid email").endsWith('.edu', "Must use a school email").optional(),
+  personalEmail: z.string().email("Invalid email").optional(),
+  phoneNumber: z.string().min(10, "Invalid phone number"),
+  initiationYear: z.string().optional(),
+  memberId: z.string().optional(),
+  address: z.string().optional(),
+  city: z.string().optional(),
+  state: z.string().optional(),
+  zipCode: z.string().optional(),
+  birthDate: z.string().optional(),
   major: z.string().optional(),
   currentYear: z.enum(['freshman', 'sophomore', 'junior', 'senior', 'graduate']).optional(),
   email: z.string().email("Invalid email").endsWith('.edu', "Must use a school email"),
-  phoneNumber: z.string().min(10, "Invalid phone number"),
   organization: z.string().min(1, "Organization is required"),
   profilePicture: z.string().optional(),
+  linkedIn: z.string().optional(),
   password: z.string().min(6, "Password must be at least 6 characters"),
   university: z.string().optional(),
 });

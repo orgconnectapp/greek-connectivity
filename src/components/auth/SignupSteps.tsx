@@ -7,9 +7,10 @@ import { toast } from '@/hooks/use-toast';
 import { baseSchema, SignupFormData } from './signupSchemas';
 import { PersonalInfoStep } from './steps/PersonalInfoStep';
 import { MemberTypeStep } from './steps/MemberTypeStep';
-import { ContactAndAcademicStep } from './steps/ContactAndAcademicStep';
-import { ProfilePictureStep } from './steps/ProfilePictureStep';
-import { OrganizationStep } from './steps/OrganizationStep';
+import { ActiveContactStep } from './steps/ActiveContactStep';
+import { MembershipInfoStep } from './steps/MembershipInfoStep';
+import { PersonalDetailsStep } from './steps/PersonalDetailsStep';
+import { ProfileCompletionStep } from './steps/ProfileCompletionStep';
 import { AlumniContactStep } from './steps/AlumniContactStep';
 import { AlumniPasswordStep } from './steps/AlumniPasswordStep';
 import { AlumniUniversityStep } from './steps/AlumniUniversityStep';
@@ -25,11 +26,21 @@ export const SignupSteps = () => {
       lastName: '',
       memberType: 'active',
       email: '',
+      schoolEmail: '',
+      personalEmail: '',
       phoneNumber: '',
+      initiationYear: '',
+      memberId: '',
+      address: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      birthDate: '',
       major: '',
       currentYear: 'freshman',
       organization: '',
       profilePicture: '',
+      linkedIn: '',
       password: '',
       university: '',
     },
@@ -81,15 +92,19 @@ export const SignupSteps = () => {
       case 3:
         return isAlumni 
           ? <AlumniContactStep form={form} onNextStep={nextStep} />
-          : <ContactAndAcademicStep form={form} onNextStep={nextStep} />;
+          : <ActiveContactStep form={form} onNextStep={nextStep} />;
       case 4:
         return isAlumni 
           ? <AlumniPasswordStep form={form} onNextStep={nextStep} />
-          : <ProfilePictureStep form={form} onNextStep={nextStep} />;
+          : <MembershipInfoStep form={form} onNextStep={nextStep} />;
       case 5:
         return isAlumni 
           ? <AlumniUniversityStep form={form} onSubmit={onSubmit} />
-          : <OrganizationStep form={form} onSubmit={onSubmit} />;
+          : <PersonalDetailsStep form={form} onNextStep={nextStep} />;
+      case 6:
+        return isAlumni 
+          ? null // Alumni process ends at step 5
+          : <ProfileCompletionStep form={form} onSubmit={onSubmit} />;
       default:
         return null;
     }
@@ -109,20 +124,24 @@ export const SignupSteps = () => {
       switch (step) {
         case 1: return "Personal Information";
         case 2: return "Member Type";
-        case 3: return "Contact & Academic Information";
-        case 4: return "Profile Picture";
-        case 5: return "Organization Selection";
+        case 3: return "Contact Information";
+        case 4: return "Membership Information";
+        case 5: return "Personal Details";
+        case 6: return "Profile Completion";
         default: return "";
       }
     }
   };
+
+  // Calculate the total number of steps based on member type
+  const totalSteps = isAlumni ? 5 : 6;
 
   return (
     <div className="space-y-6">
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-tight">Create an account</h2>
         <p className="text-sm text-muted-foreground">
-          Step {step} of 5: {getStepLabel()}
+          Step {step} of {totalSteps}: {getStepLabel()}
         </p>
       </div>
       {renderStep()}
