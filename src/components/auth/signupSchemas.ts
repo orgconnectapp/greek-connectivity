@@ -1,3 +1,4 @@
+
 import { z } from 'zod';
 
 export const baseSchema = z.object({
@@ -7,6 +8,7 @@ export const baseSchema = z.object({
   schoolEmail: z.string().email("Invalid email").endsWith('.edu', "Must use a school email").optional(),
   personalEmail: z.string().email("Invalid email").optional(),
   phoneNumber: z.string().min(10, "Invalid phone number"),
+  initiationSemester: z.enum(['fall', 'spring']).optional(),
   initiationYear: z.string().optional(),
   memberId: z.string().optional(),
   address: z.string().optional(),

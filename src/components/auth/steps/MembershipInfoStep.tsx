@@ -5,6 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { SignupFormData } from '../signupSchemas';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface MembershipInfoStepProps {
   form: UseFormReturn<SignupFormData>;
@@ -19,6 +26,22 @@ export const MembershipInfoStep = ({ form, onNextStep }: MembershipInfoStepProps
         <p className="text-sm text-muted-foreground mt-1">
           Please provide your Lambda Chi Alpha membership details
         </p>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="initiationSemester">Initiation Semester</Label>
+        <Select
+          defaultValue={form.getValues("initiationSemester") || "fall"}
+          onValueChange={(value) => form.setValue("initiationSemester", value as "fall" | "spring")}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select semester" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="fall">Fall</SelectItem>
+            <SelectItem value="spring">Spring</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-2">
@@ -57,10 +80,10 @@ export const MembershipInfoStep = ({ form, onNextStep }: MembershipInfoStepProps
       <Button 
         className="w-full mt-4" 
         onClick={() => {
-          if (form.getValues('initiationYear') && form.getValues('memberId')) {
+          if (form.getValues('initiationSemester') && form.getValues('initiationYear') && form.getValues('memberId')) {
             onNextStep();
           } else {
-            form.trigger(['initiationYear', 'memberId']);
+            form.trigger(['initiationSemester', 'initiationYear', 'memberId']);
           }
         }}
       >

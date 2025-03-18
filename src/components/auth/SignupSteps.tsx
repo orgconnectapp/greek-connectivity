@@ -14,10 +14,12 @@ import { ProfileCompletionStep } from './steps/ProfileCompletionStep';
 import { AlumniContactStep } from './steps/AlumniContactStep';
 import { AlumniPasswordStep } from './steps/AlumniPasswordStep';
 import { AlumniUniversityStep } from './steps/AlumniUniversityStep';
+import { useNavigate } from 'react-router-dom';
 
 export const SignupSteps = () => {
   const [step, setStep] = useState(1);
   const { signup } = useAuth();
+  const navigate = useNavigate();
   
   const form = useForm<SignupFormData>({
     resolver: zodResolver(baseSchema),
@@ -29,6 +31,7 @@ export const SignupSteps = () => {
       schoolEmail: '',
       personalEmail: '',
       phoneNumber: '',
+      initiationSemester: 'fall',
       initiationYear: '',
       memberId: '',
       address: '',
@@ -69,9 +72,12 @@ export const SignupSteps = () => {
       
       await signup(userData);
       toast({
-        title: "Request Submitted",
-        description: "Your request to join the organization has been submitted. You will receive access once approved.",
+        title: "Account Created",
+        description: "Your account has been created successfully.",
       });
+      
+      // Redirect to message board after successful signup
+      navigate("/message-board");
     } catch (error) {
       toast({
         title: "Error",
