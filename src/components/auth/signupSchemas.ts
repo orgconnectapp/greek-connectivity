@@ -26,6 +26,34 @@ export const baseSchema = z.object({
   university: z.string().optional(),
 });
 
+// Create a refined schema for active members with required fields
+export const activeSchema = baseSchema.refine(
+  (data) => {
+    // Only apply these requirements for active members
+    if (data.memberType === 'active') {
+      return !!(
+        data.firstName &&
+        data.lastName &&
+        data.email && // School email
+        data.phoneNumber &&
+        data.initiationSemester &&
+        data.initiationYear &&
+        data.memberId &&
+        data.address &&
+        data.city &&
+        data.state &&
+        data.zipCode &&
+        data.birthDate
+      );
+    }
+    return true;
+  },
+  {
+    message: "Please fill out all required fields",
+    path: ["missingFields"],
+  }
+);
+
 export type SignupFormData = z.infer<typeof baseSchema>;
 
 // Mock data for organizations (in a real app, this would come from an API)

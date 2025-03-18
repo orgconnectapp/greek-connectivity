@@ -1,6 +1,6 @@
 
 import { UseFormReturn } from 'react-hook-form';
-import { ArrowRight, Calendar, Hash } from 'lucide-react';
+import { ArrowRight, Calendar, Hash, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,17 @@ interface MembershipInfoStepProps {
 }
 
 export const MembershipInfoStep = ({ form, onNextStep }: MembershipInfoStepProps) => {
+  const validateAndContinue = () => {
+    form.trigger(['initiationSemester', 'initiationYear', 'memberId']).then((isValid) => {
+      if (isValid &&
+          form.getValues('initiationSemester') &&
+          form.getValues('initiationYear') &&
+          form.getValues('memberId')) {
+        onNextStep();
+      }
+    });
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -29,7 +40,7 @@ export const MembershipInfoStep = ({ form, onNextStep }: MembershipInfoStepProps
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="initiationSemester">Initiation Semester</Label>
+        <Label htmlFor="initiationSemester">Initiation Semester <span className="text-red-500">*</span></Label>
         <Select
           defaultValue={form.getValues("initiationSemester") || "fall"}
           onValueChange={(value) => form.setValue("initiationSemester", value as "fall" | "spring")}
@@ -45,13 +56,13 @@ export const MembershipInfoStep = ({ form, onNextStep }: MembershipInfoStepProps
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="initiationYear">Initiation Year</Label>
+        <Label htmlFor="initiationYear">Initiation Year <span className="text-red-500">*</span></Label>
         <div className="relative">
           <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             id="initiationYear"
             type="text"
-            {...form.register("initiationYear")}
+            {...form.register("initiationYear", { required: "Initiation year is required" })}
             placeholder="2022"
             className="pl-10"
           />
@@ -62,12 +73,12 @@ export const MembershipInfoStep = ({ form, onNextStep }: MembershipInfoStepProps
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="memberId">Member ID</Label>
+        <Label htmlFor="memberId">Member ID <span className="text-red-500">*</span></Label>
         <div className="relative">
           <Hash className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             id="memberId"
-            {...form.register("memberId")}
+            {...form.register("memberId", { required: "Member ID is required" })}
             placeholder="Enter your member ID"
             className="pl-10"
           />
@@ -77,18 +88,14 @@ export const MembershipInfoStep = ({ form, onNextStep }: MembershipInfoStepProps
         )}
       </div>
 
-      <Button 
-        className="w-full mt-4" 
-        onClick={() => {
-          if (form.getValues('initiationSemester') && form.getValues('initiationYear') && form.getValues('memberId')) {
-            onNextStep();
-          } else {
-            form.trigger(['initiationSemester', 'initiationYear', 'memberId']);
-          }
-        }}
-      >
-        Next <ArrowRight className="ml-2 h-4 w-4" />
-      </Button>
+      <div className="flex justify-between mt-6">
+        <Button variant="outline" type="button" onClick={() => form.setValue('memberType', form.getValues('memberType'))}>
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        </Button>
+        <Button onClick={validateAndContinue}>
+          Next <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 };

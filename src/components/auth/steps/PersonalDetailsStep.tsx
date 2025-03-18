@@ -1,6 +1,6 @@
 
 import { UseFormReturn } from 'react-hook-form';
-import { ArrowRight, Home, MapPin, Calendar } from 'lucide-react';
+import { ArrowRight, Home, Calendar, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -12,6 +12,19 @@ interface PersonalDetailsStepProps {
 }
 
 export const PersonalDetailsStep = ({ form, onNextStep }: PersonalDetailsStepProps) => {
+  const validateAndContinue = () => {
+    form.trigger(['address', 'city', 'state', 'zipCode', 'birthDate']).then((isValid) => {
+      if (isValid && 
+          form.getValues('address') && 
+          form.getValues('city') && 
+          form.getValues('state') && 
+          form.getValues('zipCode') &&
+          form.getValues('birthDate')) {
+        onNextStep();
+      }
+    });
+  };
+
   return (
     <div className="space-y-4">
       <div>
@@ -22,12 +35,12 @@ export const PersonalDetailsStep = ({ form, onNextStep }: PersonalDetailsStepPro
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="address">Address</Label>
+        <Label htmlFor="address">Address <span className="text-red-500">*</span></Label>
         <div className="relative">
           <Home className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             id="address"
-            {...form.register("address")}
+            {...form.register("address", { required: "Address is required" })}
             placeholder="123 Main St"
             className="pl-10"
           />
@@ -39,10 +52,10 @@ export const PersonalDetailsStep = ({ form, onNextStep }: PersonalDetailsStepPro
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="city">City</Label>
+          <Label htmlFor="city">City <span className="text-red-500">*</span></Label>
           <Input
             id="city"
-            {...form.register("city")}
+            {...form.register("city", { required: "City is required" })}
             placeholder="Anytown"
           />
           {form.formState.errors.city && (
@@ -50,10 +63,10 @@ export const PersonalDetailsStep = ({ form, onNextStep }: PersonalDetailsStepPro
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="state">State</Label>
+          <Label htmlFor="state">State <span className="text-red-500">*</span></Label>
           <Input
             id="state"
-            {...form.register("state")}
+            {...form.register("state", { required: "State is required" })}
             placeholder="CA"
           />
           {form.formState.errors.state && (
@@ -64,10 +77,10 @@ export const PersonalDetailsStep = ({ form, onNextStep }: PersonalDetailsStepPro
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="zipCode">ZIP Code</Label>
+          <Label htmlFor="zipCode">ZIP Code <span className="text-red-500">*</span></Label>
           <Input
             id="zipCode"
-            {...form.register("zipCode")}
+            {...form.register("zipCode", { required: "ZIP code is required" })}
             placeholder="12345"
           />
           {form.formState.errors.zipCode && (
@@ -75,13 +88,13 @@ export const PersonalDetailsStep = ({ form, onNextStep }: PersonalDetailsStepPro
           )}
         </div>
         <div className="space-y-2">
-          <Label htmlFor="birthDate">Birth Date</Label>
+          <Label htmlFor="birthDate">Birth Date <span className="text-red-500">*</span></Label>
           <div className="relative">
             <Calendar className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
               id="birthDate"
               type="date"
-              {...form.register("birthDate")}
+              {...form.register("birthDate", { required: "Birth date is required" })}
               className="pl-10"
             />
           </div>
@@ -91,19 +104,14 @@ export const PersonalDetailsStep = ({ form, onNextStep }: PersonalDetailsStepPro
         </div>
       </div>
 
-      <Button 
-        className="w-full mt-4" 
-        onClick={() => {
-          if (form.getValues('address') && form.getValues('city') && 
-              form.getValues('state') && form.getValues('zipCode')) {
-            onNextStep();
-          } else {
-            form.trigger(['address', 'city', 'state', 'zipCode']);
-          }
-        }}
-      >
-        Next <ArrowRight className="ml-2 h-4 w-4" />
-      </Button>
+      <div className="flex justify-between mt-6">
+        <Button variant="outline" type="button" onClick={() => window.history.back()}>
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        </Button>
+        <Button onClick={validateAndContinue}>
+          Next <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 };

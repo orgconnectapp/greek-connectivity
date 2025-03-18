@@ -1,11 +1,12 @@
 
 import { UseFormReturn } from 'react-hook-form';
-import { Check, ImagePlus, Linkedin } from 'lucide-react';
+import { Check, ImagePlus, Linkedin, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { SignupFormData } from '../signupSchemas';
 import { useState } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ProfileCompletionStepProps {
   form: UseFormReturn<SignupFormData>;
@@ -15,6 +16,7 @@ interface ProfileCompletionStepProps {
 export const ProfileCompletionStep = ({ form, onSubmit }: ProfileCompletionStepProps) => {
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -29,7 +31,43 @@ export const ProfileCompletionStep = ({ form, onSubmit }: ProfileCompletionStepP
     }
   };
 
+  const validateAllRequiredFields = () => {
+    // For active members, we need to validate all required fields
+    if (form.getValues('memberType') === 'active') {
+      const requiredFields = {
+        firstName: form.getValues('firstName'),
+        lastName: form.getValues('lastName'),
+        email: form.getValues('email'),
+        phoneNumber: form.getValues('phoneNumber'),
+        initiationSemester: form.getValues('initiationSemester'),
+        initiationYear: form.getValues('initiationYear'),
+        memberId: form.getValues('memberId'),
+        address: form.getValues('address'),
+        city: form.getValues('city'),
+        state: form.getValues('state'),
+        zipCode: form.getValues('zipCode'),
+        birthDate: form.getValues('birthDate'),
+      };
+      
+      const missingFields = Object.entries(requiredFields)
+        .filter(([_, value]) => !value)
+        .map(([key]) => key);
+      
+      if (missingFields.length > 0) {
+        setValidationError("Please fill out all required fields before completing registration");
+        return false;
+      }
+    }
+    
+    return true;
+  };
+
   const handleComplete = async () => {
+    if (!validateAllRequiredFields()) {
+      return;
+    }
+    
+    setValidationError(null);
     setIsSubmitting(true);
     try {
       await form.handleSubmit(onSubmit)();
@@ -46,6 +84,12 @@ export const ProfileCompletionStep = ({ form, onSubmit }: ProfileCompletionStepP
           Add a profile picture and connect your LinkedIn account
         </p>
       </div>
+
+      {validationError && (
+        <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-800">
+          <AlertDescription>{validationError}</AlertDescription>
+        </Alert>
+      )}
 
       <div className="flex flex-col items-center space-y-4 my-6">
         <div className="relative">
@@ -89,17 +133,22 @@ export const ProfileCompletionStep = ({ form, onSubmit }: ProfileCompletionStepP
         <p className="text-xs text-muted-foreground">Connect your LinkedIn profile (optional)</p>
       </div>
 
-      <Button 
-        className="w-full mt-8" 
-        onClick={handleComplete}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          "Creating your account..."
-        ) : (
-          <>Complete <Check className="ml-2 h-4 w-4" /></>
-        )}
-      </Button>
+      <div className="flex justify-between mt-8">
+        <Button variant="outline" type="button" onClick={() => window.history.back()}>
+          <ArrowLeft className="mr-2 h-4 w-4" /> Back
+        </Button>
+        <Button 
+          onClick={handleComplete}
+          disabled={isSubmitting}
+          className="px-6"
+        >
+          {isSubmitting ? (
+            "Creating your account..."
+          ) : (
+            <>Complete <Check className="ml-2 h-4 w-4" /></>
+          )}
+        </Button>
+      </div>
     </div>
   );
 };

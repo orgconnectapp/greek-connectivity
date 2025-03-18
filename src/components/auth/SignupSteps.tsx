@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
-import { baseSchema, SignupFormData } from './signupSchemas';
+import { baseSchema, activeSchema, SignupFormData } from './signupSchemas';
 import { PersonalInfoStep } from './steps/PersonalInfoStep';
 import { MemberTypeStep } from './steps/MemberTypeStep';
 import { ActiveContactStep } from './steps/ActiveContactStep';
@@ -15,9 +15,13 @@ import { AlumniContactStep } from './steps/AlumniContactStep';
 import { AlumniPasswordStep } from './steps/AlumniPasswordStep';
 import { AlumniUniversityStep } from './steps/AlumniUniversityStep';
 import { useNavigate } from 'react-router-dom';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 
 export const SignupSteps = () => {
   const [step, setStep] = useState(1);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const { signup } = useAuth();
   const navigate = useNavigate();
   
@@ -50,12 +54,54 @@ export const SignupSteps = () => {
   });
 
   const nextStep = () => {
+    setValidationError(null);
     setStep(prev => prev + 1);
+  };
+
+  const prevStep = () => {
+    setValidationError(null);
+    setStep(prev => Math.max(prev - 1, 1));
+  };
+
+  const validateActiveRequiredFields = () => {
+    if (form.getValues('memberType') !== 'active') return true;
+    
+    // Validate required fields for active members
+    const requiredFields = {
+      firstName: form.getValues('firstName'),
+      lastName: form.getValues('lastName'),
+      email: form.getValues('email'),
+      phoneNumber: form.getValues('phoneNumber'),
+      initiationSemester: form.getValues('initiationSemester'),
+      initiationYear: form.getValues('initiationYear'),
+      memberId: form.getValues('memberId'),
+      address: form.getValues('address'),
+      city: form.getValues('city'),
+      state: form.getValues('state'),
+      zipCode: form.getValues('zipCode'),
+      birthDate: form.getValues('birthDate'),
+    };
+    
+    const missingFields = Object.entries(requiredFields)
+      .filter(([_, value]) => !value)
+      .map(([key]) => key);
+    
+    if (missingFields.length > 0) {
+      setValidationError("Please fill out all required fields before proceeding");
+      return false;
+    }
+    
+    return true;
   };
 
   const onSubmit = async (data: SignupFormData) => {
     try {
-      // Ensure all required fields are present (TypeScript validation only, actual values are validated by Zod)
+      // For active members, validate all required fields
+      if (data.memberType === 'active' && !validateActiveRequiredFields()) {
+        return;
+      }
+      
+      // Ensure all required fields are present
       const userData = {
         firstName: data.firstName,
         lastName: data.lastName,
@@ -150,7 +196,29 @@ export const SignupSteps = () => {
           Step {step} of {totalSteps}: {getStepLabel()}
         </p>
       </div>
+      
+      {validationError && (
+        <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-800">
+          <AlertDescription>{validationError}</AlertDescription>
+        </Alert>
+      )}
+      
       {renderStep()}
+      
+      {/* Back/Next Navigation Buttons */}
+      {step > 1 && step < totalSteps && (
+        <div className="flex justify-between mt-6">
+          <Button 
+            variant="outline" 
+            onClick={prevStep}
+            className="flex items-center"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back
+          </Button>
+          
+          {/* Next button is handled by individual step components */}
+        </div>
+      )}
     </div>
   );
 };

@@ -12,13 +12,21 @@ interface PersonalInfoStepProps {
 }
 
 export const PersonalInfoStep = ({ form, onNextStep }: PersonalInfoStepProps) => {
+  const validateAndContinue = () => {
+    form.trigger(['firstName', 'lastName']).then((isValid) => {
+      if (isValid && form.getValues('firstName') && form.getValues('lastName')) {
+        onNextStep();
+      }
+    });
+  };
+
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="firstName">First Name</Label>
+        <Label htmlFor="firstName">First Name <span className="text-red-500">*</span></Label>
         <Input
           id="firstName"
-          {...form.register("firstName")}
+          {...form.register("firstName", { required: "First name is required" })}
           placeholder="Enter your first name"
         />
         {form.formState.errors.firstName && (
@@ -26,10 +34,10 @@ export const PersonalInfoStep = ({ form, onNextStep }: PersonalInfoStepProps) =>
         )}
       </div>
       <div className="space-y-2">
-        <Label htmlFor="lastName">Last Name</Label>
+        <Label htmlFor="lastName">Last Name <span className="text-red-500">*</span></Label>
         <Input
           id="lastName"
-          {...form.register("lastName")}
+          {...form.register("lastName", { required: "Last name is required" })}
           placeholder="Enter your last name"
         />
         {form.formState.errors.lastName && (
@@ -38,13 +46,7 @@ export const PersonalInfoStep = ({ form, onNextStep }: PersonalInfoStepProps) =>
       </div>
       <Button 
         className="w-full" 
-        onClick={() => {
-          if (form.getValues('firstName') && form.getValues('lastName')) {
-            onNextStep();
-          } else {
-            form.trigger(['firstName', 'lastName']);
-          }
-        }}
+        onClick={validateAndContinue}
       >
         Next <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
