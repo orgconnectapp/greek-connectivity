@@ -9,6 +9,7 @@ type User = {
   verifiedEmail: boolean;
   organization?: string;
   profilePicture?: string;
+  memberType?: 'active' | 'alumni';
 };
 
 type AuthContextType = {
@@ -89,13 +90,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         phoneNumber: userData.phoneNumber,
         verifiedEmail: false,
         organization: userData.organization,
-        profilePicture: userData.profilePicture
+        profilePicture: userData.profilePicture,
+        memberType: userData.memberType
       };
       
       setUser(newUser);
       localStorage.setItem('user', JSON.stringify(newUser));
       
       console.log('Verification email sent to', userData.email);
+      console.log('User signup successful, redirecting to message board');
     } catch (error) {
       throw error;
     } finally {

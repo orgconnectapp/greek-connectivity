@@ -47,6 +47,7 @@ export const PersonalInfoStep = ({ form, onNextStep }: PersonalInfoStepProps) =>
       <Button 
         className="w-full" 
         onClick={validateAndContinue}
+        type="button"
       >
         Next <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
