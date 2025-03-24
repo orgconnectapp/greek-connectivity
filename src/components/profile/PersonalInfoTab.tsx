@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Phone, MapPin, Calendar, Edit, Eye, EyeOff } from "lucide-react";
+import { Mail, Phone, MapPin, Calendar, Edit, Eye, EyeOff, IdCard } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 interface ProfileData {
@@ -13,7 +13,8 @@ interface ProfileData {
   address: string;
   major: string;
   gradYear: string;
-  gpa: string;
+  memberId: string;
+  profilePicture?: string;
 }
 
 interface PersonalInfoTabProps {
@@ -38,12 +39,20 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <Avatar className="h-20 w-20 border-2 border-primary/10">
-                <AvatarImage src="/placeholder.svg" alt="Jason Smith" />
+                <AvatarImage src={profileData.profilePicture || "/placeholder.svg"} alt="Jason Smith" />
                 <AvatarFallback className="text-2xl">JS</AvatarFallback>
               </Avatar>
               <div>
                 <CardTitle className="text-2xl">Jason Smith</CardTitle>
-                <CardDescription>Active Member since 2022</CardDescription>
+                <CardDescription>
+                  Active Member since 2022
+                  {profileData.memberId && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <IdCard className="h-3 w-3 text-muted-foreground" />
+                      <span className="text-xs">Member ID: {profileData.memberId}</span>
+                    </div>
+                  )}
+                </CardDescription>
                 <div className="flex flex-wrap gap-2 mt-2">
                   <Badge variant="outline" className="bg-primary/5">President</Badge>
                   <Badge variant="outline" className="bg-secondary/5">Chapter Executive</Badge>
@@ -103,7 +112,6 @@ export const PersonalInfoTab: React.FC<PersonalInfoTabProps> = ({
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground mb-2">Academic Information</h3>
                 <p>{profileData.major}, {profileData.gradYear}</p>
-                <p>GPA: {profileData.gpa}</p>
               </div>
             </div>
 

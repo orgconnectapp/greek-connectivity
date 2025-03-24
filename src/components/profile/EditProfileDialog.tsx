@@ -8,6 +8,8 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ImagePlus } from "lucide-react";
 
 interface ProfileFormData {
   email: string;
@@ -15,9 +17,10 @@ interface ProfileFormData {
   address: string;
   major: string;
   gradYear: string;
-  gpa: string;
+  memberId: string;
   showEmail: boolean;
   showPhone: boolean;
+  profilePicture?: string;
 }
 
 interface EditProfileDialogProps {
@@ -29,9 +32,10 @@ interface EditProfileDialogProps {
     address: string;
     major: string;
     gradYear: string;
-    gpa: string;
+    memberId: string;
     showEmail: boolean;
     showPhone: boolean;
+    profilePicture?: string;
   };
   onSave: (data: ProfileFormData) => void;
 }
@@ -44,6 +48,7 @@ export function EditProfileDialog({
 }: EditProfileDialogProps) {
   const { toast } = useToast();
   const [formData, setFormData] = useState<ProfileFormData>(initialData);
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(initialData.profilePicture);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -52,6 +57,19 @@ export function EditProfileDialog({
 
   const handleSwitchChange = (name: string, checked: boolean) => {
     setFormData((prev) => ({ ...prev, [name]: checked }));
+  };
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setPreviewUrl(base64String);
+        setFormData((prev) => ({ ...prev, profilePicture: base64String }));
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -74,6 +92,30 @@ export function EditProfileDialog({
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Profile Picture Upload */}
+          <div className="flex flex-col items-center space-y-4 my-4">
+            <div className="relative">
+              <Avatar className="h-24 w-24 border-2 border-primary/10">
+                <AvatarImage src={previewUrl || "/placeholder.svg"} alt="Profile picture" />
+                <AvatarFallback className="text-2xl">JS</AvatarFallback>
+              </Avatar>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+                id="profile-picture"
+              />
+              <label
+                htmlFor="profile-picture"
+                className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-2 cursor-pointer hover:bg-primary/90 transition-colors"
+              >
+                <ImagePlus className="h-4 w-4" />
+              </label>
+            </div>
+            <p className="text-sm text-muted-foreground">Click the icon to change your profile picture</p>
+          </div>
+
           <div className="space-y-4">
             <h3 className="font-medium text-sm">Contact Information</h3>
             
@@ -129,7 +171,7 @@ export function EditProfileDialog({
           </div>
           
           <div className="space-y-4">
-            <h3 className="font-medium text-sm">Academic Information</h3>
+            <h3 className="font-medium text-sm">Academic & Membership Information</h3>
             
             <div className="grid gap-2">
               <Label htmlFor="major">Major</Label>
@@ -153,12 +195,13 @@ export function EditProfileDialog({
               </div>
               
               <div className="grid gap-2">
-                <Label htmlFor="gpa">GPA</Label>
+                <Label htmlFor="memberId">Member ID</Label>
                 <Input
-                  id="gpa"
-                  name="gpa"
-                  value={formData.gpa}
+                  id="memberId"
+                  name="memberId"
+                  value={formData.memberId}
                   onChange={handleChange}
+                  placeholder="Enter your member ID"
                 />
               </div>
             </div>

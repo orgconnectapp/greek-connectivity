@@ -22,7 +22,8 @@ const Profile = () => {
     address: "123 University Ave, Campus Housing",
     major: "Computer Science",
     gradYear: "Class of 2024",
-    gpa: "3.8",
+    memberId: "A12345678",
+    profilePicture: undefined as string | undefined,
   });
   
   // State for edit profile dialog
@@ -49,7 +50,8 @@ const Profile = () => {
       address: formData.address,
       major: formData.major,
       gradYear: formData.gradYear,
-      gpa: formData.gpa,
+      memberId: formData.memberId,
+      profilePicture: formData.profilePicture,
     });
     
     setShowEmail(formData.showEmail);
@@ -104,9 +106,10 @@ const Profile = () => {
           address: profileData.address,
           major: profileData.major,
           gradYear: profileData.gradYear,
-          gpa: profileData.gpa,
+          memberId: profileData.memberId,
           showEmail: showEmail,
           showPhone: showPhone,
+          profilePicture: profileData.profilePicture,
         }}
         onSave={handleProfileSave}
       />
