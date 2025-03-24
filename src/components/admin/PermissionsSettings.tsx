@@ -1,14 +1,115 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from "sonner";
+
+// Define the permission type
+interface Permission {
+  feature: string;
+  description: string;
+  enabled: boolean;
+}
+
+// Define roles and their initial permissions
+interface RolePermissions {
+  [key: string]: Permission[];
+}
 
 const PermissionsSettings = () => {
+  const initialPermissions: RolePermissions = {
+    'president': [
+      { feature: 'Admin Access', description: 'Full administrative access', enabled: true },
+      { feature: 'Overview', description: 'View organization overview', enabled: true },
+      { feature: 'Member Management', description: 'Add, edit, or remove members', enabled: true },
+      { feature: 'Dues Management', description: 'Manage dues and expenses', enabled: true },
+      { feature: 'Settings', description: 'Manage organization settings', enabled: true },
+    ],
+    'vice-president': [
+      { feature: 'Admin Access', description: 'Full administrative access', enabled: true },
+      { feature: 'Overview', description: 'View organization overview', enabled: true },
+      { feature: 'Member Management', description: 'Add, edit, or remove members', enabled: true },
+      { feature: 'Dues Management', description: 'Manage dues and expenses', enabled: true },
+      { feature: 'Settings', description: 'Manage organization settings', enabled: true },
+    ],
+    'treasurer': [
+      { feature: 'Admin Access', description: 'Full administrative access', enabled: false },
+      { feature: 'Overview', description: 'View organization overview', enabled: true },
+      { feature: 'Member Management', description: 'Add, edit, or remove members', enabled: false },
+      { feature: 'Dues Management', description: 'Manage dues and expenses', enabled: true },
+      { feature: 'Settings', description: 'Manage organization settings', enabled: false },
+    ],
+    'secretary': [
+      { feature: 'Admin Access', description: 'Full administrative access', enabled: false },
+      { feature: 'Overview', description: 'View organization overview', enabled: true },
+      { feature: 'Member Management', description: 'Add, edit, or remove members', enabled: true },
+      { feature: 'Dues Management', description: 'Manage dues and expenses', enabled: false },
+      { feature: 'Settings', description: 'Manage organization settings', enabled: false },
+    ],
+    'member': [
+      { feature: 'Admin Access', description: 'Full administrative access', enabled: false },
+      { feature: 'Overview', description: 'View organization overview', enabled: true },
+      { feature: 'Member Management', description: 'Add, edit, or remove members', enabled: false },
+      { feature: 'Dues Management', description: 'Manage dues and expenses', enabled: false },
+      { feature: 'Settings', description: 'Manage organization settings', enabled: false },
+    ],
+  };
+
+  const [permissions, setPermissions] = useState<RolePermissions>(initialPermissions);
+  const [currentRole, setCurrentRole] = useState<string>('president');
+
+  const handlePermissionChange = (feature: string, checked: boolean) => {
+    // Make a copy of the current permissions
+    const updatedPermissions = { ...permissions };
+    
+    if (feature === 'Admin Access' && !checked) {
+      // If Admin Access is being disabled, disable all other permissions
+      updatedPermissions[currentRole] = updatedPermissions[currentRole].map(permission => ({
+        ...permission,
+        enabled: permission.feature === 'Admin Access' ? false : false
+      }));
+
+      toast.info("All permissions have been disabled as Admin Access was turned off.");
+    } else if (feature === 'Admin Access' && checked) {
+      // If Admin Access is being enabled, just enable it
+      updatedPermissions[currentRole] = updatedPermissions[currentRole].map(permission => ({
+        ...permission,
+        enabled: permission.feature === 'Admin Access' ? true : permission.enabled
+      }));
+    } else {
+      // For other permissions, just toggle the specific one
+      // But only if Admin Access is enabled
+      const adminPermission = updatedPermissions[currentRole].find(p => p.feature === 'Admin Access');
+      
+      if (adminPermission && adminPermission.enabled) {
+        updatedPermissions[currentRole] = updatedPermissions[currentRole].map(permission => ({
+          ...permission,
+          enabled: permission.feature === feature ? checked : permission.enabled
+        }));
+      } else if (checked) {
+        // If trying to enable a permission without Admin Access
+        toast.error("Cannot enable permissions without Admin Access.");
+        return;
+      }
+    }
+    
+    setPermissions(updatedPermissions);
+  };
+
+  const handleRoleChange = (role: string) => {
+    setCurrentRole(role);
+  };
+
+  const handleUpdatePermissions = () => {
+    // Here we would implement the API call to update permissions
+    toast.success("Permissions updated successfully");
+  };
+
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold">Role Permissions</h2>
-      <Tabs defaultValue="president" className="w-full">
+      <Tabs defaultValue="president" className="w-full" onValueChange={handleRoleChange}>
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="president">President</TabsTrigger>
           <TabsTrigger value="vice-president">Vice President</TabsTrigger>
@@ -17,25 +118,22 @@ const PermissionsSettings = () => {
           <TabsTrigger value="member">Member</TabsTrigger>
         </TabsList>
         <div className="mt-4 space-y-4">
-          {[
-            { feature: 'Admin Access', description: 'Full administrative access' },
-            { feature: 'Overview', description: 'View organization overview' },
-            { feature: 'Member Management', description: 'Add, edit, or remove members' },
-            { feature: 'Dues Management', description: 'Manage dues and expenses' },
-            { feature: 'Settings', description: 'Manage organization settings' },
-          ].map((item, index) => (
+          {permissions[currentRole].map((item, index) => (
             <div key={index} className="flex items-center justify-between border-b pb-2">
               <div>
                 <p className="font-medium">{item.feature}</p>
                 <p className="text-sm text-muted-foreground">{item.description}</p>
               </div>
-              <Switch defaultChecked />
+              <Switch 
+                checked={item.enabled}
+                onCheckedChange={(checked) => handlePermissionChange(item.feature, checked)}
+              />
             </div>
           ))}
         </div>
       </Tabs>
       <div className="mt-4 flex justify-end">
-        <Button>Update Permissions</Button>
+        <Button onClick={handleUpdatePermissions}>Update Permissions</Button>
       </div>
     </div>
   );
