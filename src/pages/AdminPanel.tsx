@@ -9,7 +9,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import MemberManagement from '@/components/admin/MemberManagement';
 import DuesManagement from '@/components/admin/DuesManagement';
 import OrganizationSettings from '@/components/admin/OrganizationSettings';
-import SecuritySettings from '@/components/admin/SecuritySettings';
 import PermissionsSettings from '@/components/admin/PermissionsSettings';
 import OverviewSection from '@/components/admin/OverviewSection';
 
@@ -98,12 +97,6 @@ const AdminPanel = () => {
           <Card>
             <CardContent className="pt-6">
               <OrganizationSettings />
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="pt-6">
-              <SecuritySettings />
             </CardContent>
           </Card>
         </TabsContent>
