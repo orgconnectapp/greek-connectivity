@@ -4,7 +4,6 @@ import { DollarSign, Users, Percent, Check } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import CreateDueChargeModal from '@/components/admin/CreateDueChargeModal';
 import ChargeDetailsDialog from '@/components/admin/ChargeDetailsDialog';
@@ -76,18 +75,6 @@ const DuesManagement = ({ chargesDetails }: DuesManagementProps) => {
         
         <div className="flex items-center gap-2 mb-4">
           <Input placeholder="Search due charges..." className="max-w-sm" />
-          <Select defaultValue="all">
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="regular">Regular Dues</SelectItem>
-              <SelectItem value="late">Late Fees</SelectItem>
-              <SelectItem value="event">Event Fees</SelectItem>
-              <SelectItem value="other">Other Charges</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
         
         <Table>

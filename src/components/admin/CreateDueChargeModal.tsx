@@ -5,7 +5,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -14,6 +13,7 @@ import { toast } from 'sonner';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 
 interface CreateDueChargeModalProps {
   onDueCreated?: () => void;
@@ -39,7 +39,6 @@ const CreateDueChargeModal: React.FC<CreateDueChargeModalProps> = ({ onDueCreate
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
-  const [dueType, setDueType] = useState('regular');
   const [dueDate, setDueDate] = useState<Date>();
   const [description, setDescription] = useState('');
   const [membersTab, setMembersTab] = useState('active');
@@ -99,7 +98,6 @@ const CreateDueChargeModal: React.FC<CreateDueChargeModalProps> = ({ onDueCreate
     console.log({
       title,
       amount: parseFloat(amount),
-      dueType,
       dueDate,
       description,
       createdAt: new Date(),
@@ -119,7 +117,6 @@ const CreateDueChargeModal: React.FC<CreateDueChargeModalProps> = ({ onDueCreate
   const resetForm = () => {
     setTitle('');
     setAmount('');
-    setDueType('regular');
     setDueDate(undefined);
     setDescription('');
     setSelectedMembers([]);
@@ -133,7 +130,8 @@ const CreateDueChargeModal: React.FC<CreateDueChargeModalProps> = ({ onDueCreate
            !isNaN(parseFloat(amount)) && 
            parseFloat(amount) > 0 && 
            dueDate !== undefined &&
-           selectedMembers.length > 0; // Ensure at least one member is selected
+           description.trim() !== '' &&
+           selectedMembers.length > 0; 
   };
   
   return (
@@ -185,21 +183,6 @@ const CreateDueChargeModal: React.FC<CreateDueChargeModalProps> = ({ onDueCreate
               </div>
               
               <div className="grid gap-2">
-                <Label htmlFor="type">Type</Label>
-                <Select value={dueType} onValueChange={setDueType}>
-                  <SelectTrigger id="type">
-                    <SelectValue placeholder="Select due type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="regular">Regular Dues</SelectItem>
-                    <SelectItem value="late">Late Fee</SelectItem>
-                    <SelectItem value="event">Event Fee</SelectItem>
-                    <SelectItem value="other">Other Charge</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="grid gap-2">
                 <Label htmlFor="due-date">Due Date</Label>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -227,13 +210,14 @@ const CreateDueChargeModal: React.FC<CreateDueChargeModalProps> = ({ onDueCreate
               </div>
               
               <div className="grid gap-2">
-                <Label htmlFor="description">Description (Optional)</Label>
-                <textarea 
+                <Label htmlFor="description">Description</Label>
+                <Textarea 
                   id="description"
-                  className="w-full min-h-[80px] rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  className="w-full min-h-[80px]"
                   placeholder="Additional information about this charge"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
+                  required
                 />
               </div>
             </div>
