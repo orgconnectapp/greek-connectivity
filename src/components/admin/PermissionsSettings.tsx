@@ -18,13 +18,11 @@ const PermissionsSettings = () => {
         </TabsList>
         <div className="mt-4 space-y-4">
           {[
-            { feature: 'Dashboard Access', description: 'View organization metrics' },
+            { feature: 'Admin Access', description: 'Full administrative access' },
+            { feature: 'Overview', description: 'View organization overview' },
             { feature: 'Member Management', description: 'Add, edit, or remove members' },
-            { feature: 'Financial Management', description: 'Manage dues and expenses' },
-            { feature: 'Fundraiser Creation', description: 'Create and edit fundraisers' },
-            { feature: 'Admin Panel', description: 'Access admin settings' },
-            { feature: 'Export Data', description: 'Export organization data' },
-            { feature: 'Messaging', description: 'Send organization-wide messages' },
+            { feature: 'Dues Management', description: 'Manage dues and expenses' },
+            { feature: 'Settings', description: 'Manage organization settings' },
           ].map((item, index) => (
             <div key={index} className="flex items-center justify-between border-b pb-2">
               <div>
