@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -75,9 +76,8 @@ const Profile = () => {
       </div>
 
       <Tabs defaultValue="info" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="info">Personal Info</TabsTrigger>
-          <TabsTrigger value="activity">Activity</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
         
@@ -166,36 +166,6 @@ const Profile = () => {
                       </li>
                     </ul>
                   </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="activity" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>
-                Your recent actions and participation in the organization
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="border-b pb-4">
-                  <p className="font-medium">Beach Cleanup Event</p>
-                  <p className="text-sm text-muted-foreground">Participated 2 weeks ago</p>
-                  <p className="mt-1">Contributed 4 service hours</p>
-                </div>
-                <div className="border-b pb-4">
-                  <p className="font-medium">Chapter Meeting</p>
-                  <p className="text-sm text-muted-foreground">Attended 1 week ago</p>
-                  <p className="mt-1">Presented new fundraising initiative</p>
-                </div>
-                <div className="pb-4">
-                  <p className="font-medium">Dues Payment</p>
-                  <p className="text-sm text-muted-foreground">2 weeks ago</p>
-                  <p className="mt-1">Paid $150 for semester dues</p>
                 </div>
               </div>
             </CardContent>
