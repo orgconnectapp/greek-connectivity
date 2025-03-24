@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Users, UserCog, Flag, Upload, Download, Bell, Check, X, Calendar, ChevronDown, Info } from 'lucide-react';
+import { Users, UserCog, Flag, Calendar, ChevronDown, Check, X } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -381,7 +382,7 @@ const OverviewSection = () => {
       
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         {selectedFundraiser && (
-          <>
+          <DialogContent>
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Flag className="h-5 w-5 text-primary" />
@@ -448,6 +449,11 @@ const OverviewSection = () => {
                 Deny Fundraiser
               </Button>
             </div>
-          </>
-       
+          </DialogContent>
+        )}
+      </Dialog>
+    </div>
+  );
+};
 
+export default OverviewSection;
