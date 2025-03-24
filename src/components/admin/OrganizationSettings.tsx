@@ -70,11 +70,11 @@ const OrganizationSettings = () => {
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
           <label className="text-sm font-medium">Organization Name</label>
-          <Input defaultValue="Alpha Phi Omega" />
+          <Input defaultValue="Lambda Chi Alpha" />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">Chapter Designation</label>
-          <Input defaultValue="Gamma Alpha" />
+          <Input defaultValue="Phi Alpha Zeta" />
         </div>
       </div>
       
@@ -82,7 +82,7 @@ const OrganizationSettings = () => {
         <label className="text-sm font-medium">Organization Description</label>
         <textarea 
           className="w-full min-h-[120px] rounded-md border border-input bg-background px-3 py-2"
-          defaultValue="Alpha Phi Omega is a national co-educational service fraternity founded on the principles of leadership, friendship, and service."
+          defaultValue="Lambda Chi Alpha is a national co-educational service fraternity founded on the principles of leadership, friendship, and service."
         />
       </div>
       

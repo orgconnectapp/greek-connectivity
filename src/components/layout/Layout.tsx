@@ -37,7 +37,10 @@ const Layout = () => {
           <div className="absolute inset-0 bg-[url('/placeholder.svg')] bg-center bg-cover mix-blend-overlay opacity-20"></div>
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="container h-full flex items-end pb-4">
-            <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-md">AXA Phi Alpha Zeta</h1>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-white drop-shadow-md">Lambda Chi Alpha</h1>
+              <p className="text-white/90 text-sm md:text-base">Phi Alpha Zeta Chapter</p>
+            </div>
           </div>
         </div>
         <Navbar />
