@@ -63,36 +63,11 @@ const PermissionsSettings = () => {
     // Make a copy of the current permissions
     const updatedPermissions = { ...permissions };
     
-    if (feature === 'Admin Access' && !checked) {
-      // If Admin Access is being disabled, disable all other permissions
-      updatedPermissions[currentRole] = updatedPermissions[currentRole].map(permission => ({
-        ...permission,
-        enabled: permission.feature === 'Admin Access' ? false : false
-      }));
-
-      toast.info("All permissions have been disabled as Admin Access was turned off.");
-    } else if (feature === 'Admin Access' && checked) {
-      // If Admin Access is being enabled, just enable it
-      updatedPermissions[currentRole] = updatedPermissions[currentRole].map(permission => ({
-        ...permission,
-        enabled: permission.feature === 'Admin Access' ? true : permission.enabled
-      }));
-    } else {
-      // For other permissions, just toggle the specific one
-      // But only if Admin Access is enabled
-      const adminPermission = updatedPermissions[currentRole].find(p => p.feature === 'Admin Access');
-      
-      if (adminPermission && adminPermission.enabled) {
-        updatedPermissions[currentRole] = updatedPermissions[currentRole].map(permission => ({
-          ...permission,
-          enabled: permission.feature === feature ? checked : permission.enabled
-        }));
-      } else if (checked) {
-        // If trying to enable a permission without Admin Access
-        toast.error("Cannot enable permissions without Admin Access.");
-        return;
-      }
-    }
+    // Update the specific permission
+    updatedPermissions[currentRole] = updatedPermissions[currentRole].map(permission => ({
+      ...permission,
+      enabled: permission.feature === feature ? checked : permission.enabled
+    }));
     
     setPermissions(updatedPermissions);
   };
