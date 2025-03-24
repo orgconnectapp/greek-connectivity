@@ -8,7 +8,7 @@ const OrganizationInfo = () => {
   const organizationInfo = {
     name: "Lambda Chi Alpha",
     chapterName: "Phi Alpha Zeta",
-    description: "Lambda Chi Alpha is a national co-educational service fraternity founded on the principles of leadership, friendship, and service. Our chapter focuses on campus and community service projects.",
+    description: "Lambda Chi Alpha is a national co-educational service fraternity founded on the principles of leadership, friendship, and service.",
     founded: 1977,
     memberCount: 87,
     achievements: "Distinguished Service Chapter Award, 2023"
