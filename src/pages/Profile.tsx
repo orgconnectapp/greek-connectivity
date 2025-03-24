@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -247,20 +246,12 @@ const Profile = () => {
                   <p className="text-sm text-muted-foreground mb-4">Manage what types of emails you receive</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex items-center gap-2">
-                      <input type="checkbox" id="notify-events" className="rounded border-gray-300" defaultChecked />
-                      <label htmlFor="notify-events">Event announcements</label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <input type="checkbox" id="notify-dues" className="rounded border-gray-300" defaultChecked />
-                      <label htmlFor="notify-dues">Dues reminders</label>
+                      <input type="checkbox" id="notify-fundraisers" className="rounded border-gray-300" defaultChecked />
+                      <label htmlFor="notify-fundraisers">New Fundraisers</label>
                     </div>
                     <div className="flex items-center gap-2">
                       <input type="checkbox" id="notify-messages" className="rounded border-gray-300" defaultChecked />
                       <label htmlFor="notify-messages">New message board posts</label>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <input type="checkbox" id="notify-newsletter" className="rounded border-gray-300" defaultChecked />
-                      <label htmlFor="notify-newsletter">Weekly newsletter</label>
                     </div>
                   </div>
                 </div>
