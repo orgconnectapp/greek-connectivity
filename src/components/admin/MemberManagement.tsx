@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Pencil, UserPlus, UserX } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -105,18 +104,6 @@ const MemberManagement = () => {
         
         <div className="flex items-center gap-2 mb-4">
           <Input placeholder="Search members..." className="max-w-sm" />
-          <Select defaultValue="all">
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Roles</SelectItem>
-              <SelectItem value="president">President</SelectItem>
-              <SelectItem value="treasurer">Treasurer</SelectItem>
-              <SelectItem value="secretary">Secretary</SelectItem>
-              <SelectItem value="member">Member</SelectItem>
-            </SelectContent>
-          </Select>
         </div>
         
         <Table>
@@ -127,7 +114,6 @@ const MemberManagement = () => {
               <TableHead>Role</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Admin Access</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -141,9 +127,6 @@ const MemberManagement = () => {
                   <Badge variant={member.status === 'Active' ? 'default' : 'secondary'}>
                     {member.status}
                   </Badge>
-                </TableCell>
-                <TableCell>
-                  <Switch checked={member.admin} />
                 </TableCell>
                 <TableCell>
                   <Button 
@@ -161,7 +144,6 @@ const MemberManagement = () => {
         </Table>
       </div>
 
-      {/* Edit Member Dialog */}
       <Dialog open={editMemberDialog} onOpenChange={setEditMemberDialog}>
         <DialogContent>
           <DialogHeader>
@@ -219,14 +201,6 @@ const MemberManagement = () => {
                 </Select>
               </div>
               
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium">Admin Access</h3>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm">Grant admin panel access</span>
-                  <Switch defaultChecked={selectedMember.admin} />
-                </div>
-              </div>
-              
               <div className="pt-2">
                 <Button 
                   variant="destructive" 
@@ -257,7 +231,6 @@ const MemberManagement = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Remove Member Confirmation Dialog */}
       <Dialog open={removeMemberDialog} onOpenChange={setRemoveMemberDialog}>
         <DialogContent>
           <DialogHeader>
@@ -295,7 +268,6 @@ const MemberManagement = () => {
         </DialogContent>
       </Dialog>
       
-      {/* Invite Member Dialog */}
       <InviteMemberDialog open={inviteDialog} onOpenChange={setInviteDialog} />
     </>
   );

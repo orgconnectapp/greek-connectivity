@@ -27,7 +27,6 @@ interface FundraiserData {
   image: string;
 }
 
-// Mock pending members data
 const MOCK_PENDING_MEMBERS: PendingMember[] = [
   {
     id: "1",
@@ -133,7 +132,6 @@ const OverviewSection = () => {
   };
 
   const handleMemberApproval = (id: string, approved: boolean) => {
-    // In a real app, this would make an API call to update the member status
     const updatedMembers = pendingMembers.filter(member => member.id !== id);
     setPendingMembers(updatedMembers);
     
@@ -142,7 +140,6 @@ const OverviewSection = () => {
       description: `The membership application has been ${approved ? 'approved' : 'rejected'}.`,
     });
     
-    // Close the dialog if it's open
     setIsMemberDetailsOpen(false);
   };
 
@@ -249,7 +246,6 @@ const OverviewSection = () => {
         </DashboardCard>
       </div>
       
-      {/* Member Approval Dialog */}
       <MemberApprovalDialog
         member={selectedMember}
         isOpen={isMemberDetailsOpen}
@@ -383,106 +379,75 @@ const OverviewSection = () => {
         </Collapsible>
       </DashboardCard>
       
-      {/* Fundraiser Details Dialog */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="max-w-2xl">
-          {selectedFundraiser && (
-            <>
-              <DialogHeader>
-                <DialogTitle className="flex items-center gap-2">
-                  <Flag className="h-5 w-5 text-primary" />
-                  {selectedFundraiser.title}
-                </DialogTitle>
-                <DialogDescription>
-                  Fundraiser details and approval options
-                </DialogDescription>
-              </DialogHeader>
-              
-              <div className="space-y-4 py-4">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="w-full md:w-1/3">
-                    <img 
-                      src={selectedFundraiser.image} 
-                      alt={selectedFundraiser.title}
-                      className="rounded-md object-cover w-full h-auto"
-                    />
+        {selectedFundraiser && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Flag className="h-5 w-5 text-primary" />
+                {selectedFundraiser.title}
+              </DialogTitle>
+              <DialogDescription>
+                Fundraiser details and approval options
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4 py-4">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="w-full md:w-1/3">
+                  <img 
+                    src={selectedFundraiser.image} 
+                    alt={selectedFundraiser.title}
+                    className="rounded-md object-cover w-full h-auto"
+                  />
+                </div>
+                
+                <div className="flex-1 space-y-3">
+                  <div>
+                    <span className="font-medium">Description:</span>
+                    <p className="mt-1">{selectedFundraiser.description}</p>
                   </div>
                   
-                  <div className="flex-1 space-y-3">
-                    <div>
-                      <span className="font-medium">Description:</span>
-                      <p className="mt-1">{selectedFundraiser.description}</p>
-                    </div>
-                    
-                    <div>
-                      <span className="font-medium">Created by:</span>
-                      <p className="mt-1">{selectedFundraiser.creator}</p>
-                    </div>
-                    
-                    <div>
-                      <span className="font-medium">Fundraising Goal:</span>
-                      <p className="mt-1 font-semibold">${selectedFundraiser.goal}</p>
-                    </div>
-                    
-                    <div>
-                      <span className="font-medium">Submitted:</span>
-                      <p className="mt-1">{selectedFundraiser.createdAt}</p>
-                    </div>
+                  <div>
+                    <span className="font-medium">Created by:</span>
+                    <p className="mt-1">{selectedFundraiser.creator}</p>
+                  </div>
+                  
+                  <div>
+                    <span className="font-medium">Fundraising Goal:</span>
+                    <p className="mt-1 font-semibold">${selectedFundraiser.goal}</p>
+                  </div>
+                  
+                  <div>
+                    <span className="font-medium">Submitted:</span>
+                    <p className="mt-1">{selectedFundraiser.createdAt}</p>
                   </div>
                 </div>
               </div>
-              
-              <div className="flex justify-end gap-2 mt-4">
-                <Button 
-                  onClick={() => {
-                    handleFundraiserApproval(selectedFundraiser.id, true);
-                    setIsDetailsOpen(false);
-                  }}
-                  className="bg-green-600 hover:bg-green-700"
-                >
-                  <Check className="mr-2 h-4 w-4" />
-                  Approve Fundraiser
-                </Button>
-                <Button 
-                  onClick={() => {
-                    handleFundraiserApproval(selectedFundraiser.id, false);
-                    setIsDetailsOpen(false);
-                  }}
-                  variant="destructive"
-                >
-                  <X className="mr-2 h-4 w-4" />
-                  Deny Fundraiser
-                </Button>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>Frequently used admin tools</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-2">
-            <Button className="justify-start">
-              <Upload className="mr-2 h-4 w-4" />
-              Export Member Data
-            </Button>
-            <Button className="justify-start">
-              <Download className="mr-2 h-4 w-4" />
-              Generate Reports
-            </Button>
-            <Button className="justify-start">
-              <Bell className="mr-2 h-4 w-4" />
-              Send Organization Announcement
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
+            </div>
+            
+            <div className="flex justify-end gap-2 mt-4">
+              <Button 
+                onClick={() => {
+                  handleFundraiserApproval(selectedFundraiser.id, true);
+                  setIsDetailsOpen(false);
+                }}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <Check className="mr-2 h-4 w-4" />
+                Approve Fundraiser
+              </Button>
+              <Button 
+                onClick={() => {
+                  handleFundraiserApproval(selectedFundraiser.id, false);
+                  setIsDetailsOpen(false);
+                }}
+                variant="destructive"
+              >
+                <X className="mr-2 h-4 w-4" />
+                Deny Fundraiser
+              </Button>
+            </div>
+          </>
+       
 
-export default OverviewSection;
