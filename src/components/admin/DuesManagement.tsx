@@ -25,7 +25,6 @@ const DuesManagement = ({ chargesDetails }: DuesManagementProps) => {
     { 
       title: 'Spring 2024 Membership Dues', 
       amount: '$150.00', 
-      type: 'Regular Dues',
       dueDate: 'Apr 15, 2024',
       created: 'Mar 1, 2024',
       status: 'Active',
@@ -37,7 +36,6 @@ const DuesManagement = ({ chargesDetails }: DuesManagementProps) => {
     { 
       title: 'Leadership Conference Fee', 
       amount: '$35.00', 
-      type: 'Event Fee',
       dueDate: 'Mar 30, 2024',
       created: 'Mar 5, 2024',
       status: 'Active',
@@ -49,7 +47,6 @@ const DuesManagement = ({ chargesDetails }: DuesManagementProps) => {
     { 
       title: 'Late Payment Fee', 
       amount: '$25.00', 
-      type: 'Late Fee',
       dueDate: 'May 1, 2024',
       created: 'Mar 15, 2024',
       status: 'Pending',
@@ -83,7 +80,6 @@ const DuesManagement = ({ chargesDetails }: DuesManagementProps) => {
             <TableRow>
               <TableHead>Title</TableHead>
               <TableHead>Amount</TableHead>
-              <TableHead>Type</TableHead>
               <TableHead>Due Date</TableHead>
               <TableHead>Created</TableHead>
               <TableHead>Payment Status</TableHead>
@@ -103,7 +99,6 @@ const DuesManagement = ({ chargesDetails }: DuesManagementProps) => {
                 >
                   <TableCell className="font-medium">{dues.title}</TableCell>
                   <TableCell>{dues.amount}</TableCell>
-                  <TableCell>{dues.type}</TableCell>
                   <TableCell>{dues.dueDate}</TableCell>
                   <TableCell>{dues.created}</TableCell>
                   <TableCell className="w-[250px]">
