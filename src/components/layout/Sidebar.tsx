@@ -12,7 +12,7 @@ import {
   Shield,
   Megaphone,
   Calendar,
-  Building
+  Share2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -55,10 +55,6 @@ const Sidebar = () => {
   // For now, we'll just hardcode it for demonstration
   const userRole = "president"; // Could be "president", "treasurer", "member", etc.
   const isAdmin = ["president", "treasurer", "vice president"].includes(userRole);
-  
-  // Super admin access - this would typically be determined by a special flag in the user's profile
-  // For demo purposes, we'll set it to true to show the super admin option
-  const isSuperAdmin = true;
   
   const toggleSidebar = () => {
     setIsCollapsed(prev => !prev);
@@ -126,15 +122,6 @@ const Sidebar = () => {
             icon={Shield} 
             label="Admin" 
             href="/admin" 
-            isCollapsed={isCollapsed} 
-          />
-        )}
-        
-        {isSuperAdmin && (
-          <SidebarNavItem 
-            icon={Building} 
-            label="Super Admin" 
-            href="/super-admin" 
             isCollapsed={isCollapsed} 
           />
         )}
