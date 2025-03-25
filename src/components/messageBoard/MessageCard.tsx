@@ -44,8 +44,9 @@ const MessageCard = ({ message, onLike, onPin, onOpenComments, isLiked }: Messag
 
   const handleAuthorClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Navigate to the author's profile page
-    navigate(`/profile/${message.author.replace(/\s+/g, '-').toLowerCase()}`);
+    // Navigate to the author's profile page using the username format
+    const username = message.author.replace(/\s+/g, '-').toLowerCase();
+    navigate(`/profile/${username}`);
   };
 
   const handleCopyMessage = () => {
