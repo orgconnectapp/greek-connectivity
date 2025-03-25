@@ -1,16 +1,16 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useNavigate } from 'react-router-dom';
 import { Message } from './types';
 
 interface CommentsDialogProps {
@@ -22,95 +22,95 @@ interface CommentsDialogProps {
   handleAddComment: () => void;
 }
 
-const CommentsDialog: React.FC<CommentsDialogProps> = ({
+const CommentsDialog = ({
   isOpen,
   onOpenChange,
   selectedMessage,
   newComment,
   setNewComment,
   handleAddComment
-}) => {
+}: CommentsDialogProps) => {
   const navigate = useNavigate();
-
-  const handleAuthorClick = (author: string) => {
-    // Navigate to the author's profile page using the username format
-    const username = author.replace(/\s+/g, '-').toLowerCase();
-    navigate(`/profile/${username}`);
-    onOpenChange(false); // Close the dialog after navigation
-  };
 
   if (!selectedMessage) return null;
 
+  const handleAuthorClick = (authorName: string) => {
+    // Navigate to the author's profile page using the username format
+    // Include state to indicate we're coming from the message board
+    const username = authorName.replace(/\s+/g, '-').toLowerCase();
+    navigate(`/profile/${username}`, {
+      state: { from: 'messageBoard' }
+    });
+    onOpenChange(false);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px]">
+      <DialogContent className="sm:max-w-[500px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl">Comments</DialogTitle>
+          <DialogTitle>Comments</DialogTitle>
         </DialogHeader>
-
-        <div className="mt-2">
-          <div className="flex items-start space-x-4 mb-4">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={selectedMessage.avatar} alt={selectedMessage.author} />
-              <AvatarFallback>{selectedMessage.author.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-            </Avatar>
-            <div className="flex-1">
-              <div className="flex items-center">
-                <h4 
-                  className="font-medium text-sm cursor-pointer hover:underline"
+        
+        <div className="space-y-4 py-4">
+          <div className="border-b pb-4">
+            <div className="flex items-start gap-3 mb-2">
+              <Avatar className="cursor-pointer" onClick={() => handleAuthorClick(selectedMessage.author)}>
+                <AvatarImage src={selectedMessage.avatar} alt={selectedMessage.author} />
+                <AvatarFallback>
+                  {selectedMessage.author.split(' ').map(n => n[0]).join('')}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p 
+                  className="font-medium cursor-pointer hover:underline"
                   onClick={() => handleAuthorClick(selectedMessage.author)}
                 >
                   {selectedMessage.author}
-                </h4>
-                <span className="text-xs text-muted-foreground ml-2">{selectedMessage.timestamp}</span>
+                </p>
+                <p className="text-sm text-muted-foreground">{selectedMessage.timestamp}</p>
               </div>
-              <p className="mt-1">{selectedMessage.content}</p>
             </div>
+            <p className="whitespace-pre-line">{selectedMessage.content}</p>
           </div>
-
-          <div className="border-t pt-4">
-            <h4 className="font-medium text-sm mb-2">
-              {selectedMessage.comments.length} Comment{selectedMessage.comments.length !== 1 ? 's' : ''}
-            </h4>
-            <div className="space-y-4 max-h-[300px] overflow-y-auto">
+          
+          {selectedMessage.comments && selectedMessage.comments.length > 0 ? (
+            <div className="space-y-4">
               {selectedMessage.comments.map((comment) => (
-                <div key={comment.id} className="flex items-start space-x-3">
-                  <Avatar className="h-8 w-8">
+                <div key={comment.id} className="flex items-start gap-3">
+                  <Avatar className="cursor-pointer" onClick={() => handleAuthorClick(comment.author)}>
                     <AvatarImage src={comment.avatar} alt={comment.author} />
-                    <AvatarFallback>{comment.author.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                    <AvatarFallback>
+                      {comment.author.split(' ').map(n => n[0]).join('')}
+                    </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1">
-                    <div className="flex items-center">
-                      <h4 
-                        className="font-medium text-sm cursor-pointer hover:underline" 
-                        onClick={() => handleAuthorClick(comment.author)}
-                      >
-                        {comment.author}
-                      </h4>
-                      <span className="text-xs text-muted-foreground ml-2">{comment.timestamp}</span>
-                    </div>
-                    <p className="text-sm mt-1">{comment.content}</p>
+                  <div>
+                    <p 
+                      className="font-medium cursor-pointer hover:underline"
+                      onClick={() => handleAuthorClick(comment.author)}
+                    >
+                      {comment.author}
+                    </p>
+                    <p className="text-sm text-muted-foreground">{comment.timestamp}</p>
+                    <p className="mt-1 whitespace-pre-line">{comment.content}</p>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
-
-          <div className="mt-4 flex items-end gap-2">
-            <Textarea
-              placeholder="Add a comment..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              className="min-h-24 flex-1"
-            />
-            <Button 
-              size="icon" 
-              onClick={handleAddComment}
-              disabled={!newComment.trim()}
-            >
-              <Send className="h-4 w-4" />
-            </Button>
-          </div>
+          ) : (
+            <p className="text-center text-muted-foreground py-4">No comments yet. Be the first to comment!</p>
+          )}
+        </div>
+        
+        <div className="flex items-center gap-2">
+          <Textarea
+            placeholder="Write a comment..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            className="flex-1"
+          />
+          <Button size="icon" onClick={handleAddComment} disabled={!newComment.trim()}>
+            <Send className="h-4 w-4" />
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
