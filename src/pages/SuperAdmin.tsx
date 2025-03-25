@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Shield, Users, Building } from 'lucide-react';
+import { Shield, Users, Building, Mail } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { OrganizationsTab, UsersTab, BillingTab, SettingsTab } from '@/components/superadmin';
