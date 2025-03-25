@@ -1,50 +1,15 @@
-import React, { useState } from 'react';
-import { 
-  Search, 
-  UserPlus,
-  Mail,
-  Phone,
-  Calendar,
-  MoreHorizontal,
-  GraduationCap,
-} from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogClose
-} from '@/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Member } from '@/components/calendar/types';
-import InviteMemberDialog from '@/components/members/InviteMemberDialog';
-import { useToast } from '@/hooks/use-toast';
 
+import React, { useState } from 'react';
+import { UserPlus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Member } from '@/components/members/types';
+import { MemberFilters } from '@/components/members/MemberFilters';
+import { MembersViewToggle } from '@/components/members/MembersViewToggle';
+import { MembersList } from '@/components/members/MembersList';
+import { MemberProfile } from '@/components/members/MemberProfile';
+import InviteMemberDialog from '@/components/members/InviteMemberDialog';
+
+// Sample member data (in a real app, this would come from an API)
 const members: Member[] = [
   { 
     id: "1", 
@@ -192,8 +157,6 @@ const Members = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
-  const navigate = useNavigate();
-  const { toast } = useToast();
   
   const filteredMembers = members.filter(member => {
     const matchesSearch = 
@@ -212,22 +175,6 @@ const Members = () => {
     setSelectedMember(member);
   };
   
-  const handleMessageMember = (member: Member) => {
-    setSelectedMember(null);
-    toast({
-      title: `Messaging ${member.name}`,
-      description: "Opening conversation...",
-    });
-    navigate('/messages', { 
-      state: { 
-        openConversation: {
-          id: member.id,
-          name: member.name
-        } 
-      } 
-    });
-  };
-  
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col gap-2">
@@ -238,83 +185,18 @@ const Members = () => {
       </div>
       
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex w-full max-w-sm items-center space-x-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search members..."
-              className="pl-8"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <Select 
-            defaultValue="all"
-            onValueChange={setStatusFilter}
-          >
-            <SelectTrigger className="w-[130px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Members</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="alumni">Alumni</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+        <MemberFilters 
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+        />
         
         <div className="flex items-center gap-2">
-          <div className="flex items-center rounded-md border p-1">
-            <Button
-              variant={viewType === 'grid' ? 'default' : 'ghost'}
-              size="sm"
-              className="h-8 w-8 p-0"
-              onClick={() => setViewType('grid')}
-            >
-              <span className="sr-only">Grid view</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-4 w-4"
-              >
-                <rect width="7" height="7" x="3" y="3" rx="1" />
-                <rect width="7" height="7" x="14" y="3" rx="1" />
-                <rect width="7" height="7" x="14" y="14" rx="1" />
-                <rect width="7" height="7" x="3" y="14" rx="1" />
-              </svg>
-            </Button>
-            <Button
-              variant={viewType === 'list' ? 'default' : 'ghost'}
-              size="sm"
-              className="h-8 w-8 p-0"
-              onClick={() => setViewType('list')}
-            >
-              <span className="sr-only">List view</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-4 w-4"
-              >
-                <line x1="8" x2="21" y1="6" y2="6" />
-                <line x1="8" x2="21" y1="12" y2="12" />
-                <line x1="8" x2="21" y1="18" y2="18" />
-                <line x1="3" x2="3.01" y1="6" y2="6" />
-                <line x1="3" x2="3.01" y1="12" y2="12" />
-                <line x1="3" x2="3.01" y1="18" y2="18" />
-              </svg>
-            </Button>
-          </div>
+          <MembersViewToggle 
+            viewType={viewType} 
+            setViewType={setViewType} 
+          />
           <Button className="gap-2" onClick={() => setInviteDialogOpen(true)}>
             <UserPlus className="h-4 w-4" />
             <span>Invite Member</span>
@@ -322,220 +204,17 @@ const Members = () => {
         </div>
       </div>
       
-      {viewType === 'grid' ? (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredMembers.map((member) => (
-            <Card key={member.id} className="overflow-hidden transition-all hover:shadow-subtle animate-scale-in">
-              <CardHeader className="p-4">
-                <div className="flex items-center justify-between">
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage src="/placeholder.svg" alt={member.name} />
-                    <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                  </Avatar>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleOpenProfile(member)}>View Profile</DropdownMenuItem>
-                      <DropdownMenuItem>Send Message</DropdownMenuItem>
-                      <DropdownMenuItem>Edit</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                <CardTitle className="text-base mt-2">
-                  <button 
-                    className="hover:underline text-left" 
-                    onClick={() => handleOpenProfile(member)}
-                  >
-                    {member.name}
-                  </button>
-                </CardTitle>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="font-normal">
-                    {member.role}
-                  </Badge>
-                  {member.status === 'alumni' && (
-                    <Badge variant="outline" className="font-normal text-muted-foreground">
-                      Alumni
-                    </Badge>
-                  )}
-                </div>
-              </CardHeader>
-              <CardContent className="p-4 pt-0">
-                <div className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Mail className="h-4 w-4" />
-                    <span>{member.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Phone className="h-4 w-4" />
-                    <span>{member.phone}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    <span>Joined {member.joinedDate}</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="rounded-md border">
-          <div className="grid grid-cols-[1fr_1fr_1fr_auto] p-4 font-medium bg-muted/50">
-            <div>Name</div>
-            <div>Contact</div>
-            <div>Joined</div>
-            <div></div>
-          </div>
-          <div className="divide-y">
-            {filteredMembers.map((member) => (
-              <div key={member.id} className="grid grid-cols-[1fr_1fr_1fr_auto] p-4 items-center animate-fade-up">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src="/placeholder.svg" alt={member.name} />
-                    <AvatarFallback>{member.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-medium">
-                      <button 
-                        className="hover:underline text-left" 
-                        onClick={() => handleOpenProfile(member)}
-                      >
-                        {member.name}
-                      </button>
-                    </p>
-                    <Badge variant="secondary" className="mt-1 font-normal text-xs">
-                      {member.role}
-                    </Badge>
-                    {member.status === 'alumni' && (
-                      <Badge variant="outline" className="ml-1 mt-1 font-normal text-xs">
-                        Alumni
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-                <div className="space-y-1 text-sm">
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Mail className="h-3 w-3" />
-                    <span>{member.email}</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Phone className="h-3 w-3" />
-                    <span>{member.phone}</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Calendar className="h-4 w-4" />
-                  <span>{member.joinedDate}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon" className="h-8 w-8">
-                    <Mail className="h-4 w-4" />
-                  </Button>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleOpenProfile(member)}>View Profile</DropdownMenuItem>
-                      <DropdownMenuItem>Send Message</DropdownMenuItem>
-                      <DropdownMenuItem>Edit</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      <MembersList 
+        members={filteredMembers}
+        viewType={viewType}
+        onOpenProfile={handleOpenProfile}
+      />
       
-      <Dialog open={!!selectedMember} onOpenChange={(open) => !open && setSelectedMember(null)}>
-        <DialogContent className="sm:max-w-[525px]">
-          <DialogHeader>
-            <DialogTitle className="text-xl">Member Profile</DialogTitle>
-            <DialogDescription>
-              View detailed information about this member
-            </DialogDescription>
-          </DialogHeader>
-          
-          {selectedMember && (
-            <div className="space-y-6">
-              <div className="flex items-start gap-4">
-                <Avatar className="h-16 w-16">
-                  <AvatarImage src="/placeholder.svg" alt={selectedMember.name} />
-                  <AvatarFallback className="text-lg">
-                    {selectedMember.name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
-                
-                <div className="flex-1">
-                  <h3 className="text-xl font-semibold">{selectedMember.name}</h3>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    <Badge variant="secondary">
-                      {selectedMember.role}
-                    </Badge>
-                    <Badge variant={selectedMember.status === 'active' ? 'default' : 'outline'}>
-                      {selectedMember.status === 'active' ? 'Active Member' : 'Alumni'}
-                    </Badge>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Contact Information</p>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Mail className="h-4 w-4 text-primary" />
-                      <span>{selectedMember.email}</span>
-                    </div>
-                    {selectedMember.phone && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Phone className="h-4 w-4 text-primary" />
-                        <span>{selectedMember.phone}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Academic Information</p>
-                  <div className="space-y-2">
-                    {selectedMember.major && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <GraduationCap className="h-4 w-4 text-primary" />
-                        <span>{selectedMember.major}</span>
-                      </div>
-                    )}
-                    {selectedMember.graduationYear && (
-                      <div className="flex items-center gap-2 text-sm">
-                        <Calendar className="h-4 w-4 text-primary" />
-                        <span>Class of {selectedMember.graduationYear}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex justify-end gap-2">
-                <DialogClose asChild>
-                  <Button variant="outline">Close</Button>
-                </DialogClose>
-                <Button onClick={() => handleMessageMember(selectedMember)}>
-                  <Mail className="mr-2 h-4 w-4" />
-                  Message
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <MemberProfile
+        isOpen={!!selectedMember}
+        onOpenChange={(open) => !open && setSelectedMember(null)}
+        member={selectedMember}
+      />
       
       <InviteMemberDialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen} />
     </div>
