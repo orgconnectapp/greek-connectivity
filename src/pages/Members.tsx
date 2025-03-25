@@ -7,10 +7,6 @@ import {
   Calendar,
   MoreHorizontal,
   GraduationCap,
-  Instagram,
-  Linkedin,
-  Twitter,
-  X
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -526,69 +522,6 @@ const Members = () => {
                   </div>
                 </div>
               </div>
-              
-              {selectedMember.bio && (
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground mb-1">Bio</p>
-                  <p className="text-sm">{selectedMember.bio}</p>
-                </div>
-              )}
-              
-              {selectedMember.socialLinks && Object.values(selectedMember.socialLinks).some(Boolean) && (
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground mb-2">Social Media</p>
-                  <div className="flex gap-2">
-                    {selectedMember.socialLinks.instagram && (
-                      <a href={`https://instagram.com/${selectedMember.socialLinks.instagram}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="p-2 rounded-full bg-muted hover:bg-muted/80"
-                      >
-                        <Instagram className="h-4 w-4" />
-                      </a>
-                    )}
-                    {selectedMember.socialLinks.linkedin && (
-                      <a href={`https://linkedin.com/in/${selectedMember.socialLinks.linkedin}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="p-2 rounded-full bg-muted hover:bg-muted/80"
-                      >
-                        <Linkedin className="h-4 w-4" />
-                      </a>
-                    )}
-                    {selectedMember.socialLinks.twitter && (
-                      <a href={`https://twitter.com/${selectedMember.socialLinks.twitter}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="p-2 rounded-full bg-muted hover:bg-muted/80"
-                      >
-                        <Twitter className="h-4 w-4" />
-                      </a>
-                    )}
-                    {selectedMember.socialLinks.github && (
-                      <a href={`https://github.com/${selectedMember.socialLinks.github}`} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="p-2 rounded-full bg-muted hover:bg-muted/80"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="h-4 w-4"
-                        >
-                          <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-                          <path d="M9 18c-4.51 2-5-2-7-2" />
-                        </svg>
-                      </a>
-                    )}
-                  </div>
-                </div>
-              )}
               
               <div className="flex justify-end gap-2">
                 <DialogClose asChild>
