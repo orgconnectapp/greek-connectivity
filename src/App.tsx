@@ -13,6 +13,7 @@ import Fundraisers from "./pages/Fundraisers";
 import Messages from "./pages/Messages";
 import MessageBoard from "./pages/MessageBoard";
 import AdminPanel from "./pages/AdminPanel";
+import SuperAdmin from "./pages/SuperAdmin";
 import Calendar from "./pages/Calendar";
 import Profile from "./pages/Profile";
 import Billing from "./pages/Billing";
@@ -22,6 +23,7 @@ import Auth from "./pages/Auth";
 import VerifyEmail from "./pages/VerifyEmail";
 import AuthLayout from "./components/layout/AuthLayout";
 import UserProfile from "./pages/UserProfile";
+import OrganizationProfile from "./components/superadmin/OrganizationProfile";
 
 const queryClient = new QueryClient();
 
@@ -50,6 +52,8 @@ const App = () => (
               <Route path="/message-board" element={<MessageBoard />} />
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/admin" element={<AdminPanel />} />
+              <Route path="/super-admin" element={<SuperAdmin />} />
+              <Route path="/super-admin/org/:orgId" element={<OrganizationProfile />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/profile/:username" element={<UserProfile />} />
               <Route path="/billing" element={<Billing />} />
