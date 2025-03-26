@@ -9,7 +9,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import MemberManagement from '@/components/admin/MemberManagement';
 import DuesManagement from '@/components/admin/DuesManagement';
 import OrganizationSettings from '@/components/admin/OrganizationSettings';
-import PermissionsSettings from '@/components/admin/PermissionsSettings';
 import OverviewSection from '@/components/admin/OverviewSection';
 
 // Mock data for charges details
@@ -55,7 +54,7 @@ const AdminPanel = () => {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Admin Panel</h1>
           <p className="text-muted-foreground">
-            Manage your organization's settings and permissions.
+            Manage your organization's settings and members.
           </p>
         </div>
         <Badge variant="secondary" className="gap-1">
@@ -65,12 +64,11 @@ const AdminPanel = () => {
       </div>
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5 lg:w-auto">
+        <TabsList className="grid w-full grid-cols-4 lg:w-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="users">Member Management</TabsTrigger>
           <TabsTrigger value="dues">Dues Management</TabsTrigger>
           <TabsTrigger value="settings">Settings</TabsTrigger>
-          <TabsTrigger value="permissions">Permissions</TabsTrigger>
         </TabsList>
         
         <TabsContent value="overview" className="space-y-4">
@@ -97,14 +95,6 @@ const AdminPanel = () => {
           <Card>
             <CardContent className="pt-6">
               <OrganizationSettings />
-            </CardContent>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="permissions" className="space-y-4">
-          <Card>
-            <CardContent className="pt-6">
-              <PermissionsSettings />
             </CardContent>
           </Card>
         </TabsContent>

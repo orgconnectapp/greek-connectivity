@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Pencil, UserPlus, UserX } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -9,10 +10,10 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from '@/hooks/use-toast';
 import InviteMemberDialog from '@/components/members/InviteMemberDialog';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface MemberData {
   name: string;
-  role: string;
   email: string;
   status: string;
   admin: boolean;
@@ -46,45 +47,47 @@ const MemberManagement = () => {
     });
   };
 
-  const handleRoleChange = (role: string) => {
-    toast({
-      title: "Role updated",
-      description: `${selectedMember?.name}'s role has been updated to ${role}.`,
-    });
+  const handleAdminToggle = (checked: boolean) => {
+    if (selectedMember) {
+      setSelectedMember({
+        ...selectedMember,
+        admin: checked
+      });
+      
+      toast({
+        title: "Admin access updated",
+        description: `${selectedMember.name}'s admin access has been ${checked ? 'granted' : 'revoked'}.`,
+      });
+    }
   };
   
   const members = [
     { 
       name: 'Jason Smith', 
-      role: 'President', 
       email: 'jason@greeksync.com',
       status: 'Active',
       admin: true
     },
     { 
       name: 'Emma Johnson', 
-      role: 'Vice President', 
       email: 'emma@greeksync.com',
       status: 'Active',
       admin: true
     },
     { 
       name: 'Michael Brown', 
-      role: 'Treasurer', 
       email: 'michael@greeksync.com',
       status: 'Active',
       admin: true
     },
     { 
       name: 'Sophia Garcia', 
-      role: 'Secretary', 
       email: 'sophia@greeksync.com',
       status: 'Active',
       admin: false
     },
     { 
       name: 'Alex Williams', 
-      role: 'Event Coordinator', 
       email: 'alex@greeksync.com',
       status: 'Active',
       admin: false
@@ -107,13 +110,13 @@ const MemberManagement = () => {
         </div>
         
         <Table>
-          <TableCaption>A list of all members with their roles and permissions</TableCaption>
+          <TableCaption>A list of all members with their permissions</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Role</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Admin Access</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -121,12 +124,24 @@ const MemberManagement = () => {
             {members.map((member, index) => (
               <TableRow key={index}>
                 <TableCell className="font-medium">{member.name}</TableCell>
-                <TableCell>{member.role}</TableCell>
                 <TableCell>{member.email}</TableCell>
                 <TableCell>
                   <Badge variant={member.status === 'Active' ? 'default' : 'secondary'}>
                     {member.status}
                   </Badge>
+                </TableCell>
+                <TableCell>
+                  <Switch 
+                    checked={member.admin} 
+                    onCheckedChange={(checked) => {
+                      // Update member's admin status in the local state
+                      members[index].admin = checked;
+                      toast({
+                        title: "Admin access updated",
+                        description: `${member.name}'s admin access has been ${checked ? 'granted' : 'revoked'}.`,
+                      });
+                    }}
+                  />
                 </TableCell>
                 <TableCell>
                   <Button 
@@ -149,7 +164,7 @@ const MemberManagement = () => {
           <DialogHeader>
             <DialogTitle>Edit Member</DialogTitle>
             <DialogDescription>
-              Update member details, role, and status
+              Update member details and status
             </DialogDescription>
           </DialogHeader>
           
@@ -160,7 +175,6 @@ const MemberManagement = () => {
                 <div className="text-sm">
                   <p><span className="font-medium">Name:</span> {selectedMember.name}</p>
                   <p><span className="font-medium">Email:</span> {selectedMember.email}</p>
-                  <p><span className="font-medium">Current Role:</span> {selectedMember.role}</p>
                 </div>
               </div>
               
@@ -182,23 +196,16 @@ const MemberManagement = () => {
               </div>
               
               <div className="space-y-2">
-                <h3 className="text-sm font-medium">Assign Role</h3>
-                <Select 
-                  defaultValue={selectedMember.role.toLowerCase().replace(' ', '-')}
-                  onValueChange={handleRoleChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="president">President</SelectItem>
-                    <SelectItem value="vice-president">Vice President</SelectItem>
-                    <SelectItem value="treasurer">Treasurer</SelectItem>
-                    <SelectItem value="secretary">Secretary</SelectItem>
-                    <SelectItem value="event-coordinator">Event Coordinator</SelectItem>
-                    <SelectItem value="member">Member</SelectItem>
-                  </SelectContent>
-                </Select>
+                <h3 className="text-sm font-medium">Admin Access</h3>
+                <div className="flex items-center space-x-2">
+                  <Switch 
+                    checked={selectedMember.admin}
+                    onCheckedChange={handleAdminToggle}
+                  />
+                  <span className="text-sm">
+                    {selectedMember.admin ? 'Has admin access' : 'No admin access'}
+                  </span>
+                </div>
               </div>
               
               <div className="pt-2">
@@ -245,7 +252,9 @@ const MemberManagement = () => {
               <div className="p-4 border rounded-md bg-muted/50 mb-4">
                 <p className="font-medium">{selectedMember.name}</p>
                 <p className="text-sm text-muted-foreground">{selectedMember.email}</p>
-                <p className="text-sm text-muted-foreground">{selectedMember.role}</p>
+                <p className="text-sm text-muted-foreground">
+                  {selectedMember.admin ? 'Admin access' : 'Regular member'}
+                </p>
               </div>
               
               <div className="flex justify-between">

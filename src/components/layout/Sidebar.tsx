@@ -52,9 +52,8 @@ const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   
   // This would typically come from an auth context
-  // For now, we'll just hardcode it for demonstration
-  const userRole = "president"; // Could be "president", "treasurer", "member", etc.
-  const isAdmin = ["president", "treasurer", "vice president"].includes(userRole);
+  // For now, we'll just check for admin access directly
+  const hasAdminAccess = true; // This would be determined by the user's admin status
   
   const toggleSidebar = () => {
     setIsCollapsed(prev => !prev);
@@ -117,7 +116,7 @@ const Sidebar = () => {
           isCollapsed={isCollapsed} 
         />
         
-        {isAdmin && (
+        {hasAdminAccess && (
           <SidebarNavItem 
             icon={Shield} 
             label="Admin" 
