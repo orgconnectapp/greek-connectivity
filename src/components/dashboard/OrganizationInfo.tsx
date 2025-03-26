@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Building, Calendar, Users, Award } from 'lucide-react';
+import { Building, Calendar, Users } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 const OrganizationInfo = () => {
@@ -10,8 +10,7 @@ const OrganizationInfo = () => {
     chapterName: "Phi Alpha Zeta",
     description: "Lambda Chi Alpha is a national co-educational service fraternity founded on the principles of leadership, friendship, and service.",
     founded: 1977,
-    memberCount: 87,
-    achievements: "Distinguished Service Chapter Award, 2023"
+    memberCount: 87
   };
 
   return (
@@ -33,12 +32,6 @@ const OrganizationInfo = () => {
                 <Users className="h-4 w-4 text-primary" />
                 <span className="text-sm">
                   <span className="font-medium">Active Members:</span> {organizationInfo.memberCount}
-                </span>
-              </div>
-              <div className="flex items-center gap-2 col-span-2">
-                <Award className="h-4 w-4 text-primary" />
-                <span className="text-sm">
-                  <span className="font-medium">Recent Achievement:</span> {organizationInfo.achievements}
                 </span>
               </div>
             </div>
