@@ -2,10 +2,8 @@ import React, { useState } from 'react';
 import DuesSummary from '@/components/dashboard/DuesSummary';
 import FundraiserCard from '@/components/dashboard/FundraiserCard';
 import MembershipStats from '@/components/dashboard/MembershipStats';
-import DashboardCard from '@/components/dashboard/DashboardCard';
 import OrganizationInfo from '@/components/dashboard/OrganizationInfo';
 import { Button } from '@/components/ui/button';
-import { CalendarDays, MessageSquare, Bell } from 'lucide-react';
 import FundraiserDetailsDialog from '@/components/fundraisers/FundraiserDetailsDialog';
 import ShareFundraiserDialog from '@/components/fundraisers/ShareFundraiserDialog';
 import DonationDialog from '@/components/fundraisers/DonationDialog';
@@ -109,35 +107,13 @@ const Index = () => {
       
       <OrganizationInfo />
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2">
         <div className="animate-fade-up" style={{ animationDelay: '0.1s' }}>
           <DuesSummary />
         </div>
         
         <div className="animate-fade-up" style={{ animationDelay: '0.2s' }}>
           <MembershipStats />
-        </div>
-        
-        <div className="animate-fade-up" style={{ animationDelay: '0.3s' }}>
-          <DashboardCard title="Activity" className="h-full">
-            <div className="space-y-4">
-              {[
-                { icon: Bell, text: "Dues reminder sent", time: "2 hours ago" },
-                { icon: MessageSquare, text: "New message from Treasurer", time: "5 hours ago" },
-                { icon: CalendarDays, text: "Fundraiser scheduled", time: "Yesterday" }
-              ].map((item, i) => (
-                <div key={i} className="flex gap-3">
-                  <div className="mt-0.5 rounded-full bg-primary/10 p-1.5">
-                    <item.icon className="h-4 w-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium">{item.text}</p>
-                    <p className="text-xs text-muted-foreground">{item.time}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </DashboardCard>
         </div>
       </div>
       
