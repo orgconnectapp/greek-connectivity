@@ -133,7 +133,6 @@ const DuesManagement = ({ chargesDetails }: DuesManagementProps) => {
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button variant="ghost" size="sm">Edit</Button>
                       <Button variant="ghost" size="sm" className="text-destructive">Delete</Button>
                     </div>
                   </TableCell>
