@@ -1,8 +1,6 @@
 
 import React, { useState } from 'react';
-import { MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 
 import MessageCard from '@/components/messageBoard/MessageCard';
@@ -16,17 +14,12 @@ const MessageBoard = () => {
   const [newMessageOpen, setNewMessageOpen] = useState(false);
   const [newMessageContent, setNewMessageContent] = useState('');
   const [newMessageCategory, setNewMessageCategory] = useState('General');
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [newComment, setNewComment] = useState('');
   const [likedMessages, setLikedMessages] = useState<number[]>([]);
 
-  const filteredMessages = messages.filter(message => {
-    return message.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-           message.author.toLowerCase().includes(searchQuery.toLowerCase());
-  });
-
-  const sortedMessages = [...filteredMessages].sort((a, b) => {
+  // Remove the search-related state and filtering
+  const sortedMessages = [...messages].sort((a, b) => {
     if (a.isPinned && !b.isPinned) return -1;
     if (!a.isPinned && b.isPinned) return 1;
     return 0;
@@ -144,15 +137,7 @@ const MessageBoard = () => {
         />
       </div>
 
-      <div className="relative flex-1">
-        <Input
-          className="pl-8 w-full"
-          placeholder="Search messages..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <MessageSquare className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-      </div>
+      {/* Removed the search input */}
 
       <div className="space-y-4 pt-4">
         {sortedMessages.length > 0 ? (
