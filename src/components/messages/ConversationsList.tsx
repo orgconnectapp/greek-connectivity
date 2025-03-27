@@ -1,7 +1,5 @@
 
 import React from 'react';
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -37,18 +35,7 @@ const ConversationsList = ({
         </Button>
       </div>
       
-      <div className="p-2">
-        <div className="relative">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input 
-            type="search" 
-            placeholder="Search conversations..." 
-            className="pl-8" 
-          />
-        </div>
-      </div>
-      
-      <ScrollArea className="h-[calc(100vh-13rem)]">
+      <ScrollArea className="h-[calc(100vh-8rem)]">
         <div className="space-y-1 p-2">
           {conversations.map((conversation) => (
             <button
