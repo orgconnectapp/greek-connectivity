@@ -78,10 +78,6 @@ const Fundraisers = () => {
         </p>
       </div>
       
-      <StatsList stats={filteredStats} />
-      
-      <FundraisersSearch onCreateClick={() => setCreateDialogOpen(true)} />
-      
       <FundraiserDateRangeFilter
         dateRange={dateRange}
         setDateRange={handleDateRangeChange}
@@ -90,6 +86,10 @@ const Fundraisers = () => {
         setCustomStartDate={setCustomStartDate}
         setCustomEndDate={setCustomEndDate}
       />
+      
+      <StatsList stats={filteredStats} />
+      
+      <FundraisersSearch onCreateClick={() => setCreateDialogOpen(true)} />
       
       <FundraisersList 
         fundraisers={fundraisers}
