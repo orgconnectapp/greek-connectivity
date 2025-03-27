@@ -1,4 +1,6 @@
+
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DuesSummary from '@/components/dashboard/DuesSummary';
 import FundraiserCard from '@/components/dashboard/FundraiserCard';
 import MembershipStats from '@/components/dashboard/MembershipStats';
@@ -10,6 +12,7 @@ import DonationDialog from '@/components/fundraisers/DonationDialog';
 import { FundraiserType, DonorType } from '@/components/fundraisers/data';
 
 const Index = () => {
+  const navigate = useNavigate();
   const [selectedFundraiser, setSelectedFundraiser] = useState<FundraiserType | null>(null);
   const [detailsDialogOpen, setDetailsDialogOpen] = useState(false);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
@@ -96,6 +99,10 @@ const Index = () => {
     return donors;
   };
 
+  const handleViewAllFundraisers = () => {
+    navigate('/fundraisers');
+  };
+
   return (
     <div className="space-y-8 animate-fade-in">
       <div className="flex flex-col gap-2">
@@ -120,7 +127,7 @@ const Index = () => {
       <div>
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-xl font-semibold">Current Fundraisers</h2>
-          <Button variant="outline" size="sm">View All</Button>
+          <Button variant="outline" size="sm" onClick={handleViewAllFundraisers}>View All</Button>
         </div>
         
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
