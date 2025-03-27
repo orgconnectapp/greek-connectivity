@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MoreVertical, Send, Paperclip, Smile, Pencil } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -31,11 +32,18 @@ const MessageView = ({
   handleSendMessage,
   onRenameGroup
 }: MessageViewProps) => {
+  const navigate = useNavigate();
   const messages = initialMessages; // This would be dynamic in a real application
   
   const canRenameGroup = selectedConversation?.isGroup && 
     selectedConversation?.members && 
     selectedConversation.members.length >= 3;
+  
+  const handleViewProfile = () => {
+    // Convert name to kebab-case for URL
+    const username = selectedConversation.name.toLowerCase().replace(/\s+/g, '-');
+    navigate(`/members/${username}`, { state: { from: 'messageBoard' } });
+  };
   
   return (
     <div className="flex flex-1 flex-col">
@@ -50,7 +58,15 @@ const MessageView = ({
             </AvatarFallback>
           </Avatar>
           <div className="flex items-center gap-2">
-            <div className="font-medium">{selectedConversation.name}</div>
+            <div 
+              className={cn(
+                "font-medium",
+                !selectedConversation.isGroup && "cursor-pointer hover:underline"
+              )}
+              onClick={!selectedConversation.isGroup ? handleViewProfile : undefined}
+            >
+              {selectedConversation.name}
+            </div>
             {canRenameGroup && (
               <Button 
                 variant="ghost" 
@@ -80,9 +96,10 @@ const MessageView = ({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>View Profile</DropdownMenuItem>
+              <DropdownMenuItem onClick={!selectedConversation.isGroup ? handleViewProfile : undefined}>
+                View Profile
+              </DropdownMenuItem>
               <DropdownMenuItem>Mute Notifications</DropdownMenuItem>
-              <DropdownMenuItem>Search Messages</DropdownMenuItem>
               <DropdownMenuItem>Block</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
