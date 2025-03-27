@@ -1,8 +1,6 @@
 
 import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EventCalendar from "@/components/calendar/EventCalendar";
-import CalendarIntegration from "@/components/calendar/CalendarIntegration";
 import CreateEventDialog from "@/components/calendar/CreateEventDialog";
 import { Event } from "@/components/calendar/types";
 
@@ -27,18 +25,7 @@ const Calendar = () => {
         <CreateEventDialog />
       </div>
 
-      <Tabs defaultValue="calendar" className="w-full">
-        <TabsList>
-          <TabsTrigger value="calendar">Calendar View</TabsTrigger>
-          <TabsTrigger value="integration">Calendar Integration</TabsTrigger>
-        </TabsList>
-        <TabsContent value="calendar" className="mt-6">
-          <EventCalendar onEventSelect={handleEventSelect} />
-        </TabsContent>
-        <TabsContent value="integration" className="mt-6">
-          <CalendarIntegration />
-        </TabsContent>
-      </Tabs>
+      <EventCalendar onEventSelect={handleEventSelect} />
     </div>
   );
 };
