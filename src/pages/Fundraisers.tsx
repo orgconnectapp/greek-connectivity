@@ -8,6 +8,7 @@ import FundraiserDetailsDialog from '@/components/fundraisers/FundraiserDetailsD
 import DonationDialog from '@/components/fundraisers/DonationDialog';
 import ShareFundraiserDialog from '@/components/fundraisers/ShareFundraiserDialog';
 import StatsList from '@/components/fundraisers/StatsList';
+import FundraiserDateRangeFilter, { DateRangeType } from '@/components/fundraisers/FundraiserDateRangeFilter';
 import { donors, fundraisers, stats, FundraiserType, DonorType } from '@/components/fundraisers/data';
 
 const Fundraisers = () => {
@@ -17,6 +18,9 @@ const Fundraisers = () => {
   const [donatingFundraiser, setDonatingFundraiser] = useState<FundraiserType | null>(null);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [sharingFundraiser, setSharingFundraiser] = useState<FundraiserType | null>(null);
+  const [dateRange, setDateRange] = useState<DateRangeType>('all-time');
+  const [customStartDate, setCustomStartDate] = useState<Date | undefined>(undefined);
+  const [customEndDate, setCustomEndDate] = useState<Date | undefined>(undefined);
   
   // Filter out the Member Participation stat
   const filteredStats = stats.filter(stat => stat.title !== "Member Participation");
@@ -42,6 +46,29 @@ const Fundraisers = () => {
     return donors.filter(donor => fundraiser.donors.includes(donor.id));
   };
 
+  const handleDateRangeChange = (range: DateRangeType) => {
+    setDateRange(range);
+    
+    // Reset custom dates if not using custom range
+    if (range !== 'custom') {
+      setCustomStartDate(undefined);
+      setCustomEndDate(undefined);
+    }
+    
+    // Show toast to confirm the change
+    const rangeText = {
+      'this-semester': 'This Semester',
+      'last-semester': 'Last Semester',
+      'all-time': 'All Time',
+      'custom': 'Custom Date Range'
+    }[range];
+    
+    toast({
+      title: "Date Range Updated",
+      description: `Showing fundraising totals for: ${rangeText}`,
+    });
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col gap-2">
@@ -55,12 +82,24 @@ const Fundraisers = () => {
       
       <FundraisersSearch onCreateClick={() => setCreateDialogOpen(true)} />
       
+      <FundraiserDateRangeFilter
+        dateRange={dateRange}
+        setDateRange={handleDateRangeChange}
+        customStartDate={customStartDate}
+        customEndDate={customEndDate}
+        setCustomStartDate={setCustomStartDate}
+        setCustomEndDate={setCustomEndDate}
+      />
+      
       <FundraisersList 
         fundraisers={fundraisers}
         handleShare={handleShare}
         handleFundraiserDoubleClick={handleFundraiserDoubleClick}
         handleContribute={handleContribute}
         getFundraiserDonors={getFundraiserDonors}
+        dateRange={dateRange}
+        customStartDate={customStartDate}
+        customEndDate={customEndDate}
       />
       
       <CreateFundraiserDialog 
