@@ -1,18 +1,11 @@
 
 import React from 'react';
-import { ThumbsUp, MessageCircle, Clock, Copy, Flag } from 'lucide-react';
+import { ThumbsUp, MessageCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
 
 export interface MessageProps {
   message: {
@@ -50,11 +43,6 @@ const MessageCard = ({ message, onLike, onPin, onOpenComments, isLiked }: Messag
     navigate(`/profile/${username}`, { 
       state: { from: 'messageBoard' } 
     });
-  };
-
-  const handleCopyMessage = () => {
-    navigator.clipboard.writeText(message.content);
-    toast.success('Message copied to clipboard');
   };
 
   return (
@@ -95,7 +83,7 @@ const MessageCard = ({ message, onLike, onPin, onOpenComments, isLiked }: Messag
         <p className="whitespace-pre-line">{message.content}</p>
         {/* Image or video content would be displayed here */}
       </CardContent>
-      <CardFooter className="pt-3 border-t flex justify-between">
+      <CardFooter className="pt-3 border-t">
         <div className="flex gap-4">
           <Button 
             variant="ghost" 
@@ -111,23 +99,6 @@ const MessageCard = ({ message, onLike, onPin, onOpenComments, isLiked }: Messag
             <span>{message.comments?.length || 0}</span>
           </Button>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm">
-              Options
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={handleCopyMessage}>
-              <Copy className="h-4 w-4 mr-2" />
-              Copy
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Flag className="h-4 w-4 mr-2" />
-              Report
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </CardFooter>
     </Card>
   );
